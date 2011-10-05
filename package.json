@@ -2,7 +2,7 @@
   "author": "Joshua Holbrook <josh.holbrook@gmail.com> (http://jesusabdullah.net)",
   "name": "browserify-service",
   "description": "A webservice for browserified npm modules",
-  "version": "0.0.0",
+  "version": "0.0.0-2",
   "repository": {
     "url": ""
   },
