@@ -1,0 +1,15 @@
+{
+  "author": "Joshua Holbrook <josh.holbrook@gmail.com> (http://jesusabdullah.net)",
+  "name": "browserify-service",
+  "description": "A webservice for browserified npm modules",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "engines": {
+    "node": "~v0.4.12"
+  },
+  "main": "./lib/browserify-service",
+  "dependencies": {},
+  "devDependencies": {}
+}

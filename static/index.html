@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>browserify.nodejitsu.com</title>
+    <script src='/?require=["mrcolor"]'  type="text/javascript"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var mr = require("mrcolor");
+            var next = mr();
+
+            var example = document.getElementById("example");
+
+            example.innerHTML = example.innerHTML
+                .split("\n")
+                .map(function (line) {
+                    var color = next().rgb();
+                    var rgbText = "rgb(" + color.join(",") + ");";
+
+                    return "<span style=\"color: " + rgbText + ";\">"
+                        + "<strong>" + line + "</strong>"
+                        + "</span>";
+                }).join("\n");
+        };
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>BROWSERIFY JUST GOT MORE MAGICAL.</h1>
+        <!--<p><img src="/img/hp.png"></p>-->
+        <!--<p>
+          Now if you want to use a browserified script from <a href="http://npmjs.org">npm</a>, you don't have to bundle them yourself anymore! <strong>Just link to them!</strong>
+        </p>-->
+        <!-- TODO: Make toggle-able. -->
+        <h2>Example: <small>This one colors its own listings.</small></h2>
+        <p>
+          <pre id="example">
+    &lt;script src='http://browserify.nodejitsu.com/?require=["mrcolor"]' type="text/javascript"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript"&gt;
+        window.onload = function () {
+            var mr = require("mrcolor");
+            var next = mr();
+
+            var example = document.getElementById("example");
+
+            example.innerHTML = example.innerHTML
+                .split("\n")
+                .map(function (line) {
+
+                    var color = next().rgb();
+
+                    var rgbText = "rgb(" + color.join(",") + ");";
+
+                    return "&lt;span style=\"color: " + rgbText + ";\"&gt;"
+                        + line
+                        + "&lt;/span&gt;";
+                }).join("\n");
+        };
+    &lt;/script&gt;
+
+          </pre>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
