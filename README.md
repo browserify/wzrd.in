@@ -4,7 +4,7 @@ Too lazy to browserify things yourself? No need! With browserify.nodejitsu.com, 
 
 1. Include your bundle:
 
-``` js
+``` html
     <script src='http://browserify.nodejitsu.com/?require=["mrcolor"]' type="text/javascript"></script>
 ```
 
