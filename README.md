@@ -4,12 +4,16 @@ Too lazy to browserify things yourself? No need! With browserify.nodejitsu.com, 
 
 1. Include your bundle:
 
+``` js
     <script src='http://browserify.nodejitsu.com/?require=["mrcolor"]' type="text/javascript"></script>
+```
 
 2. Receive bacon:
 
+``` js
     var require = function (file, cwd) {
     // . . .
+```
 
 # GUYS THIS IS WAY ALPHA:
 
