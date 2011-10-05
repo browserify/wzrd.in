@@ -10,6 +10,15 @@
     "node": "~v0.4.12"
   },
   "main": "./lib/browserify-service",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "npm": "*",
+    "browserify": "*",
+    "qs": "*",
+    "node-static": "*"
+  },
+  "devDependencies": {},
+  "subdomain": "browserify",
+  "scripts": {
+    "start": "bin/server.js"
+  }
 }
