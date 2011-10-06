@@ -3,4 +3,6 @@ body {
 }
 
 pre#example {
+  background-color: #c0cad0;
+  text-shadow: 0px 0px 6px #333;
 }
