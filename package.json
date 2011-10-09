@@ -2,7 +2,7 @@
   "author": "Joshua Holbrook <josh.holbrook@gmail.com> (http://jesusabdullah.net)",
   "name": "browserify-service",
   "description": "A webservice for browserified npm modules",
-  "version": "0.0.0-2",
+  "version": "0.0.0-5",
   "repository": {
     "url": ""
   },
@@ -14,11 +14,32 @@
     "npm": "*",
     "browserify": "*",
     "qs": "*",
-    "node-static": "*"
+    "node-static": "*",
+    "detective": "*",
+    "burrito": "*",
+    "uglify-js": "*",
+    "traverse": "*",
+    "resolve": "*",
+    "commondir": "*",
+    "nub": "*",
+    "coffee-script": "*",
+    "graceful-fs": "*",
+    "nopt": "*",
+    "abbrev": "*",
+    "ini": "*",
+    "proto-list": "*",
+    "semver": "*",
+    "slide": "*",
+    "which": "*"
   },
   "devDependencies": {},
   "subdomain": "browserify",
   "scripts": {
     "start": "bin/server.js"
-  }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "SUBDOMAIN": "browserify"
+  },
+  "databases": {}
 }
