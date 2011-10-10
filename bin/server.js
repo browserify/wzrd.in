@@ -13,7 +13,7 @@ http.createServer(function (req, res) {
 
         service.getBundle(query.require, function (err, js) {
             if (err) {
-                winston.info("Cache ".yellow + "error".red + ": "+( (err && err.message) || "status code "+resp.statusCode ).cyan);
+                winston.info("Cache ".yellow + "error".red + ": "+( (err && err.message) || err ).cyan);
             }
             res.writeHead(200, {'Content-Type': 'text/javascript'});
             res.end(js);
