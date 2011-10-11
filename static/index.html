@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/index.css">
     <title>browserify.nodejitsu.com</title>
-    <script src='http://browserify.nodejitsu.com/?require=["mrcolor", {"jquery": "jquery-browserify"}]'  type="text/javascript"></script>
+    <script src='/?require=["mrcolor", {"jquery": "jquery-browserify"}]'  type="text/javascript"></script>
     <script type="text/javascript">
       var color = require("mrcolor")(),
           $ = require("jquery");
@@ -29,36 +29,80 @@
   <body>
     <div class="container">
       <div class="content">
-        <h1 class="rainbow">BROWSERIFY JUST GOT MORE MAGICAL.</h1>
-        <!--<p><img src="/img/hp.png"></p>-->
-        <!-- TODO: Make toggle-able. -->
-        <h2>Example: <small>See those colors?^^ This is where they came from.</small></h2>
-        <p>
-          <pre id="example">
-    &lt;script src='http://browserify.nodejitsu.com/?require=["mrcolor", {"jquery": "jquery-browserify"}]'  type="text/javascript"&gt;&lt;/script&gt;
-    &lt;script type="text/javascript"&gt;
-      var color = require("mrcolor")(),
-          $ = require("jquery");
+        <div class="span16">
+          <div class="row">
+            <h1 class="rainbow">BROWSERIFY JUST GOT MORE MAGICAL.</h1>
+          </div>
+          <div class="row">
+            <div class="span16">
+              <h2>See those colors?^^ <small>This is where they came from:</small></h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="span16">
+              <pre id="example">
+&lt;!--All you need is a script tag!--&gt;
+&lt;script src='http://browserify.nodejitsu.com/?require=["mrcolor", {"jquery": "jquery-browserify"}]'  type="text/javascript"&gt;&lt;/script&gt;
+&lt;!--This is your entry point.--&gt;
+&lt;script type="text/javascript"&gt;
+  // Use require in the browser!
+  var color = require("mrcolor")(),
+      $ = require("jquery");
 
-      $(function () {
-        $(".rainbow").replaceWith((function () {
-          var h = $("&lt;h1&gt;");
-          $(".rainbow")
-            .text()
-            .split("")
-            .forEach(function (c) {
-              h.append($("&lt;span&gt;")
-                .css("color", "rgb(" + color().rgb().join(",")+")")
-                .text(c)
-              );
-            });
+  // Now do some magic with your new-found powers! &gt;:3
+  $(function () {
+    $(".rainbow").replaceWith((function () {
+      var h = $("&lt;h1&gt;");
+      $(".rainbow")
+        .text()
+        .split("")
+        .forEach(function (c) {
+          h.append($("&lt;span&gt;")
+            .css("color", "rgb(" + color().rgb().join(",")+")")
+            .text(c)
+          );
+        });
 
-          return h.addClass("rainbow");
-        })());
-      });
-    &lt;/script&gt;
-          </pre>
-        </p>
+      return h.addClass("rainbow");
+    })());
+  });
+&lt;/script&gt;
+              </pre>
+            </div>
+          </div>
+          <!--<p></p>-->
+          <div class="row">
+            <div class="span16">
+              <h2>HOW IT WORKS:</h2>
+              <div class="row">
+                <div class="span8">
+                  <h3><strong>1.</strong> Use a <strong>querystring</strong> to specify the "requires" parameter of browserify's API:</h3>
+                  <pre>require('browserify')({
+      require : ["mrcolor", {"jquery": "jquery-browserify"}]
+  }))</pre>
+                  <h3>becomes:</h3>
+                  <pre>http://browserify.nodejitsu.com/?require=["mrcolor", {"jquery": "jquery-browserify"}]</pre>
+                </div>
+                <div class="span8">
+                  <h3><strong>2.</strong> <em>browserify.nodejitsu.com</em> <a href="https://github.com/substack/node-browserify">browserifies</a> modules for you!</h3>
+                  <!--<p><img src="/img/hp.png" width=300 height=231></p>-->
+                  <h3><strong>3.</strong> <em>browserify.nodejitsu.com</em> downloads your package from <a href="http://npmjs.org">npm</a> if necessary!</h3>
+                  <!--<p><img src="/img/npm.png"></p>-->
+                  <h3><strong>4.</strong> <em>browserify.nodejitsu.com</em> uses <a href="http://couchdb.apache.org">couchdb</a> to cache browserify bundles so you don't have to wait!</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <p class="centered"><img src="/img/hp.png"></p>
+            <h1 class="centered">BASICALLY IT'S PRETTY SWEET.</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span18">
+            <h3 class="centered">Written by <a href="http://twitter.com/jesusabdullah">Joshua Holbrook</a>. [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com">github</a>] [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com/issues">bugs</a>] [<a href="http://jesusabdullah.github.com/">blog</a>]</h3>
+          </div>
+        </div>
       </div>
     </div>
   </body>

@@ -1,8 +1,35 @@
 body {
   padding-top: 40px;
+  color: #000;
 }
 
-pre#example {
-  background-color: #c0cad0;
-  text-shadow: 0px 0px 6px #333;
+pre {
+  color: #0e0;
+  background-color: #444;
+}
+
+h1 {
+  font-size: 40px;
+  padding: 10px 0px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h2 small {
+  color: #4896b0;
+}
+
+h3 {
+  font-size: 20px;
+  padding: 5px;
+}
+
+img {
+  padding: 5px;
+}
+
+.centered {
+  text-align: center;
 }
