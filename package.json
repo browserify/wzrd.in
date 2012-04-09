@@ -1,6 +1,9 @@
 {
-  "name": "flatiron-helloworld",
+  "name": "browserify-cdn",
   "version": "0.0.0",
+  "scripts": {
+    "start": "node ./app.js"
+  },
   "dependencies": {
     "flatiron": "0.1.16",
     "union": "0.3.0"
