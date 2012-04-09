@@ -1,0 +1,8 @@
+{
+  "name": "flatiron-helloworld",
+  "version": "0.0.0",
+  "dependencies": {
+    "flatiron": "0.1.16",
+    "union": "0.3.0"
+  }
+}
