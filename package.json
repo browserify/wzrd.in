@@ -6,6 +6,11 @@
   },
   "dependencies": {
     "flatiron": "0.1.16",
-    "union": "0.3.0"
+    "union": "0.3.0",
+    "utile": "0.0.10",
+    "eventemitter2": "0.4.x",
+    "browserify": "1.10.6",
+    "detective": "0.1.x",
+    "npm": "1.1.x"
   }
 }
