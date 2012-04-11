@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Browserify CDN</title>
+  </head>
+  <body>
+    <h1>Welcome to the (new) Browserify CDN</h1>
+    <h3>This is a work in progress.</h3>
+    <p>How it works:</p>
+    <ol>
+      <li>
+        http POST a javascript file to /. For example:
+        <code>curl -X POST -d 'var traverse = require("traverse");' browserify.jit.su</code>
+      </li>
+      <li>
+        <em>The Browserify CDN</em> <a href="https://github.com/substack/node-browserify">browserifies</a> your posted index.js for you!</h3>
+      </li>
+      <li>
+        <em>The Browserify CDN</em> downloads your packages from <a href="http://npmjs.org">npm</a> if necessary!
+      </li>
+      <li>
+        <em>The Browserify CDN</em> uses <a href="http://couchdb.apache.org">couchdb</a> to cache browserify bundles so you don't have to wait!
+      </li>
+      <li>
+        <em>The Browserify CDN</em> will even <a href="https://github.com/mishoo/UglifyJS">uglify-js</a> your code into a compact package!
+      </li>
+    </ol>
+    <p><img src="/img/hp.png"></p>
+    <h1>BASICALLY IT'S PRETTY SWEET.</h1>
+    <h3>Written by <a href="http://twitter.com/jesusabdullah">Joshua Holbrook</a>. [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com">github</a>] [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com/issues">bugs</a>] [<a href="http://jesusabdullah.github.com/">blog</a>]</h3>
+  </body>
+</html>
