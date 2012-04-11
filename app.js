@@ -1,17 +1,16 @@
 var path = require('path'),
-    utile = require('utile');
+    utile = require('utile'),
+    colors = require('colors');
 
 utile.inspect = require('util').inspect;
 
 var flatiron = require('flatiron'),
     app = flatiron.app;
 
-// This is a new library used for running browserify bundle jobs for us.
-var bundler = require('./bundler');
+var bundler = require('./lib/bundler');
 
 app.config.file({ file: path.join(__dirname, 'config.json') });
 
-// Note that 'bundler' is written to work as a flatiron plugin.
 app.use(flatiron.plugins.http);
 app.use(bundler);
 
@@ -19,20 +18,16 @@ app.router.path('/', function () {
   this.get(function () {
     this.res.writeHead(200, { 'content-type': 'text/plain' });
     this.res.write('Welcome to the Browserify CDN! You probably want to post. Ex:\n\n');
-    this.res.end('    curl -X POST -d \'var traverse = require("traverse");\' address:3600\n');
+    this.res.end('    curl -X POST -d \'var traverse = require("traverse");\' localhost:3600\n');
   });
 
   this.post(function () {
 
-    // If the request body doesn't have the property we expect, it's assumed
-    // to be raw javascript. Note that the raw unparsed body is buffered into
-    // req.chunks (as a Buffer).
     var req = this.req,
         res = this.res,
         js = req.body.js ? req.body.js : req.chunks.toString();
 
-    // 'app.bundler' was created when we attached 'bundler'.
-    app.bundler.bundle(js, function (err, data) {
+    app.bundler.get(js, function (err, data) {
       if (err) {
         return res.json(500, {
           success: false,
