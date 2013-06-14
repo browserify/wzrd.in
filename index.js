@@ -15,6 +15,9 @@ app.get('/bundle/:module', function (req, res) {
   if (t.length) {
     version = t.shift();
   }
+  else {
+    version = 'latest';
+  }
 
   bundle({
     module: module,
