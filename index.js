@@ -4,10 +4,18 @@ var express = require('express'),
     log = require('minilog')('browserify-cdn');
 
 var bundler = require('./bundler'),
-    defaults = require('./defaults');
+    defaults = require('./defaults'),
+    requestLogger = require('./request-logger');
 
 var app = express(),
     bundle = bundler(defaults());
+
+//
+// Add static assets
+//
+app.use(requestLogger);
+app.use(app.routes);
+app.use(express.static(__dirname + '/public'));
 
 //
 // Standalone bundles
@@ -80,6 +88,7 @@ function serveBundle(res) {
       });
 
       res.setHeader('content-type', 'text/plain');
+      res.statusCode = 500;
 
       res.write('---FLAGRANT SYSTEM ERROR---\n');
       res.write('\n');
