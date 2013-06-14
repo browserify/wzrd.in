@@ -22,9 +22,10 @@
   ],
   "scripts": {
     "start": "node ./bin/browserify-cdn",
-    "index-page": "./bin/index-page.sh"
+    "index-page": "marked README.md | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },
   "devDependencies": {
-    "marked": "~0.2.9"
+    "marked": "~0.2.9",
+    "exercise-bike": "0.0.1"
   }
 }
