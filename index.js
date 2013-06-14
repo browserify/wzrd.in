@@ -1,6 +1,7 @@
 var util = require('util');
 
-var express = require('express');
+var express = require('express'),
+    log = require('minilog')('browserify-cdn');
 
 var bundler = require('./bundler'),
     defaults = require('./defaults');
@@ -56,8 +57,47 @@ app.get('/debug-bundle/:module', function (req, res) {
 function serveBundle(res) {
   return function (err, bundle) {
     if (err) {
+      var lines = [];
+
+      if (err.stack) {
+        err.stack.split('\n').forEach(function (l) {
+          lines.push(l);
+        });
+      }
+      else if (err.message) {
+        lines.push(err.message);
+      }
+      else {
+        lines.push('unspecified error');
+      }
+
+      Object.keys(err).forEach(function (k) {
+        lines.push(k + ': ' + util.format(err[k]));
+      });
+
+      lines.forEach(function (l) {
+        log.error(l);
+      });
+
       res.setHeader('content-type', 'text/plain');
-      return res.end(stringifyError(err));
+
+      res.write('---FLAGRANT SYSTEM ERROR---\n');
+      res.write('\n');
+      if (err.message) {
+        res.write('Error: "' + err.message + "'");
+      }
+      else {
+        res.write('Error: An unspecified error has occurred.\n');
+        res.write('(Yes, I know. How helpful.)\n');
+      }
+      res.write('\n');
+      res.write('Get ahold of @jesusabdullah on freenode or twitter with\n');
+      res.write('the ENTIRETY of the contents of this message, and he can\n');
+      res.write('try to help you out.\n');
+      res.write('\n');
+      res.write('Build Session: ' + err.dirPath + '\n');
+      res.write('\n');
+      return res.end('Have a nice day!\n\n');
     }
     res.setHeader('content-type', 'text/javascript');
     res.end(bundle);
@@ -71,23 +111,3 @@ exports.app = app;
 exports.bundler = bundler;
 exports.defaults = defaults;
 exports.serveBundle = serveBundle;
-
-function stringifyError(err) {
-  var lines = [];
-
-  if (err.stack) {
-    lines.push(err.stack);
-  }
-  else if (err.message) {
-    lines.push(err.message);
-  }
-  else {
-    lines.push('unspecified error');
-  }
-
-  Object.keys(err).forEach(function (k) {
-    lines.push(k + ': ' + util.format(err[k]));
-  });
-
-  return lines.join('\n');
-}
