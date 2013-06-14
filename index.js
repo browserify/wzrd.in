@@ -7,6 +7,9 @@ var bundler = require('./lib/bundler');
 var app = express(),
     bundle = bundler(defaults());
 
+//
+// Standalone bundles
+//
 app.get('/bundle/:module', function (req, res) {
   var t = req.params.module.split('@'),
       module = t.shift(),
@@ -23,21 +26,50 @@ app.get('/bundle/:module', function (req, res) {
     module: module,
     version: version,
     standalone: true
-  }, function (err, b) {
+  }, serveBundle(res));
+});
+
+//
+// Standalone DEBUG bundles
+//
+app.get('/debug-bundle/:module', function (req, res) {
+  var t = req.params.module.split('@'),
+      module = t.shift(),
+      version;
+
+  if (t.length) {
+    version = t.shift();
+  }
+  else {
+    version = 'latest';
+  }
+
+  bundle({
+    module: module,
+    version: version,
+    standalone: true,
+    debug: true
+  }, serveBundle(res));
+});
+
+function serveBundle(res) {
+  return function (err, bundle) {
     if (err) {
       res.setHeader('content-type', 'text/plain');
       return res.end(stringifyError(err));
     }
     res.setHeader('content-type', 'text/javascript');
-    res.end(b);
-  });
-});
+    res.end(bundle);
+  };
+}
 
 //
 // Exports
 //
 exports.app = app;
 exports.bundler = bundler;
+exports.defaults = defaults;
+exports.serveBundle = serveBundle;
 
 function defaults(opts) {
   var o = opts || {};
@@ -74,37 +106,4 @@ function stringifyError(err) {
   });
 
   return lines.join('\n');
-}
-
-//
-// If you're using express, it will take an existing req.body, otherwise
-// you'd better be using JSON >:|
-//
-function getBody(req, cb) {
-  if (req.body) {
-    smooth(req.body);
-  }
-  else {
-    req.pipe(concat(smooth));
-  }
-
-  function smooth(_body) {
-    var body = _body;
-
-    try {
-
-      if (Buffer.isBuffer(_body)) {
-        body = JSON.parse(_body.toString());
-      }
-
-      if (typeof _body === 'string') {
-        body = JSON.parse(_body);
-      }
-
-      cb(null, body);
-    }
-    catch (err) {
-      cb(err);
-    }
-  }
 }
