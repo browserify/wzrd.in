@@ -4,7 +4,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Browserify CDN</title>
+    <title>Browserify-CDN</title>
   </head>
   <body>
 EOF
