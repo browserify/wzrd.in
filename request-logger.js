@@ -6,7 +6,7 @@ module.exports = function requestLogger(req, res, next) {
 
   //
   // Pretty much copypasta from
-  // https://github.com/senchalabs/connect/blob/master/lib/middleware/logger.js#L168-L174
+  // https://github.com/senchalabs/connect/blob/master/lib/middleware/logger.js#L135-L158
   //
   // Monkey punching res.end. It's dirty but, maan I wanna log my status
   // codes!
