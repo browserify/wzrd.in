@@ -1,6 +1,9 @@
 {
   "name": "browserify-cdn",
   "version": "0.3.0",
+  "bin": {
+    "browserify-cdn": "./bin/browserify-cdn"
+  },
   "dependencies": {
     "level": "~0.9.0",
     "browserify": "~2.17.3",
