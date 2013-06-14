@@ -2,7 +2,7 @@ var util = require('util');
 
 var express = require('express');
 
-var bundler = require('./lib/bundler');
+var bundler = require('./bundler');
 
 var app = express(),
     bundle = bundler(defaults());
