@@ -1,0 +1,37 @@
+{
+  "name": "scopedfs",
+  "version": "0.1.0",
+  "description": "A convenient API to build and access file system subtrees (particularly in tests); provides a version of every ‘fs’ module function, scoped to the given root or, optionally, to a new temporary directory; also adds a bunch of convenience methods",
+  "main": "lib/scopedfs.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha -R ${REPORTER-spec}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreyvit/scopedfs.js.git"
+  },
+  "homepage": "https://github.com/andreyvit/scopedfs.js",
+  "keywords": [
+    "scoped",
+    "fixture",
+    "fs",
+    "temp"
+  ],
+  "author": {
+    "name": "Andrey Tarantsov",
+    "email": "andrey@tarantsov.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "temp": "~0.4.0",
+    "rimraf": "~2.0.2",
+    "mkdirp": "~0.3.4"
+  },
+  "devDependencies": {
+    "mocha": "~1.6.0"
+  },
+  "readme": "# Scoped FS\n\nA convenient API to build and access file system subtrees (particularly in tests); provides a version of every ‘fs’ module function, scoped to the given root or, optionally, to a new temporary directory; also adds a bunch of convenience methods.\n\nSynopsis 1 — can be used as a drop-in ‘fs’ replacement:\n\n    fs = require 'scopedfs'\n    fs.writeFileSync '/tmp/foo.txt', '42'\n\nSynopsis 2 — can be used as a scoped file system:\n\n    sfs = require('scopedfs').scoped('/tmp')\n    sfs.writeFileSync 'foo.txt', '42'\n\nSynopsis 3 — can be used to quickly build a temporary folder:\n\n    sfs = require('scopedfs').createTempFS()\n    sfs.writeFileSync 'foo.txt', '42'\n    sfs.writeFileSync 'bar.txt', '24'\n\nor even shorter:\n\n    sfs = require('scopedfs').createTempFS()\n    sfs.applySync {\n        'foo.txt': '42'\n        'bar.txt': '24'\n    }\n\n\n## Installation\n\n    npm install scopedfs\n\n\n## API\n\nAn instance of ScopedFS is returned by `require('scopedfs')`, and also by `scoped` and `createTempFS` methods. Every instance of ScopedFS defines the following functions:\n\n* All functions from Node.js ‘fs’ module:\n\n        sfs.stat(path, callback)\n        sfs.statSync(path)\n        sfs.readFile(relpath, encoding, callback)\n        sfs.readFileSync(relpath, encoding)\n        …etc etc etc…\n\n* Recursive rmdir, courtesy of [rimraf](https://npmjs.org/package/rimraf):\n\n        sfs.rmrf(path, callback)\n        sfs.rmrfSync(path, callback)\n\n* Recursive mkdir, courtesy of [mkdirp](https://npmjs.org/package/mkdirp):\n\n        sfs.mkdirp(path, [mode], callback)\n        sfs.mkdirpSync(path, [mode])\n\n* A shortcut for `mkdirpSync` and `writeFileSync`:\n\n        sfs.putSync(path, data, [encoding])\n\n* A convenient method for creating or modifying a directory hierarchy, doing a combination of `putSync`, `mkdirpSync` and `rmrfSync` (especially helpful when writing tests):\n\n        sfs.applySync {\n          'foo/bar.txt': '42'          # putSync\n          'foo/boz.txt': null          # rmrfSync when the value is null\n          'foo/boz/':    yes           # mkdirpSync when the key ends with a slash\n          'foo/biz':     function(path) { fs.chmodSync(path, 0777); }  # any function accepting a full path\n        }\n\n* Creating a scoped fs for the given directory:\n\n        sfs.scoped(subpath)\n\n* Creating a scoped fs for a new temporary directory, courtesy of [temp](https://npmjs.org/package/temp):\n\n        sfs.createTempFS([affixes])\n\n    where `affixes` is either a prefix string (like `\"myapp-\"`) or an object like `{ prefix: \"d-\", suffix: \".app\" }`.\n\n\n## License\n\nMIT. © 2012, Andrey Tarantsov.\n",
+  "readmeFilename": "README.md",
+  "_id": "scopedfs@0.1.0",
+  "_from": "scopedfs@~0.1.0"
+}
