@@ -18,6 +18,10 @@
     "scopedfs"
   ],
   "scripts": {
-    "start": "node ./bin/browserify-cdn"
+    "start": "node ./bin/browserify-cdn",
+    "index-page": "./bin/index-page.sh"
+  },
+  "devDependencies": {
+    "marked": "~0.2.9"
   }
 }

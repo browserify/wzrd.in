@@ -4,29 +4,41 @@
     <title>Browserify CDN</title>
   </head>
   <body>
-    <h1>Welcome to the (new) Browserify CDN</h1>
-    <h3>This is a work in progress.</h3>
-    <p>How it works:</p>
-    <ol>
-      <li>
-        http POST a javascript file to /. For example:
-        <code>curl -X POST -d 'var traverse = require("traverse");' browserify.jit.su</code>
-      </li>
-      <li>
-        <em>The Browserify CDN</em> <a href="https://github.com/substack/node-browserify">browserifies</a> your posted index.js for you!</h3>
-      </li>
-      <li>
-        <em>The Browserify CDN</em> downloads your packages from <a href="http://npmjs.org">npm</a> if necessary!
-      </li>
-      <li>
-        <em>The Browserify CDN</em> uses <a href="http://couchdb.apache.org">couchdb</a> to cache browserify bundles so you don't have to wait!
-      </li>
-      <li>
-        <em>The Browserify CDN</em> will even <a href="https://github.com/mishoo/UglifyJS">uglify-js</a> your code into a compact package!
-      </li>
-    </ol>
-    <p><img src="/img/hp.png"></p>
-    <h1>BASICALLY IT'S PRETTY SWEET.</h1>
-    <h3>Written by <a href="http://twitter.com/jesusabdullah">Joshua Holbrook</a>. [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com">github</a>] [<a href="https://github.com/jesusabdullah/browserify.nodejitsu.com/issues">bugs</a>] [<a href="http://jesusabdullah.github.com/">blog</a>]</h3>
+<h1>BROWSERIFY-CDN</h1>
+<h2>browserify-as-a-service</h2>
+<h2>Quick Start</h2>
+<p>Try visiting this link:</p>
+<p><a href="/bundle/concat-stream@latest">/bundle/concat-stream@latest</a></p>
+<h2>What just happened?</h2>
+<p>Well, in <em>this</em> case, since someone has visited this link before you,
+the file was cached with <a href="https://github.com/rvagg/node-levelup">leveldb</a>.
+But if you were to try and grab a bundle that
+<em>nobody else has tried to grab before</em>, what would happen is this:</p>
+<ul>
+<li>The module gets pulled down from <a href="http://npmjs.org">npm</a> and installed</li>
+<li>The module gets <a href="http://browserify.org">browserified</a></li>
+<li>The module gets sent to you, piping hot</li>
+<li>The module gets cached so that you don&#39;t have to wait later on</li>
+</ul>
+<h2>API</h2>
+<p>There are a few API endpoints:</p>
+<h3>GET /bundle/:module</h3>
+<p>Get the latest version of :module.</p>
+<h3>GET /bundle/:module@:version</h3>
+<p>Get a version of :module which satisfies the given :version
+<a href="https://github.com/rvagg/node-levelup">semver</a>.</p>
+<h3>GET /debug-bundle/:module</h3>
+<h3>GET /debug-bundle/:module@:latest</h3>
+<p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
+<h3>COMING VAGUELY SOON:</h3>
+<h3>POST /multi-bundle</h3>
+<h3>GET /multi-bundle/:existing-bundle</h3>
+<h2>Places</h2>
+<ul>
+<li><a href="https://github.com/jesusabdullah/browserify-cdn">browserify-cdn development site</a></li>
+<li><a href="http://browserify.org">browserify on the web</a></li>
+<li><a href="https://github.com/substack/node-browserify">browserify development site</a></li>
+</ul>
+
   </body>
 </html>
