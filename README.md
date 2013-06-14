@@ -15,7 +15,7 @@ But if you were to try and grab a bundle that
 *nobody else has tried to grab before*, what would happen is this:
 
 * The module gets pulled down from [npm](http://npmjs.org) and installed
-* The module gets [browserified](http://browserify.org)
+* The module gets [browserified](http://browserify.org) as a standalone bundle
 * The module gets sent to you, piping hot
 * The module gets cached so that you don't have to wait later on
 
