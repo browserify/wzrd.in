@@ -1,8 +1,12 @@
 var http = require('http');
 
-var minilog = require('minilog');
+var minilog = require('minilog'),
+    log = minilog('browserify-cdn');
 
-minilog.pipe(process.stdout);
+minilog
+  .pipe(minilog.backends.console.formatNpm)
+  .pipe(minilog.backends.console)
+;
 
 var cdn = http.createServer(
   require('../').app
@@ -11,6 +15,6 @@ var cdn = http.createServer(
 
   var addr = cdn.address();
 
-  console.log('browserify-cdn is online');
-  console.log('http://' + addr.address + ':' + addr.port);
+  log.info('browserify-cdn is online');
+  log.info('http://' + addr.address + ':' + addr.port);
 });
