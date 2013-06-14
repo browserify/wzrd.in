@@ -44,7 +44,10 @@ module.exports = function buildEnv(options, cb) {
     // "spawn" is always in that cwd
     //
     env.spawn = function () {
-      var argv = [].slice.call(arguments);
+      var argv = [].slice.call(arguments),
+          _env = JSON.parse(JSON.stringify(process.env));
+
+      _env.path = path.resolve(__dirname + '/node_modules/.bin');
 
       if (!argv[1]) {
         argv[1] = [];
@@ -59,6 +62,8 @@ module.exports = function buildEnv(options, cb) {
         : dirPath
       ;
 
+      argv[2].env = _env;
+
       return spawn.apply(spawn, argv);
     };
 
@@ -66,7 +71,8 @@ module.exports = function buildEnv(options, cb) {
     // same with exec
     //
     env.exec = function () {
-      var argv = [].slice.call(arguments);
+      var argv = [].slice.call(arguments),
+          _env = JSON.parse(JSON.stringify(process.env));
 
       if (argv.length === 2) {
         argv = [ argv[0] ].concat({ cwd: dirPath }).concat(argv[1]);
@@ -77,6 +83,8 @@ module.exports = function buildEnv(options, cb) {
           : dirPath
         ;
       }
+
+      argv[1].env = _env;
 
       return exec.apply(exec, argv);
     };
