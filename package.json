@@ -6,16 +6,17 @@
     "browserify": "~2.17.3",
     "npm": "~1.2.25",
     "concat-stream": "~1.0.0",
-    "scopedfs": "~0.1.0",
     "rimraf": "~2.1.4",
     "request": "~2.21.0",
     "semver": "~1.1.4",
     "mkdirp": "~0.3.5",
     "routes": "~0.2.0",
-    "express": "~3.2.6"
+    "express": "~3.2.6",
+    "minilog": "~2.0.0"
   },
   "bundledDependencies": [
-    "temp"
+    "temp",
+    "scopedfs"
   ],
   "scripts": {
     "start": "node ./bin/browserify-cdn"

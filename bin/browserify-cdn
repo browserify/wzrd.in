@@ -1,5 +1,9 @@
 var http = require('http');
 
+var minilog = require('minilog');
+
+minilog.pipe(process.stdout);
+
 var cdn = http.createServer(
   require('../').app
 ).listen(8080, function (err) {
