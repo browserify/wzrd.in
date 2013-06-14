@@ -1,0 +1,12 @@
+var http = require('http');
+
+var cdn = http.createServer(
+  require('../').app
+).listen(8080, function (err) {
+  if (err) throw err;
+
+  var addr = cdn.address();
+
+  console.log('browserify-cdn is online');
+  console.log('http://' + addr.address + ':' + addr.port);
+});

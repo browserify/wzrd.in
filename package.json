@@ -1,27 +1,23 @@
 {
   "name": "browserify-cdn",
-  "version": "0.0.0-3",
-  "start": "node ./app.js",
-  "private": true,
+  "version": "0.3.0",
   "dependencies": {
-    "flatiron": "0.1.16",
-    "union": "0.3.0",
-    "resourceful": "0.1.10",
-    "ecstatic": "0.1.6",
-    "utile": "0.0.10",
-    "errs": "0.2.x",
-    "eventemitter2": "0.4.x",
-    "browserify": "1.10.6",
-    "detective": "0.1.x",
-    "npm": "1.1.x",
-    "uglify-js": "1.2.x",
-    "colors": "*"
+    "level": "~0.9.0",
+    "browserify": "~2.17.3",
+    "npm": "~1.2.25",
+    "concat-stream": "~1.0.0",
+    "scopedfs": "~0.1.0",
+    "rimraf": "~2.1.4",
+    "request": "~2.21.0",
+    "semver": "~1.1.4",
+    "mkdirp": "~0.3.5",
+    "routes": "~0.2.0",
+    "express": "~3.2.6"
   },
-  "subdomain": "browserify",
+  "bundledDependencies": [
+    "temp"
+  ],
   "scripts": {
-    "start": "node ./app.js"
-  },
-  "engines": {
-    "node": "0.6.x"
+    "start": "node ./bin/browserify-cdn"
   }
 }
