@@ -37,7 +37,7 @@ var registry = module.exports = function get(module, version, cb) {
       }
     }
     catch (e) {
-      return cb(new Error('No matching version for `' + version + '` found'));
+      return cb(new Error('No match for semver `' + version + '` found'));
     }
 
     cb(null, registry.download(module, v));
