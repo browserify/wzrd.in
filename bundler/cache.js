@@ -1,47 +1,88 @@
 var crypto = require('crypto');
 
 var level = require('level'),
+    ttl = require('level-ttl'),
+    sublevel = require('level-sublevel'),
     log = require('minilog')('leveldb');
 
+var Cache = function (location) {
+  this.db = sublevel(ttl(level(location)));
+};
 
-//
-// LevelDB cache
-//
-module.exports = function createCache(options, generate) {
+Cache.prototype.open = function (name, options) {
+  var db = this.db.sublevel(name),
+      hashfxn = options.hashFunction || defaultHashFxn,
+      ttl = options.ttl;
 
-  var db = level(options.db);
+  return function check(body, generate, cb) {
 
-  return function (body, cb) {
+    var hash = hashfxn(body);
 
-    var hash = md5(JSON.stringify(body));
+    log('cache: checking `' + name + '` for hash `' + hash + '`...');
 
-    log.info('cache: body `' + JSON.stringify(body) + '` has hash `' + hash + '`.');
+    db.get(hash, function (err, res) {
 
-    log.info('cache: checking leveldb for bundle `' + hash + '`...');
-
-    db.get(hash, function (err, b) {
       if (err && err.name === 'NotFoundError') {
 
-        log.info('cache: did not find bundle `' + hash + '`.');
-
-        return generate(body, function (err, _b) {
+        log('cache: `' + name + '` did not have `' + hash + '`.');
+        return generate(function (err, _res) {
           if (err) return cb(err);
 
-          db.put(hash, _b, function (err) {
-            cb(err, _b);
-          });
+          log(
+            'cache: saving hash `' + hash + '` in `' + name +
+            (typeof ttl === 'number')
+              ? 'with ttl ' + ttl +'...'
+              : '...'
+          );
+
+          if (ttl) {
+            db.put(hash, _res, { ttl: ttl }, finish);
+          }
+          else {
+            db.put(hash, _res, finish);
+          }
+
+          function finish(err) {
+            log('saved hash `' + hash + '` in `' + name + '`.');
+            cb(err, _res);
+          }
         });
       }
 
-      if (!err) {
-        log.info('cache: successfully found bundle `' + hash + '`.');
-      }
-
-      cb(err, b);
+      cb(err, res);
     });
+  };
+
+  function defaultHashFxn(o) {
+    return crypto
+      .createHash('md5')
+      .update(JSON.stringify(o))
+      .digest('base64')
+    ;
   }
 };
 
-function md5 (text) {
-  return crypto.createHash('md5').update(text).digest('base64');
-}
+var SECONDS = 1000,
+    MINUTES = 60 * SECONDS,
+    HOURS = 60 * MINUTES,
+    DAYS = 24 * HOURS;
+
+module.exports = function (location) {
+
+  var cache = new Cache(location),
+      bundles, aliases;
+
+  bundles = cache.open('bundles', {
+    ttl: 30 * DAYS
+  });
+
+  // We don't want LRU caching for this; We want straight expiry.
+  aliases = cache.open('aliases', {
+    hashfxn: function (o) {
+      return o.module + '@' + o.semver;
+    },
+    ttl: 1 * DAYS
+  });
+
+  return { bundles: bundles, aliases: aliases };
+};

@@ -104,7 +104,10 @@ function serveBundle(res) {
       res.write('the ENTIRETY of the contents of this message, and he can\n');
       res.write('try to help you out.\n');
       res.write('\n');
-      res.write('Build Session: ' + err.dirPath + '\n');
+
+      Object.keys(err).forEach(function (k) {
+        res.write(k + ': ' + JSON.stringify(err[k]));
+      });
       res.write('\n');
       return res.end('Have a nice day!\n\n');
     }

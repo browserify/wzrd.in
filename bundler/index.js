@@ -10,31 +10,50 @@ var cache = require('./cache'),
     install = require('./install'),
     browserify = require('./browserify');
 
-module.exports = function (options) {
-  return cache(options, bundler(options));
-};
 
-function bundler(opts) {
+module.exports = function bundler(opts) {
   opts = opts || {};
 
-  var root = opts.root;
+  var db = opts.db,
+      root = opts.root;
 
-  return function bundle(pkg, cb) {
+  var c = cache(db);
+
+  return function bundle(pkg, callback) {
 
     var module = pkg.module,
         semver = pkg.version;
 
-    log.info('bundler: about to browserify `' + module + '@' + semver + '`...');
+    c.aliases({ module: module, semver: semver }, function resolve(cb) {
+      registry.resolve(module, semver, function (err, v) {
+        if (err) return callback(err);
 
-    buildEnv({
-      root: module
-    }, function (err, env) {
-      if (err) return cb(withPath(err));
+        cb(null, v);
+      });
+    }, checkBundles);
 
-      registry(module, semver, function (err, stream) {
+    function checkBundles(err, version) {
+      if (err) return callback(err);
+
+      pkg.version = version;
+
+      c.bundles(pkg, function (cb) {
+        return build(pkg, cb);
+      }, callback);
+    }
+
+    function build(pkg, cb) {
+      var module = pkg.module,
+          version = pkg.version;
+
+      log.info('about to browserify `' + module + '@' + version + '`...');
+
+      buildEnv({
+        root: module
+      }, function (err, env) {
         if (err) return cb(withPath(err));
 
-        unpack(env, stream, function (err) {
+        unpack(env, registry.download(module, version), function (err) {
           if (err) return cb(withPath(err));
 
           riggledogg(env, module, function (err) {
@@ -55,12 +74,12 @@ function bundler(opts) {
             });
           });
         });
+        function withPath(err) {
+          err.dirPath = env.dirPath;
+          return err;
+        }
       });
 
-      function withPath(err) {
-        err.dirPath = env.dirPath;
-        return err;
-      }
-    });
+    }
   };
 };

@@ -14,7 +14,9 @@
     "semver": "~1.1.4",
     "mkdirp": "~0.3.5",
     "express": "~3.2.6",
-    "minilog": "~2.0.0"
+    "minilog": "~2.0.0",
+    "level-ttl": "0.0.1",
+    "level-sublevel": "~4.7.0"
   },
   "bundledDependencies": [
     "temp",
