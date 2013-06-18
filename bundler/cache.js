@@ -28,6 +28,10 @@ Cache.prototype.open = function (name, options) {
         return generate(function (err, _res) {
           if (err) return cb(err);
 
+          if (typeof _res !== 'string' || !_res.length) {
+            return cb(new Error('result not non-zero-length string (' + JSON.stringify(_res) + ')'));
+          }
+
           log(
             'cache: saving hash `' + hash + '` in `' + name +
             (typeof ttl === 'number')
