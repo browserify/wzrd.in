@@ -33,10 +33,11 @@ Cache.prototype.open = function (name, options) {
           }
 
           log(
-            'cache: saving hash `' + hash + '` in `' + name +
-            (typeof ttl === 'number')
-              ? 'with ttl ' + ttl +'...'
-              : '...'
+            'cache: saving hash `' + hash + '` in `' + name + '` ' + (
+              (typeof ttl === 'number')
+                ? 'with ttl ' + ttl +'...'
+                : '...'
+            )
           );
 
           if (ttl) {
