@@ -4,26 +4,36 @@ module.exports = function gatherOutputs(name, child, cb) {
   //
   // Buffer to show the user
   //
-  var stdout = '', stderr = '';
+  var stdout = '', stderr = '', ct = 0, code;
   child.stdout.pipe(concat(function (_out) {
     if (_out) {
-      stdout += _out.toString();
+      stdout = _out.toString();
     }
+    finish();
   }));
   child.stderr.pipe(concat(function (_err) {
     if (_err) {
-      stderr += _err.toString();
+      stderr = _err.toString();
     }
+    finish();
   }));
 
-  child.on('exit', function (code) {
-    var err = null;
-    if (code) {
-      err = new Error(name + ' exited with code ' + code);
-      err.code = code;
-      err.stdout = stdout;
-      err.stderr = stderr;
-    }
-    return cb(err, { stdout: stdout, stderr: stderr });
+  child.on('exit', function (c) {
+    code = c;
+    finish();
   });
+
+  function finish() {
+    ct++;
+    if (ct >= 3) {
+      var err = null;
+      if (code) {
+        err = new Error(name + ' exited with code ' + code);
+        err.code = code;
+        err.stdout = stdout;
+        err.stderr = stderr;
+      }
+      return cb(err, { stdout: stdout, stderr: stderr });
+    }
+  };
 };
