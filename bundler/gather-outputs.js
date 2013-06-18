@@ -7,12 +7,12 @@ module.exports = function gatherOutputs(name, child, cb) {
   var stdout = '', stderr = '';
   child.stdout.pipe(concat(function (_out) {
     if (_out) {
-      stdout = _out.toString();
+      stdout += _out.toString();
     }
   }));
   child.stderr.pipe(concat(function (_err) {
     if (_err) {
-      stderr = _err.toString();
+      stderr += _err.toString();
     }
   }));
 
