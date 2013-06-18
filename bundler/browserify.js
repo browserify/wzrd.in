@@ -54,6 +54,10 @@ module.exports = function (env, options, cb) {
 
       env.log.info('browserify: browserification complete.');
 
+      data.stderr.split('\n').forEach(function (l) {
+        env.log.info('browserify: stderr - ' + l);
+      });
+
       cb(null, data.stdout);
     });
   }

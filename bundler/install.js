@@ -16,6 +16,12 @@ module.exports = function install(env, module, cb) {
     if (err) return cb(err);
 
     env.log.info('install: installed `' + module + '`.');
+    data.stdout.split('\n').forEach(function (l) {
+      env.log.info('install: stdout - ' + l);
+    });
+    data.stderr.split('\n').forEach(function (l) {
+      env.log.info('install: stderr - ' + l);
+    });
 
     cb(null, data);
   });
