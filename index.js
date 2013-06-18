@@ -106,7 +106,7 @@ function serveBundle(res) {
       res.write('\n');
 
       Object.keys(err).forEach(function (k) {
-        res.write(k + ': ' + JSON.stringify(err[k]));
+        res.write(k + ': ' + JSON.stringify(err[k]) + '\n');
       });
       res.write('\n');
       return res.end('Have a nice day!\n\n');
