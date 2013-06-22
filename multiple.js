@@ -8,6 +8,9 @@ module.exports = function (app, bundle) {
 };
 
 function create(bundle) {
+
+  var cache = bundle.cache;
+
   return function (req, res) {
     var opts = req.body;
 
@@ -15,57 +18,104 @@ function create(bundle) {
         options = opts.options || {};
 
     if (typeof deps === 'undefined' || deps === null) {
+      // TODO
       return res.end('bro no deps?');
     }
 
-    var keys = Object.keys(deps),
-        count = keys.length,
-        modules = {},
-        errors = [];
+    cache.multibundles(cache.defaultHashFxn(opts), function multibundle(cb) {
+      var keys = Object.keys(deps),
+          count = keys.length,
+          modules = {},
+          errors = [];
 
-    keys.forEach(function (k) {
-      var o = JSON.parse(JSON.stringify(options));
+      keys.forEach(function (k) {
+        var o = JSON.parse(JSON.stringify(options));
 
-      o.module = k;
-      o.version = deps[k];
+        o.module = k;
+        o.version = deps[k];
 
-      bundle(o, function (err, b) {
-        if (err) {
-          errors.push(err);
-        }
-        else {
-          modules[k] = b;
-        }
+        bundle(o, function (err, b) {
+          if (err) {
+            errors.push(err);
+          }
+          else {
+            modules[k] = b;
+          }
 
-        count--;
+          count--;
 
-        if (!count) {
-          send();
-        }
+          if (!count) {
+            handleBundle();
+          }
+        });
       });
-    });
 
-    function send() {
-      if (errors.length) {
+      function handleBundle() {
+        if (errors.length) {
+          //
+          // End the request. Don't try caching.
+          //
+          res.statusCode = 500;
+          res.setHeader('content-type', 'text/plain');
+          res.write(stringifyError.hello);
+          errors.forEach(function (e, i) {
+            res.write('\n--- error #' + i + ': ---\n\n');
+            res.write(stringifyError(e));
+            res.write('\n');
+          });
+          res.write('\n------\n');
+          return res.end(stringifyError.goodbye);
+        }
+        return cb(null, JSON.stringify(modules, true, 2));
+      }
+    }, function (err, _b) {
+      if (err) {
         res.statusCode = 500;
         res.setHeader('content-type', 'text/plain');
         res.write(stringifyError.hello);
-        errors.forEach(function (e, i) {
-          res.write('\n--- error #' + i + ': ---\n\n');
-          res.write(stringifyError(e));
-          res.write('\n');
-        });
-        res.write('\n------\n');
+        res.write(stringifyError(err));
         return res.end(stringifyError.goodbye);
       }
+
+      res.statusCode = 302;
+      res.setHeader('Location', '/multi/' + cache.defaultHashFxn(opts));
       res.setHeader('content-type', 'application/json');
-      res.send(JSON.stringify(modules, true, 2));
-    }
+      res.end(_b);
+    });
   };
 };
 
 function get(bundle) {
+
+  var cache = bundle.cache;
+
   return function (req, res) {
-    res.end('not implemented lol');
+
+    var hash = req.params.bundle;
+
+    cache.multibundles(hash, function nope(cb) {
+      res.statusCode = 404;
+      res.setHeader('content-type', 'text/plain');
+      res.write(stringifyError.hello);
+      res.write(stringifyError(new Error(
+        'The requested bundle does not exist.\n' +
+        'Have you tried POSTING to `/multi`?'
+      )));
+      return res.end(stringifyError.goodbye);
+
+    }, function yup(err, b) {
+      if (err) {
+        //
+        // This should not happen.
+        //
+        res.statusCode = 500;
+        res.setHeader('content-type', 'text/plain');
+        res.write(stringifyError.hello);
+        res.write(stringifyError(err));
+        return res.end(stringifyError.goodbye);
+      }
+      res.setHeader('content-type', 'application/json');
+      return res.end(b);
+    });
   };
 };

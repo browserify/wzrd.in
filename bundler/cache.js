@@ -73,14 +73,6 @@ var c = module.exports = function (location) {
     ttl: 30 * DAYS
   });
 
-  //
-  // GETs on multibundles start with an already-hashed param
-  //
-  multibundles = cache.open('multibundles', {
-    hashfxn: function (s) { return String(s); },
-    ttl: 30 * DAYS
-  });
-
   aliases = cache.open('aliases', {
     hashfxn: function (o) {
       return o.module + '@' + o.semver;
@@ -88,7 +80,23 @@ var c = module.exports = function (location) {
     ttl: 1 * DAYS
   });
 
-  return { bundles: bundles, multibundles: multibundles, aliases: aliases };
+  multibundles = cache.open('multibundles', {
+    hashfxn: function (o) {
+      if (typeof o === 'string' && o.length === 24) {
+        log('cache: Input for `multibundles` appears to be an md5 hash already');
+        return o;
+      }
+      return defaultHashFxn(o);
+    },
+    ttl: 30 * DAYS
+  });
+
+  return {
+    bundles: bundles,
+    multibundles: multibundles,
+    aliases: aliases,
+    defaultHashFxn: defaultHashFxn
+  };
 };
 
 c.defaultHashFxn = defaultHashFxn;
