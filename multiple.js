@@ -32,8 +32,14 @@ function create(bundle) {
         options = opts.options || {};
 
     if (typeof deps === 'undefined' || deps === null) {
-      // TODO
-      return res.end('bro no deps?');
+      res.statusCode = 500;
+      res.setHeader('content-type', 'text/plain');
+      res.write(stringifyError.hello);
+      res.write(stringifyError(new Error(
+        'Multibundles *must* have specified dependencies.\n' +
+        'Otherwise this exercise is pretty much pointless.'
+      )));
+      return res.end(stringifyError.goodbye);
     }
 
     cache.multibundles(cache.defaultHashFxn(opts), function multibundle(cb) {
