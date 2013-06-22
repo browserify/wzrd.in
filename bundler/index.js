@@ -19,7 +19,7 @@ module.exports = function bundler(opts) {
 
   var c = cache(db);
 
-  return function bundle(pkg, callback) {
+  var _bundle = function bundle(pkg, callback) {
 
     var module = pkg.module,
         semver = pkg.version;
@@ -79,7 +79,10 @@ module.exports = function bundler(opts) {
           return err;
         }
       });
-
     }
   };
+
+  _bundle.cache = c;
+
+  return _bundle;
 };

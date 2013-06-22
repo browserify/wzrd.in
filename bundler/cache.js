@@ -57,14 +57,6 @@ Cache.prototype.open = function (name, options) {
       cb(err, res);
     });
   };
-
-  function defaultHashFxn(o) {
-    return crypto
-      .createHash('md5')
-      .update(JSON.stringify(o))
-      .digest('base64')
-    ;
-  }
 };
 
 var SECONDS = 1000,
@@ -72,16 +64,23 @@ var SECONDS = 1000,
     HOURS = 60 * MINUTES,
     DAYS = 24 * HOURS;
 
-module.exports = function (location) {
+var c = module.exports = function (location) {
 
   var cache = new Cache(location),
-      bundles, aliases;
+      bundles, multibundles, aliases;
 
   bundles = cache.open('bundles', {
     ttl: 30 * DAYS
   });
 
-  // We don't want LRU caching for this; We want straight expiry.
+  //
+  // GETs on multibundles start with an already-hashed param
+  //
+  multibundles = cache.open('multibundles', {
+    hashfxn: function (s) { return String(s); },
+    ttl: 30 * DAYS
+  });
+
   aliases = cache.open('aliases', {
     hashfxn: function (o) {
       return o.module + '@' + o.semver;
@@ -89,5 +88,15 @@ module.exports = function (location) {
     ttl: 1 * DAYS
   });
 
-  return { bundles: bundles, aliases: aliases };
+  return { bundles: bundles, multibundles: multibundles, aliases: aliases };
 };
+
+c.defaultHashFxn = defaultHashFxn;
+
+function defaultHashFxn(o) {
+  return crypto
+    .createHash('md5')
+    .update(JSON.stringify(o))
+    .digest('base64')
+  ;
+}
