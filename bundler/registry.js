@@ -13,14 +13,24 @@ var registry = module.exports = function get(module, version, cb) {
 };
 
 registry.metadata = function metadata(module, cb) {
-  request('http://registry.npmjs.org/' + module, function (err, res, body) {
-    try {
-      cb(err, JSON.parse(body));
+  request({
+    uri: 'http://registry.npmjs.org/' + module,
+    json: true
+  }, function (err, res, body) {
+    if (res.statusCode !== 200) {
+      if (body.error === 'not_found') {
+        err = new Error('module `' + module + '` is not on npm.');
+      }
+      else {
+        err = new Error('npm registry returned status code ' + res.statusCode);
+      }
     }
-    catch (err) {
+
+    if (err) {
       err.body = body;
-      cb(err);
     }
+
+    cb(err, body);
   });
 };
 
