@@ -8,7 +8,7 @@
 <h2>browserify-as-a-service</h2>
 <h2>Quick Start</h2>
 <p>Try visiting this link:</p>
-<p><a href="/bundle/concat-stream@latest">/bundle/concat-stream@latest</a></p>
+<p><a href="/bundle/concat-stream@latest">/standalone/concat-stream@latest</a></p>
 <h2>What just happened?</h2>
 <p>Well, in <em>this</em> case, since someone has visited this link before you,
 the file was cached with <a href="https://github.com/rvagg/node-levelup">leveldb</a>.
@@ -30,9 +30,46 @@ But if you were to try and grab a bundle that
 <h3>GET /debug-bundle/:module</h3>
 <h3>GET /debug-bundle/:module@:latest</h3>
 <p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
-<h3>COMING VAGUELY SOON:</h3>
-<h3>POST /multi-bundle</h3>
-<h3>GET /multi-bundle/:existing-bundle</h3>
+<h3>GET /standalone/:module</h3>
+<h3>GET /standalone/:module@:latest</h3>
+<p>In this case, <code>--standalone</code> is passed to browserify.</p>
+<h3>GET /debug-standalone/:module</h3>
+<h3>GET /debug-standalone/:module@:latest</h3>
+<p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
+<h3>POST /multi</h3>
+<p>POST a body that looks something like this:</p>
+<pre><code class="lang-json">{
+  &quot;options&quot;: {
+    &quot;debug&quot;: true
+  },
+  &quot;dependencies&quot;: {
+    &quot;concat-stream&quot;: &quot;0.1.x&quot;,
+    &quot;hyperstream&quot;: &quot;0.2.x&quot;
+  }
+}</code></pre>
+<p>&quot;options&quot; is where you get to set &quot;debug&quot; and &quot;standalone&quot;. Usually, in this
+case, you&#39;ll probably only really care about debug. If you don&#39;t define
+&quot;options&quot;, this will default to <code>{ &quot;debug&quot;: false, &quot;standalone&quot;: false }</code>.
+&quot;dependencies&quot; is an npm-style deps hash.</p>
+<p>What you get in return looks something like this:</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+X-Powered-By: Express
+Location: /multi/48GOmL0XvnRZn32bkpz75A==
+content-type: application/json
+Date: Sat, 22 Jun 2013 22:36:32 GMT
+Connection: keep-alive
+Transfer-Encoding: chunked
+
+{
+  &quot;concat-stream&quot;: /* the concat-stream bundle */,
+  &quot;hyperstream&quot;: /* the hyperstream bundle */
+}</code></pre>
+<p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
+future GETs, but if you want to you can ignore that and just grab the included
+body.</p>
+<h3>GET /multi/:existing-bundle</h3>
+<p>If you saved the 302 url from the POST earlier, you can just GET it instead of
+POSTing again.</p>
 <h2>Places</h2>
 <ul>
 <li><a href="https://github.com/jesusabdullah/browserify-cdn">browserify-cdn development site</a></li>
