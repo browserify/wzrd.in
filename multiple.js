@@ -1,10 +1,24 @@
-var bodyParser = require('express').bodyParser;
-
 var stringifyError = require('./stringify-error');
 
 module.exports = function (app, bundle) {
-  app.post('/multi', bodyParser(), create(bundle));
+  app.post('/multi', jsonParser, create(bundle));
   app.get('/multi/:bundle', get(bundle));
+};
+
+//
+// We're only doing JSON bodies, content-type be damned.
+//
+function jsonParser(req, res, next) {
+  req.chunks = '';
+
+  req.on('data', function (buff) {
+    req.chunks += buff.toString();
+  });
+
+  req.on('end', function () {
+    req.body = JSON.parse(req.chunks);
+    next();
+  });
 };
 
 function create(bundle) {
