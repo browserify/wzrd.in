@@ -25,16 +25,16 @@ But if you were to try and grab a bundle that
 <h3>GET /bundle/:module</h3>
 <p>Get the latest version of :module.</p>
 <h3>GET /bundle/:module@:version</h3>
-<p>Get a version of :module which satisfies the given :version
-<a href="https://github.com/rvagg/node-levelup">semver</a>.</p>
+<p>Get a version of <code>:module</code> which satisfies the given <code>:version</code>
+<a href="https://github.com/rvagg/node-levelup">semver</a> range. Defaults to latest.</p>
 <h3>GET /debug-bundle/:module</h3>
-<h3>GET /debug-bundle/:module@:latest</h3>
+<h3>GET /debug-bundle/:module@:version</h3>
 <p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
 <h3>GET /standalone/:module</h3>
-<h3>GET /standalone/:module@:latest</h3>
+<h3>GET /standalone/:module@:version</h3>
 <p>In this case, <code>--standalone</code> is passed to browserify.</p>
 <h3>GET /debug-standalone/:module</h3>
-<h3>GET /debug-standalone/:module@:latest</h3>
+<h3>GET /debug-standalone/:module@:version</h3>
 <p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
 <h3>POST /multi</h3>
 <p>POST a body that looks something like this:</p>

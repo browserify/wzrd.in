@@ -29,21 +29,21 @@ Get the latest version of :module.
 
 ### GET /bundle/:module@:version
 
-Get a version of :module which satisfies the given :version
-[semver](https://github.com/rvagg/node-levelup).
+Get a version of `:module` which satisfies the given `:version`
+[semver](https://github.com/rvagg/node-levelup) range. Defaults to latest.
 
 ### GET /debug-bundle/:module
-### GET /debug-bundle/:module@:latest
+### GET /debug-bundle/:module@:version
 
 The same as the prior two, except with `--debug` passed to browserify.
 
 ### GET /standalone/:module
-### GET /standalone/:module@:latest
+### GET /standalone/:module@:version
 
 In this case, `--standalone` is passed to browserify.
 
 ### GET /debug-standalone/:module
-### GET /debug-standalone/:module@:latest
+### GET /debug-standalone/:module@:version
 
 Both `--debug` and `--standalone` are passed to browserify!
 
