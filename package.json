@@ -16,7 +16,9 @@
     "express": "~3.2.6",
     "minilog": "~2.0.0",
     "level-ttl": "0.0.1",
-    "level-sublevel": "~4.7.0"
+    "level-sublevel": "~4.7.0",
+    "tinyauth": "~0.1.1",
+    "level-lvldump": "0.0.0"
   },
   "bundledDependencies": [
     "temp",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "marked": "~0.2.9",
-    "exercise-bike": "0.0.1"
+    "exercise-bike": "0.0.1",
+    "jsontool": "~5.1.3"
   }
 }

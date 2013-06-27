@@ -10,12 +10,29 @@ minilog
   .pipe(minilog.backends.console)
 ;
 
-var cdn = http.createServer(
-  require('../').app
-).listen(8080, function (err) {
+var cdn = require('../'),
+    app = cdn.app,
+    db = cdn.bundler.db;
+
+
+var auth = require('tinyauth')({
+      realm: 'SECRET ADMINISTRATIVE THINGS',
+      accounts: [
+        [ process.env.LVLDUMP_USERNAME, process.env.LVLDUMP_PASSWORD ].join(':')
+      ]
+    }),
+    dump = require('level-lvldump')(db);
+
+//
+// This is needed for hosting on Nodejitsu, since deploys nuke the directory
+//
+app.get('/_leveldump', auth, dump.dump);
+app.post('/_leveldump', auth, dump.push);
+
+var server = http.createServer(app).listen(8080, function (err) {
   if (err) throw err;
 
-  var addr = cdn.address();
+  var addr = server.address();
 
   log.info('browserify-cdn is online');
   log.info('http://' + addr.address + ':' + addr.port);
