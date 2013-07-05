@@ -85,8 +85,14 @@ Connection: keep-alive
 Transfer-Encoding: chunked
 
 {
-  "concat-stream": /* the concat-stream bundle */,
-  "hyperstream": /* the hyperstream bundle */
+  "concat-stream": {
+    "package": /* the concat-stream package.json */,
+    "bundle": /* the concat-stream bundle */
+  },
+  "hyperstream": {
+    "package": /* the hyperstream package.json */,
+    "bundle": /* the hyperstream bundle */
+  }
 }
 ```
 

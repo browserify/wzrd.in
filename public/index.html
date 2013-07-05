@@ -71,8 +71,14 @@ Connection: keep-alive
 Transfer-Encoding: chunked
 
 {
-  &quot;concat-stream&quot;: /* the concat-stream bundle */,
-  &quot;hyperstream&quot;: /* the hyperstream bundle */
+  &quot;concat-stream&quot;: {
+    &quot;package&quot;: /* the concat-stream package.json */,
+    &quot;bundle&quot;: /* the concat-stream bundle */
+  },
+  &quot;hyperstream&quot;: {
+    &quot;package&quot;: /* the hyperstream package.json */,
+    &quot;bundle&quot;: /* the hyperstream bundle */
+  }
 }</code></pre>
 <p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
 future GETs.</p>
