@@ -1,5 +1,6 @@
 var express = require('express'),
-    log = require('minilog')('browserify-cdn');
+    log = require('minilog')('browserify-cdn'),
+    cors = require('cors');
 
 var bundler = require('./bundler'),
     defaults = require('./defaults'),
@@ -16,6 +17,7 @@ var singular = require('./singular'),
 //
 app.use(requestLogger);
 app.use(app.routes);
+app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
 //
