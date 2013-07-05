@@ -103,7 +103,7 @@ function create(bundle) {
       // pull it out programmatically if they wish.
       //
       // res.statusCode = 302;
-      res.setHeader('Location', '/multi/' + cache.defaultHashFxn(opts));
+      res.setHeader('Location', '/multi/' + encodeURIComponent(cache.defaultHashFxn(opts)));
       res.setHeader('content-type', 'application/json');
       res.end(_b);
     });
@@ -118,7 +118,7 @@ function get(bundle) {
 
     var hash = req.params.bundle;
 
-    cache.multibundles(hash, function nope(cb) {
+    cache.multibundles(decodeURIComponent(hash), function nope(cb) {
       res.statusCode = 404;
       res.setHeader('content-type', 'text/plain');
       res.write(stringifyError.hello);
