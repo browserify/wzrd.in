@@ -29,7 +29,7 @@ var auth = require('tinyauth')({
 app.get('/_leveldump', auth, dump.dump);
 app.post('/_leveldump', auth, dump.push);
 
-var server = http.createServer(app).listen(8080, function (err) {
+var server = http.createServer(app).listen(process.argv[2] || 8080, function (err) {
   if (err) throw err;
 
   var addr = server.address();
