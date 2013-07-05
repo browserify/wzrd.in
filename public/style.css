@@ -21,15 +21,29 @@ body {
 #harry-potter {
   max-width: 600px;
   margin: auto;
-  text-align: center;
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
 
+#harry-potter h1 {
+  color: #0a9c8b;
+  text-shadow: #734eff 5px 5px;
+  font-size: 42px;
+  z-index: 1;
+  position: relative;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  left: 120px;
+  top: 320px;
+  width: 350px;
+}
+
 #harry-potter img {
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-  padding-top: 80px;
+  position: relative;
+  left: 0px;
+  top: 0px;
+  padding: 0px 0px;
+  margin: 0px 0px;
 }
 
 h1, h2, h3, h4 {
