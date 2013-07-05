@@ -4,6 +4,7 @@
 
 * [fork me on github](https://github.com/jesusabdullah/browserify-cdn)
 * [browserify on the web](http://browserify.org)
+* [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox)
 
 # Quick Start
 
