@@ -1,0 +1,86 @@
+body {
+  background-color: rgb(20,40,65);
+  font-family: Ubuntu, Helvetica, sans-serif;
+  color: rgb(200,220,235);
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#logo {
+  max-width: 600px;
+  margin: auto;
+}
+
+#content {
+  max-width: 600px;
+  margin: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+#harry-potter {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
+#harry-potter img {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  padding-top: 80px;
+}
+
+h1, h2, h3, h4 {
+  color: rgb(230,182,91);
+}
+
+a:link,
+a:visited {
+  color: rgb(90,140,230);
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(230,182,91);
+}
+
+ul {
+  list-style-image: url(/img/fireball.png);
+}
+
+li {
+  margin-bottom: 1em;
+}
+
+code {
+  color: rgb(230,182,91);
+  font-family: monospace;
+  border-width: 0px;
+  background-color: transparent;
+}
+
+pre {
+  border-color: rgb(90,140,230);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5px;
+    
+  width: 600px;
+  padding: 5px;
+    
+  color: rgb(200,220,235);
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+    
+  font-family: monospace;
+  font-size: 1.2em;
+    
+  background-color: rgb(20,30,49);
+}
+
+pre code {
+  color: rgb(200,220,235);
+}

@@ -1,7 +1,11 @@
-# BROWSERIFY-CDN
-## browserify-as-a-service
+# browserify-as-a-service
 
-## Quick Start
+#### Places
+
+* [fork me on github](https://github.com/jesusabdullah/browserify-cdn)
+* [browserify on the web](http://browserify.org)
+
+# Quick Start
 
 Try visiting this link:
 
@@ -19,35 +23,35 @@ But if you were to try and grab a bundle that
 * The module gets sent to you, piping hot
 * The module gets cached so that you don't have to wait later on
 
-## API
+# API
 
 There are a few API endpoints:
 
-### GET /bundle/:module
+## GET /bundle/:module
 
 Get the latest version of :module.
 
-### GET /bundle/:module@:version
+## GET /bundle/:module@:version
 
 Get a version of `:module` which satisfies the given `:version`
 [semver](https://github.com/rvagg/node-levelup) range. Defaults to latest.
 
-### GET /debug-bundle/:module
-### GET /debug-bundle/:module@:version
+## GET /debug-bundle/:module
+## GET /debug-bundle/:module@:version
 
 The same as the prior two, except with `--debug` passed to browserify.
 
-### GET /standalone/:module
-### GET /standalone/:module@:version
+## GET /standalone/:module
+## GET /standalone/:module@:version
 
 In this case, `--standalone` is passed to browserify.
 
-### GET /debug-standalone/:module
-### GET /debug-standalone/:module@:version
+## GET /debug-standalone/:module
+## GET /debug-standalone/:module@:version
 
 Both `--debug` and `--standalone` are passed to browserify!
 
-### POST /multi
+## POST /multi
 
 POST a body that looks something like this:
 
@@ -88,13 +92,11 @@ Transfer-Encoding: chunked
 The bundle gets permanently cached at `/multi/48GOmL0XvnRZn32bkpz75A==` for
 future GETs.
 
-### GET /multi/:existing-bundle
+## GET /multi/:existing-bundle
 
 If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.
 
-## Places
+## License
 
-* [browserify-cdn development site](https://github.com/jesusabdullah/browserify-cdn)
-* [browserify on the web](http://browserify.org)
-* [browserify development site](https://github.com/substack/node-browserify)
+MIT

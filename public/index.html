@@ -2,11 +2,20 @@
 <html>
   <head>
     <title>Browserify-CDN</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>BROWSERIFY-CDN</h1>
-<h2>browserify-as-a-service</h2>
-<h2>Quick Start</h2>
+    <div id="logo">
+      <img src="/img/browserify.png">
+    </div>
+    <div id="content">
+      <h1>browserify-as-a-service</h1>
+<h4>Places</h4>
+<ul>
+<li><a href="https://github.com/jesusabdullah/browserify-cdn">fork me on github</a></li>
+<li><a href="http://browserify.org">browserify on the web</a></li>
+</ul>
+<h1>Quick Start</h1>
 <p>Try visiting this link:</p>
 <p><a href="/bundle/concat-stream@latest">/standalone/concat-stream@latest</a></p>
 <h2>What just happened?</h2>
@@ -20,23 +29,23 @@ But if you were to try and grab a bundle that
 <li>The module gets sent to you, piping hot</li>
 <li>The module gets cached so that you don&#39;t have to wait later on</li>
 </ul>
-<h2>API</h2>
+<h1>API</h1>
 <p>There are a few API endpoints:</p>
-<h3>GET /bundle/:module</h3>
+<h2>GET /bundle/:module</h2>
 <p>Get the latest version of :module.</p>
-<h3>GET /bundle/:module@:version</h3>
+<h2>GET /bundle/:module@:version</h2>
 <p>Get a version of <code>:module</code> which satisfies the given <code>:version</code>
 <a href="https://github.com/rvagg/node-levelup">semver</a> range. Defaults to latest.</p>
-<h3>GET /debug-bundle/:module</h3>
-<h3>GET /debug-bundle/:module@:version</h3>
+<h2>GET /debug-bundle/:module</h2>
+<h2>GET /debug-bundle/:module@:version</h2>
 <p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
-<h3>GET /standalone/:module</h3>
-<h3>GET /standalone/:module@:version</h3>
+<h2>GET /standalone/:module</h2>
+<h2>GET /standalone/:module@:version</h2>
 <p>In this case, <code>--standalone</code> is passed to browserify.</p>
-<h3>GET /debug-standalone/:module</h3>
-<h3>GET /debug-standalone/:module@:version</h3>
+<h2>GET /debug-standalone/:module</h2>
+<h2>GET /debug-standalone/:module@:version</h2>
 <p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
-<h3>POST /multi</h3>
+<h2>POST /multi</h2>
 <p>POST a body that looks something like this:</p>
 <pre><code class="lang-json">{
   &quot;options&quot;: {
@@ -52,7 +61,7 @@ case, you&#39;ll probably only really care about debug. If you don&#39;t define
 &quot;options&quot;, this will default to <code>{ &quot;debug&quot;: false, &quot;standalone&quot;: false }</code>.
 &quot;dependencies&quot; is an npm-style deps hash.</p>
 <p>What you get in return looks something like this:</p>
-<pre><code>HTTP/1.1 302 Moved Temporarily
+<pre><code>HTTP/1.1 200 OK
 X-Powered-By: Express
 Location: /multi/48GOmL0XvnRZn32bkpz75A==
 content-type: application/json
@@ -65,18 +74,17 @@ Transfer-Encoding: chunked
   &quot;hyperstream&quot;: /* the hyperstream bundle */
 }</code></pre>
 <p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
-future GETs, but if you want to you can ignore that and just grab the included
-body.</p>
-<h3>GET /multi/:existing-bundle</h3>
-<p>If you saved the 302 url from the POST earlier, you can just GET it instead of
+future GETs.</p>
+<h2>GET /multi/:existing-bundle</h2>
+<p>If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.</p>
-<h2>Places</h2>
-<ul>
-<li><a href="https://github.com/jesusabdullah/browserify-cdn">browserify-cdn development site</a></li>
-<li><a href="http://browserify.org">browserify on the web</a></li>
-<li><a href="https://github.com/substack/node-browserify">browserify development site</a></li>
-</ul>
+<h2>License</h2>
+<p>MIT</p>
 
 
+    </div>
+    <div id="harry-potter">
+      <img src="/img/hp.png">
+    </div>
   </body>
 </html>
