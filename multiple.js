@@ -97,7 +97,12 @@ function create(bundle) {
         return res.end(stringifyError.goodbye);
       }
 
-      res.statusCode = 302;
+      //
+      // It seems 302s cause problems with certain use cases.
+      // I still include the Location header here though, so that one may
+      // pull it out programmatically if they wish.
+      //
+      // res.statusCode = 302;
       res.setHeader('Location', '/multi/' + cache.defaultHashFxn(opts));
       res.setHeader('content-type', 'application/json');
       res.end(_b);
