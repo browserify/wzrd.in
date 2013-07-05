@@ -71,7 +71,7 @@ case, you'll probably only really care about debug. If you don't define
 What you get in return looks something like this:
 
 ```
-HTTP/1.1 302 Moved Temporarily
+HTTP/1.1 200 OK
 X-Powered-By: Express
 Location: /multi/48GOmL0XvnRZn32bkpz75A==
 content-type: application/json
@@ -86,12 +86,11 @@ Transfer-Encoding: chunked
 ```
 
 The bundle gets permanently cached at `/multi/48GOmL0XvnRZn32bkpz75A==` for
-future GETs, but if you want to you can ignore that and just grab the included
-body.
+future GETs.
 
 ### GET /multi/:existing-bundle
 
-If you saved the 302 url from the POST earlier, you can just GET it instead of
+If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.
 
 ## Places
