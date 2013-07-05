@@ -47,7 +47,10 @@ module.exports = function riggledogg(env, module, cb) {
 
         env.log.info('riggledogg: renaming package folder...');
 
-        env.fs.rename('package', 'node_modules/' + module, cb);
+        env.fs.rename('package', 'node_modules/' + module, function (err) {
+          if (err) return cb(err);
+          cb(null, package);
+        });
       });
     });
   });

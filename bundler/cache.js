@@ -28,10 +28,6 @@ Cache.prototype.open = function (name, options) {
         return generate(function (err, _res) {
           if (err) return cb(err);
 
-          if (typeof _res !== 'string' || !_res.length) {
-            return cb(new Error('result not non-zero-length string (' + JSON.stringify(_res) + ')'));
-          }
-
           log(
             'cache: saving hash `' + hash + '` in `' + name + '` ' + (
               (typeof ttl === 'number')
@@ -41,10 +37,10 @@ Cache.prototype.open = function (name, options) {
           );
 
           if (ttl) {
-            db.put(hash, _res, { ttl: ttl }, finish);
+            db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
           }
           else {
-            db.put(hash, _res, finish);
+            db.put(hash, JSON.stringify(_res), finish);
           }
 
           function finish(err) {
@@ -54,7 +50,7 @@ Cache.prototype.open = function (name, options) {
         });
       }
 
-      cb(err, res);
+      cb(err, JSON.parse(res));
     });
   };
 };

@@ -42,6 +42,6 @@ function serveBundle(res) {
       return res.end(stringifyError.goodbye);
     }
     res.setHeader('content-type', 'text/javascript');
-    res.end(bundle);
+    res.end(bundle.bundle);
   };
 }

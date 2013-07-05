@@ -56,7 +56,7 @@ module.exports = function bundler(opts) {
         unpack(env, registry.download(module, version), function (err) {
           if (err) return cb(withPath(err));
 
-          riggledogg(env, module, function (err) {
+          riggledogg(env, module, function (err, json) {
             if (err) return cb(withPath(err));
 
             install(env, module, function (err) {
@@ -67,7 +67,7 @@ module.exports = function bundler(opts) {
 
                 log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
 
-                cb(null, bundle);
+                cb(null, { package: json, bundle: bundle });
 
                 env.teardown();
               });
