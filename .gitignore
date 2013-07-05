@@ -1,2 +1,3 @@
 ./config.json
-./cdn.db
+cdn.db
+node_modules
