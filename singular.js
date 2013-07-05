@@ -39,7 +39,7 @@ function serveBundle(res) {
       res.statusCode = 500;
       res.write(stringifyError.hello);
       res.write(stringifyError(err));
-      res.end(stringifyError.goodbye);
+      return res.end(stringifyError.goodbye);
     }
     res.setHeader('content-type', 'text/javascript');
     res.end(bundle);
