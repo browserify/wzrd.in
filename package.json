@@ -1,6 +1,6 @@
 {
   "name": "browserify-cdn",
-  "version": "0.3.0-1",
+  "version": "0.3.0",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
@@ -27,8 +27,6 @@
   ],
   "scripts": {
     "test": "tap ./test/*.js",
-    "predeploy": "./bin/predeploy.sh",
-    "postdeploy": "./bin/postdeploy.sh",
     "start": "node ./bin/browserify-cdn",
     "index-page": "marked README.md | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },
