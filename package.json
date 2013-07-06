@@ -17,7 +17,6 @@
     "minilog": "~2.0.0",
     "level-ttl": "0.0.1",
     "level-sublevel": "~4.7.0",
-    "tinyauth": "~0.1.1",
     "cors": "~1.0.1"
   },
   "bundledDependencies": [
@@ -35,9 +34,5 @@
     "jsontool": "~5.1.3",
     "supertest": "~0.7.1",
     "tap": "~0.4.3"
-  },
-  "subdomain": "browserify",
-  "engines": {
-    "node": "0.8.x"
   }
 }
