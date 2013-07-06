@@ -1,0 +1,15 @@
+{
+  "name": "browserify-cdn",
+  "version": "0.3.0-3",
+  "author": "Joshua Holbrook",
+  "description": "This server does one thing, and it does it well.\n\nRedirects.",
+  "homepage": "http://github.com/jesusabdullah/mr302",
+  "scripts": {
+    "start": "node ./mr302.js"
+  },
+  "engines": {
+    "node": "~0.6.x"
+  },
+  "analyze": false,
+  "subdomain": "browserify"
+}
