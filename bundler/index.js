@@ -83,7 +83,6 @@ module.exports = function bundler(opts) {
   };
 
   _bundle.cache = c;
-  _bundle.db = c.db;
 
   return _bundle;
 };

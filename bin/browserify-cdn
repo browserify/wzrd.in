@@ -11,23 +11,7 @@ minilog
 ;
 
 var cdn = require('../'),
-    app = cdn.app,
-    db = cdn.bundler.db;
-
-
-var auth = require('tinyauth')({
-      realm: 'SECRET ADMINISTRATIVE THINGS',
-      accounts: [
-        [ process.env.LVLDUMP_USERNAME, process.env.LVLDUMP_PASSWORD ].join(':')
-      ]
-    }),
-    dump = require('level-lvldump')(db);
-
-//
-// This is needed for hosting on Nodejitsu, since deploys nuke the directory
-//
-app.get('/_leveldump', auth, dump.dump);
-app.post('/_leveldump', auth, dump.push);
+    app = cdn.app;
 
 var server = http.createServer(app).listen(process.argv[2] || 8080, function (err) {
   if (err) throw err;

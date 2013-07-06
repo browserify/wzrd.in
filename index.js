@@ -34,5 +34,5 @@ multiple(app, bundle);
 // Exports
 //
 exports.app = app;
-exports.bundler = bundle;
+exports.bundler = bundler;
 exports.defaults = defaults;

@@ -18,7 +18,6 @@
     "level-ttl": "0.0.1",
     "level-sublevel": "~4.7.0",
     "tinyauth": "~0.1.1",
-    "level-lvldump": "0.0.0",
     "cors": "~1.0.1"
   },
   "bundledDependencies": [

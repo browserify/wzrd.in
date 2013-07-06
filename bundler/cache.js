@@ -91,8 +91,7 @@ var c = module.exports = function (location) {
     bundles: bundles,
     multibundles: multibundles,
     aliases: aliases,
-    defaultHashFxn: defaultHashFxn,
-    db: cache.db
+    defaultHashFxn: defaultHashFxn
   };
 };
 
