@@ -4,7 +4,8 @@
 
 * [fork me on github](https://github.com/jesusabdullah/browserify-cdn)
 * [browserify on the web](http://browserify.org)
-* [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox)
+* [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox) - helpful for using multi-bundles
+* [requirebin.com](http://requirebin.com) - powered by browserify-cdn
 
 # Quick Start
 
