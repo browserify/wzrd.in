@@ -1,6 +1,6 @@
 {
   "name": "browserify-cdn",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
