@@ -11,7 +11,7 @@
 
 Try visiting this link:
 
-[/standalone/concat-stream@latest](/bundle/concat-stream@latest)
+[/standalone/concat-stream@latest](http://wzrd.in.nyud.net/standalone/concat-stream@latest)
 
 ## What just happened?
 
