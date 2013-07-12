@@ -49,6 +49,7 @@ module.exports = function (env, options, cb) {
 
     gatherOutputs('browserify', bfy, function (err, data) {
       if (err) {
+        delete err.stdout;
         return cb(err);
       }
 
