@@ -9,7 +9,8 @@ var cdn = require('../').app;
 var requestBody = JSON.stringify({
   dependencies: {
     'concat-stream': 'latest',
-    'mux': '0.0.x'
+    'mux': '0.0.x',
+    'jsonml-stringify/dom': 'latest'
   }
 });
 
@@ -31,7 +32,8 @@ tap.test('multi-bundles build the first time', function (t) {
 
       [
         'concat-stream',
-        'mux'
+        'mux',
+        'jsonml-stringify/dom'
       ].forEach(function (module) {
         t.type(body[module], 'object', module + ' is included');
 
@@ -39,7 +41,7 @@ tap.test('multi-bundles build the first time', function (t) {
         t.type(body[module].package, 'object', module + ' has package');
 
         body[module].package = body[module].package || {};
-        t.equal(body[module].package.name, module, module + ' package has expected name');
+        t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
 
         t.type(body[module].bundle, 'string', module + ' includes bundle');
       });
@@ -65,7 +67,8 @@ tap.test('multi-bundles are cached the second time', function (t) {
 
       [
         'concat-stream',
-        'mux'
+        'mux',
+        'jsonml-stringify/dom'
       ].forEach(function (module) {
         t.type(body[module], 'object', module + ' is included');
 
@@ -73,7 +76,7 @@ tap.test('multi-bundles are cached the second time', function (t) {
         t.type(body[module].package, 'object', module + ' has package');
 
         body[module].package = body[module].package || {};
-        t.equal(body[module].package.name, module, module + ' package has expected name');
+        t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
 
         t.type(body[module].bundle, 'string', module + ' includes bundle');
       });
@@ -89,6 +92,6 @@ tap.test('teardown', function (t) {
     setTimeout(function () {
       process.stderr.write('# killing this because supertest is hanging\n');
       process.exit(0);
-    }, 5000);
+    }, 2000);
   });
 });
