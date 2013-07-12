@@ -44,7 +44,8 @@ module.exports = function bundler(opts) {
 
     function build(pkg, cb) {
       var module = pkg.module,
-          version = pkg.version;
+          version = pkg.version,
+          subfile = pkg.subfile;
 
       log.info('about to browserify `' + module + '@' + version + '`...');
 

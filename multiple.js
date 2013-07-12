@@ -49,10 +49,17 @@ function create(bundle) {
           errors = [];
 
       keys.forEach(function (k) {
-        var o = JSON.parse(JSON.stringify(options));
+        var o = JSON.parse(JSON.stringify(options)),
+            subfile;
 
         o.module = k;
         o.version = deps[k];
+
+        subfile = k.split('/');
+        if (subfile.length > 1) {
+          o.module = subfile.shift();
+          o.subfile = subfile.join('/');
+        }
 
         bundle(o, function (err, b) {
           if (err) {

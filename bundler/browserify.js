@@ -6,20 +6,25 @@ var gatherOutputs = require('./gather-outputs');
 module.exports = function (env, options, cb) {
 
   var argv = [],
-      file;
+      file,
+      module = options.module;
+
+  if (options.subfile) {
+    module += '/' + options.subfile;
+  }
 
   if (options.standalone) {
 
-    env.log.info('browserify: resolving path to standalone module `' + options.module + '`...');
+    env.log.info('browserify: resolving path to standalone module `' + module + '`...');
 
-    env.exec('node -pe "require.resolve(\'' + options.module + '\')"', function (err, stdout, stderr) {
+    env.exec('node -pe "require.resolve(\'' + module + '\')"', function (err, stdout, stderr) {
       if (err) {
         err.stdout = stdout;
         err.stderr = stderr;
         return cb(err);
       }
 
-      env.log.info('browserify: successfully resolved path to standalone module `' + options.module + '`.');
+      env.log.info('browserify: successfully resolved path to standalone module `' + module + '`.');
 
       file = stdout.replace(/\n$/, '');
       run();
@@ -36,12 +41,12 @@ module.exports = function (env, options, cb) {
 
     if (options.standalone) {
       argv.push('--standalone');
-      argv.push(options.module);
+      argv.push(module);
       argv.push(file);
     }
     else {
       argv.push('-r');
-      argv.push(options.module);
+      argv.push(module);
     }
 
     env.log.info('browserify: running browserify with options: `' + JSON.stringify(argv) + '`...');

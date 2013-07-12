@@ -16,13 +16,20 @@ function singular(bundle, opts) {
   return function (req, res) {
     var t = req.params.module.split('@'),
         module = t.shift(),
-        version;
+        version,
+        subfile = module.split('/');
 
     if (t.length) {
       version = t.shift();
     }
     else {
       version = 'latest';
+    }
+
+    if (subfile.length > 1) {
+      module = subfile.shift();
+      subfile = subfile.join('/');
+      opts.subfile = subfile;
     }
 
     opts.module = module;
