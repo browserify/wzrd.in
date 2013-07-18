@@ -69,7 +69,6 @@ registry.resolve = function resolve(module, version, cb) {
       }
     }
     catch (e) {
-      console.log(e);
       v = null;
     }
 
