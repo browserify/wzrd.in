@@ -17,7 +17,8 @@
     "minilog": "~2.0.0",
     "level-ttl": "0.0.1",
     "level-sublevel": "~4.7.0",
-    "cors": "~1.0.1"
+    "cors": "~1.0.1",
+    "npm-publish-stream": "~0.2.0"
   },
   "bundledDependencies": [
     "temp",

@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var level = require('level'),
     ttl = require('level-ttl'),
     sublevel = require('level-sublevel'),
+    cull = require('./npm-cull'),
     log = require('minilog')('leveldb');
 
 var Cache = function (location) {
@@ -86,6 +87,8 @@ var c = module.exports = function (location) {
     },
     ttl: 30 * DAYS
   });
+
+  cull(cache);
 
   return {
     bundles: bundles,
