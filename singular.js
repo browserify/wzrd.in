@@ -8,6 +8,7 @@ module.exports = function (app, bundle) {
   app.get('/debug-bundle/:module', singular(bundle, { debug: true }));
   app.get('/standalone/:module', singular(bundle, { standalone: true }));
   app.get('/debug-standalone/:module', singular(bundle, { standalone: true, debug: true }));
+
 };
 
 function singular(bundle, opts) {
