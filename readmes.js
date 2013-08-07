@@ -8,6 +8,7 @@ module.exports = function (app, bundle) {
 
 function readmeServer (req, res){
 
+  res.header("Access-Control-Allow-Origin", "*");
   var module = req.params.module;
   if(module){
 
