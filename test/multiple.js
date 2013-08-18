@@ -43,6 +43,8 @@ tap.test('multi-bundles build the first time', function (t) {
         body[module].package = body[module].package || {};
         t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
 
+        t.ok(body[module].package.readme, module + ' package has a readme');
+
         t.type(body[module].bundle, 'string', module + ' includes bundle');
       });
       t.end();
