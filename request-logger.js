@@ -20,7 +20,8 @@ module.exports = function requestLogger(req, res, next) {
           if (req.ip) return req.ip;
           var sock = req.socket;
           if (sock.socket) return sock.socket.remoteAddress;
-          return sock.remoteAddress;
+          if (sock.remoteAddress) return sock.remoteAddress;
+          return ' - ';
         })(),
         date = new Date().toUTCString(), // DEFINITELY not CLF-compatible.
         method = req.method,
