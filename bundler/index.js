@@ -3,6 +3,7 @@ var path = require('path');
 var log = require('minilog')('bundler');
 
 var cache = require('./cache'),
+    core = require('./node-core'),
     buildEnv = require('./build-env'),
     registry = require('./registry'),
     unpack = require('./unpack'),
@@ -23,6 +24,10 @@ module.exports = function bundler(opts) {
 
     var module = pkg.module,
         semver = pkg.version;
+
+    if (core.test(module)) {
+      return checkBundles(null, process.version);
+    }
 
     c.aliases({ module: module, semver: semver }, function resolve(cb) {
       registry.resolve(module, semver, function (err, v) {
@@ -54,6 +59,13 @@ module.exports = function bundler(opts) {
       }, function (err, env) {
         if (err) return cb(withPath(err));
 
+        if (core.test(module)) {
+          pkg.__core__ = true;
+          return browserify(env, pkg, function (err, bundle) {
+            return finish(err, bundle, { core: true, version: pkg.version });
+          });
+        }
+
         unpack(env, registry.download(module, version), function (err) {
           if (err) return cb(withPath(err));
 
@@ -64,17 +76,19 @@ module.exports = function bundler(opts) {
               if (err) return cb(withPath(err));
 
               browserify(env, pkg, function (err, bundle) {
-                if (err) return cb(withPath(err));
-
-                log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
-
-                cb(null, { package: json, bundle: bundle });
-
-                env.teardown();
+                return finish(err, bundle, json);
               });
             });
           });
         });
+        function finish(err, bundle, json) {
+          if (err) return cb(withPath(err));
+
+          log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
+
+          cb(null, { package: json, bundle: bundle });
+          env.teardown();
+        }
         function withPath(err) {
           err.dirPath = env.dirPath;
           return err;

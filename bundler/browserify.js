@@ -13,7 +13,7 @@ module.exports = function (env, options, cb) {
     module += '/' + options.subfile;
   }
 
-  if (options.standalone) {
+  if (options.standalone && !options.__core__) {
 
     env.log.info('browserify: resolving path to standalone module `' + module + '`...');
 
@@ -42,9 +42,9 @@ module.exports = function (env, options, cb) {
     if (options.standalone) {
       argv.push('--standalone');
       argv.push(module);
-      argv.push(file);
+      if (file) argv.push(file);
     }
-    else {
+    if (!options.standalone || options.__core__) {
       argv.push('-r');
       argv.push(module);
     }

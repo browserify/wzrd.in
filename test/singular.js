@@ -42,6 +42,18 @@ tap.test('singular bundles with subfiles build the first time', function (t) {
   ;
 });
 
+tap.test('singular bundles of standalone core modules build the first time', function (t) {
+  supertest(cdn)
+    .get('/standalone/events')
+    .expect('Content-Type', 'text/javascript')
+    .expect(200)
+    .end(function (err, res) {
+      t.error(err, 'requesting /standalone/events doesn\'t explode');
+      t.end();
+    })
+  ;
+});
+
 tap.test('teardown', function (t) {
   rimraf(path.resolve(__dirname, '../cdn.db'), function (err) {
     t.error(err, 'removed the database');

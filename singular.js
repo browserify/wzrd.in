@@ -19,6 +19,8 @@ function singular(bundle, opts) {
         version,
         subfile = module.split('/');
 
+    var o = JSON.parse(JSON.stringify(opts));
+
     if (t.length) {
       version = t.shift();
     }
@@ -29,13 +31,13 @@ function singular(bundle, opts) {
     if (subfile.length > 1) {
       module = subfile.shift();
       subfile = subfile.join('/');
-      opts.subfile = subfile;
+      o.subfile = subfile;
     }
 
-    opts.module = module;
-    opts.version = version;
+    o.module = module;
+    o.version = version;
 
-    bundle(opts, serveBundle(res));
+    bundle(o, serveBundle(res));
   };
 }
 
