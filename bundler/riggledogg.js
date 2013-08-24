@@ -1,6 +1,5 @@
 var path = require('path');
 
-
 //
 // Riggledogg the package.json to avoid non-installing-from-npm build steps
 //
@@ -24,34 +23,52 @@ module.exports = function riggledogg(env, module, cb) {
       return cb(err);
     }
 
+    env.log.info('riggledogg: attach readme');
     //
-    // Relatively naive. May be less blitz-ish later.
+    // thx isaac
     //
-    package.scripts = {};
+    env.glob('README?(.*)', { cwd: 'package/', nocase: true, mark: true }, function (err, files) {
+      if (err) return cb(err);
 
-    output = JSON.stringify(package, true, 2);
+      files = files.filter(function (f) { return !f.match(/\/$/); });
+      if (!files.length) return cb();
+      var p = path.join('package/', files[0]);
+      env.fs.readFile(p, function (err, readme) {
+        if (err) return cb();
+        package.readme = readme.toString();
+        package.readmeFilename = p;
 
-    env.log.info('riggledogg: writing `package.json`...');
+        //
+        // Relatively naive. May be less blitz-ish later.
+        //
+        package.scripts = {};
 
-    env.fs.writeFile('package/package.json', output, function (err) {
-      if (err) {
-        return cb(err);
-      }
+        output = JSON.stringify(package, true, 2);
 
-      env.log.info('riggledogg: making node_modules folder...');
+        env.log.info('riggledogg: writing `package.json`...');
 
-      env.mkdirp('node_modules', function (err) {
-        if (err) {
-          return cb(err);
-        }
+        env.fs.writeFile('package/package.json', output, function (err) {
+          if (err) {
+            return cb(err);
+          }
 
-        env.log.info('riggledogg: renaming package folder...');
+          env.log.info('riggledogg: making node_modules folder...');
 
-        env.fs.rename('package', 'node_modules/' + module, function (err) {
-          if (err) return cb(err);
-          cb(null, package);
+          env.mkdirp('node_modules', function (err) {
+            if (err) {
+              return cb(err);
+            }
+
+            env.log.info('riggledogg: renaming package folder...');
+
+            env.fs.rename('package', 'node_modules/' + module, function (err) {
+              if (err) return cb(err);
+              cb(null, package);
+            });
+          });
         });
       });
     });
-  });
+  })
 };
+

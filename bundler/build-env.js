@@ -6,6 +6,7 @@ var sfs = require('scopedfs'),
     temp = require('temp'),
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
+    glob = require('glob'),
     minilog = require('minilog');
 
 //
@@ -111,7 +112,12 @@ module.exports = function buildEnv(options, cb) {
 
     env.mkdirp = function (p, cb) {
       return mkdirp(path.join(dirPath, p), cb);
-    }
+    };
+
+    env.glob = function (g, opts, cb) {
+      opts.cwd = path.join(dirPath, opts.cwd);
+      return glob.call(glob, g, opts, cb);
+    };
 
     env.log.info('build-env: set up build environment.');
     cb(null, env);
