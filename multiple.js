@@ -42,7 +42,7 @@ function create(bundle) {
       return res.end(stringifyError.goodbye);
     }
 
-    cache.multibundles(cache.defaultHashFxn(opts), function multibundle(cb) {
+    cache.multibundles.check(cache.defaultHashFxn(opts), function multibundle(cb) {
       var keys = Object.keys(deps),
           count = keys.length,
           modules = {},
@@ -125,7 +125,7 @@ function get(bundle) {
 
     var hash = req.params.bundle;
 
-    cache.multibundles(decodeURIComponent(hash), function nope(cb) {
+    cache.multibundles.check(decodeURIComponent(hash), function nope(cb) {
       res.statusCode = 404;
       res.setHeader('content-type', 'text/plain');
       res.write(stringifyError.hello);

@@ -29,7 +29,7 @@ module.exports = function bundler(opts) {
       return checkBundles(null, process.version);
     }
 
-    c.aliases({ module: module, semver: semver }, function resolve(cb) {
+    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
       registry.resolve(module, semver, function (err, v) {
         if (err) return callback(err);
 
@@ -42,7 +42,7 @@ module.exports = function bundler(opts) {
 
       pkg.version = version;
 
-      c.bundles(pkg, function (cb) {
+      c.bundles.check(pkg, function (cb) {
         return build(pkg, cb);
       }, callback);
     }
