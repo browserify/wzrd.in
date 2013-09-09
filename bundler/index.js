@@ -9,8 +9,8 @@ var cache = require('./cache'),
     unpack = require('./unpack'),
     riggledogg = require('./riggledogg'),
     install = require('./install'),
-    browserify = require('./browserify');
-
+    browserify = require('./browserify'),
+    stringifyError = require('../stringify-error');
 
 module.exports = function bundler(opts) {
   opts = opts || {};
@@ -82,12 +82,25 @@ module.exports = function bundler(opts) {
           });
         });
         function finish(err, bundle, json) {
-          if (err) return cb(withPath(err));
-
+          var bundleID = module + '@' + version;
+          if (err) {
+            return c.buildstatuses.put(bundleID, {
+              ok: false,
+              error: err.message,
+              errorDetails: stringifyError(err)
+            }, function(){
+              cb(withPath(err));
+            });
+          }
+          
           log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
 
-          cb(null, { package: json, bundle: bundle });
-          env.teardown();
+          c.buildstatuses.put(bundleID, {
+            ok: true
+          }, function(){
+            cb(null, { package: json, bundle: bundle });
+            env.teardown();
+          });
         }
         function withPath(err) {
           err.dirPath = env.dirPath;

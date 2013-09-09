@@ -69,6 +69,18 @@ SubCache.prototype.check = function (body, generate, cb) {
   });
 };
 
+SubCache.prototype.put = function (key, value, callback) {
+  this.db.put(key, JSON.stringify(value), callback);
+};
+
+SubCache.prototype.get = function (key, callback) {
+  this.db.get(key, callback);
+};
+
+SubCache.prototype.getAllStream = function (callback) {
+  return this.db.createReadStream();
+};
+
 var SECONDS = 1000,
     MINUTES = 60 * SECONDS,
     HOURS = 60 * MINUTES,
@@ -77,7 +89,7 @@ var SECONDS = 1000,
 var c = module.exports = function (location) {
 
   var cache = new Cache(location),
-      bundles, multibundles, aliases;
+      bundles, multibundles, aliases, buildstatuses;
 
   bundles = cache.open('bundles', {
     ttl: 30 * DAYS
@@ -101,12 +113,17 @@ var c = module.exports = function (location) {
     ttl: 30 * DAYS
   });
 
+  buildstatuses = cache.open('buildstatuses', {
+    ttl: 365 * DAYS
+  });
+
   cull(cache);
 
   return {
     bundles: bundles,
     multibundles: multibundles,
     aliases: aliases,
+    buildstatuses: buildstatuses,
     defaultHashFxn: defaultHashFxn
   };
 };
