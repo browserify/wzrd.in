@@ -105,6 +105,14 @@ future GETs.
 If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.
 
+## GET /buildstatus/:module
+
+Get the build status of :module.
+
+## GET /buildstatus
+
+Get all build statuses of all modules built on Browserify CDN.
+
 ## License
 
 MIT
