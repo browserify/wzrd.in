@@ -15,45 +15,70 @@ Cache.prototype.open = function (name, options) {
       hashfxn = options.hashFunction || defaultHashFxn,
       ttl = options.ttl;
 
-  return function check(body, generate, cb) {
+  return new SubCache(name, db, options);
+};
 
-    var hash = hashfxn(body);
+function SubCache (name, db, options) {
+  this.name = name;
+  this.db = db;
+  this.options = options;
+}
 
-    log('cache: checking `' + name + '` for hash `' + hash + '`...');
+SubCache.prototype.check = function (body, generate, cb) {
 
-    db.get(hash, function (err, res) {
+  var db = this.db,
+      options = this.options,
+      name = this.name,
+      hashfxn = options.hashFunction || defaultHashFxn,
+      ttl = options.ttl,
+      hash = hashfxn(body);
 
-      if (err && err.name === 'NotFoundError') {
+  log('cache: checking `' + name + '` for hash `' + hash + '`...');
 
-        log('cache: `' + name + '` did not have `' + hash + '`.');
-        return generate(function (err, _res) {
-          if (err) return cb(err);
+  db.get(hash, function (err, res) {
 
-          log(
-            'cache: saving hash `' + hash + '` in `' + name + '` ' + (
-              (typeof ttl === 'number')
-                ? 'with ttl ' + ttl +'...'
-                : '...'
-            )
-          );
+    if (err && err.name === 'NotFoundError') {
 
-          if (ttl) {
-            db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
-          }
-          else {
-            db.put(hash, JSON.stringify(_res), finish);
-          }
+      log('cache: `' + name + '` did not have `' + hash + '`.');
+      return generate(function (err, _res) {
+        if (err) return cb(err);
 
-          function finish(err) {
-            log('saved hash `' + hash + '` in `' + name + '`.');
-            cb(err, _res);
-          }
-        });
-      }
+        log(
+          'cache: saving hash `' + hash + '` in `' + name + '` ' + (
+            (typeof ttl === 'number')
+              ? 'with ttl ' + ttl +'...'
+              : '...'
+          )
+        );
 
-      cb(err, JSON.parse(res));
-    });
-  };
+        if (ttl) {
+          db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
+        }
+        else {
+          db.put(hash, JSON.stringify(_res), finish);
+        }
+
+        function finish(err) {
+          log('saved hash `' + hash + '` in `' + name + '`.');
+          cb(err, _res);
+        }
+      });
+    }
+
+    cb(err, JSON.parse(res));
+  });
+};
+
+SubCache.prototype.put = function (key, value, callback) {
+  this.db.put(key, JSON.stringify(value), callback);
+};
+
+SubCache.prototype.get = function (key, callback) {
+  this.db.get(key, callback);
+};
+
+SubCache.prototype.getAllStream = function (callback) {
+  return this.db.createReadStream();
 };
 
 var SECONDS = 1000,
@@ -64,7 +89,7 @@ var SECONDS = 1000,
 var c = module.exports = function (location) {
 
   var cache = new Cache(location),
-      bundles, multibundles, aliases;
+      bundles, multibundles, aliases, buildstatuses;
 
   bundles = cache.open('bundles', {
     ttl: 30 * DAYS
@@ -88,12 +113,17 @@ var c = module.exports = function (location) {
     ttl: 30 * DAYS
   });
 
+  buildstatuses = cache.open('buildstatuses', {
+    ttl: 365 * DAYS
+  });
+
   cull(cache);
 
   return {
     bundles: bundles,
     multibundles: multibundles,
     aliases: aliases,
+    buildstatuses: buildstatuses,
     defaultHashFxn: defaultHashFxn
   };
 };
