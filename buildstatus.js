@@ -25,11 +25,7 @@ function getBuildStatus (bundle, req, resp) {
   }
 
   c.aliases.check({ module: module, semver: version }, function resolve(cb) {
-    registry.resolve(module, version, function (err, v) {
-      if (err) return callback(err);
-
-      cb(null, v);
-    });
+    registry.resolve(module, version, cb);
   }, function(err, version){
     if (err) {
       return handleError(resp, err);
