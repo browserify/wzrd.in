@@ -105,6 +105,11 @@ future GETs.
 If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.
 
+## Heroku Installation
+
+    heroku create
+    git push heroku master
+
 ## License
 
 MIT
