@@ -13,7 +13,7 @@ minilog
 var cdn = require('../'),
     app = cdn.app;
 
-var server = http.createServer(app).listen(process.argv[2] || 8080, function (err) {
+var server = http.createServer(app).listen(process.env.PORT || process.argv[2] || 8080, function (err) {
   if (err) throw err;
 
   var addr = server.address();
