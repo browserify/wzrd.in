@@ -107,9 +107,13 @@ POSTing again.
 
 ## Heroku Installation
 
+It's possible to run browserify-cdn on Heroku using the included Procfile:
+
     heroku create
     git push heroku master
     heroku ps:scale web=1
+
+Keep in mind that a new deploy will wipe the cache.
 
 ## License
 
