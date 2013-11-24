@@ -42,7 +42,7 @@ function create(bundle) {
       return res.end(stringifyError.goodbye);
     }
 
-    cache.multibundles(cache.defaultHashFxn(opts), function multibundle(cb) {
+    cache.multibundles.check(cache.defaultHashFxn(opts), function multibundle(cb) {
       var keys = Object.keys(deps),
           count = keys.length,
           modules = {},
