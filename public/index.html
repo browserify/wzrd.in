@@ -34,18 +34,7 @@
 <h1>Quick Start</h1>
 <p>Try visiting this link:</p>
 <p><a href="/standalone/concat-stream@latest">/standalone/concat-stream@latest</a></p>
-<form method="get" id="url-generator">
-  Or..
-  <label>
-    Module:
-    <input type="text" name="module" value="concat-stream" required />
-  </label>
-  <label>
-    Version: 
-    <input type="text" name="ver" value="latest" required />
-  </label>
-  <input type="submit" value="Go!" />
-</form>
+<form method="get" id="url-generator"><h3>Or choose a module here:</h3><label>Module:<input type="text" name="module" value="concat-stream" required /></label><label>Version:<input type="text" name="ver" value="latest" required /></label><input type="submit" value="Go!" /></form>
 <h2>What just happened?</h2>
 <p>Well, in <em>this</em> case, since someone has visited this link before you,
 the file was cached with <a href="https://github.com/rvagg/node-levelup">leveldb</a>.
@@ -112,6 +101,12 @@ future GETs.</p>
 <h2>GET /multi/:existing-bundle</h2>
 <p>If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.</p>
+<h2>Heroku Installation</h2>
+<p>It&#39;s possible to run browserify-cdn on Heroku using the included Procfile:</p>
+<pre><code>heroku create
+git push heroku master
+heroku ps:scale web=1</code></pre>
+<p>Keep in mind that a new deploy will wipe the cache.</p>
 <h2>License</h2>
 <p>MIT</p>
 
