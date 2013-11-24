@@ -18,9 +18,22 @@ module.exports = function bundler(opts) {
   var db = opts.db,
       root = opts.root;
 
-  var c = cache(db);
+  var c = cache(db),
+      keys = 'bundles aliases'.split(' ');
 
   var _bundle = function bundle(pkg, callback) {
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (!c[k]) {
+        // bail
+        return c.open(k, function (err, cache) {
+          if (err) return callback(err);
+          c[k] = cache;
+          // try again
+          _bundle(pkg, callback);
+        });
+      }
+    }
 
     var module = pkg.module,
         semver = pkg.version;
@@ -29,7 +42,7 @@ module.exports = function bundler(opts) {
       return checkBundles(null, process.version);
     }
 
-    c.aliases({ module: module, semver: semver }, function resolve(cb) {
+    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
       registry.resolve(module, semver, function (err, v) {
         if (err) return callback(err);
 
@@ -42,7 +55,7 @@ module.exports = function bundler(opts) {
 
       pkg.version = version;
 
-      c.bundles(pkg, function (cb) {
+      c.bundles.check(pkg, function (cb) {
         return build(pkg, cb);
       }, callback);
     }

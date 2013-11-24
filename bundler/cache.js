@@ -1,59 +1,71 @@
-var crypto = require('crypto');
+var crypto = require('crypto'),
+    util = require('util');
 
 var level = require('level'),
-    ttl = require('level-ttl'),
     sublevel = require('level-sublevel'),
-    cull = require('./npm-cull'),
+    levelbutt = require('level-scuttlebutt'),
+    expiryModel = require('expiry-model'),
+    Model = require('scuttlebutt/model'),
+    Bucket = require('scuttlebucket'),
+    //cull = require('./npm-cull'),
+    udid = require('udid'),
     log = require('minilog')('leveldb');
 
-var Cache = function (location) {
-  this.db = sublevel(ttl(level(location)));
+var Store = function (location) {
+  var self = this;
+  this.db = sublevel(level(location));
+  this.scuttles = this.db.sublevel('scuttlebutt');
+  this.models = {};
+  levelbutt(this.scuttles, udid('browserify-cdn'), function (name) {
+    return self.models[name]();
+  });
 };
 
-Cache.prototype.open = function (name, options) {
-  var db = this.db.sublevel(name),
-      hashfxn = options.hashFunction || defaultHashFxn,
-      ttl = options.ttl;
+Store.prototype.register = function (name, factory) {
+  this.models[name] = factory;
+};
 
-  return function check(body, generate, cb) {
+Store.prototype.open = function (name, cb) {
+  this.scuttles.open.call(this.scuttles, name, cb);
+};
 
-    var hash = hashfxn(body);
+var Cache = function () {
+  Model.call(this);
+};
+util.inherits(Cache, Model);
 
-    log('cache: checking `' + name + '` for hash `' + hash + '`...');
+Cache.prototype.hashfxn = defaultHashFxn;
 
-    db.get(hash, function (err, res) {
+Cache.prototype.check = function (key, generate, cb) {
+  var self = this,
+      hash = this.hashfxn(key),
+      name = this.get('name');
 
-      if (err && err.name === 'NotFoundError') {
+  log('cache: checking `' + name + '` for hash `' + hash + '`...');
 
-        log('cache: `' + name + '` did not have `' + hash + '`.');
-        return generate(function (err, _res) {
-          if (err) return cb(err);
+  try {
+    var result = this.get('hash/' + hash);
+  }
+  catch (err) {
+    return process.nextTick(function () { cb(err); });
+  }
 
-          log(
-            'cache: saving hash `' + hash + '` in `' + name + '` ' + (
-              (typeof ttl === 'number')
-                ? 'with ttl ' + ttl +'...'
-                : '...'
-            )
-          );
+  if (result) {
+    cb(err, JSON.parse(res));
+  }
+  else {
+    log('cache: `' + name + '` did not have `' + hash + '`.');
+    generate(function (err, _res) {
+      if (err) return cb(err);
 
-          if (ttl) {
-            db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
-          }
-          else {
-            db.put(hash, JSON.stringify(_res), finish);
-          }
+      log('cache: saving hash `' + hash + '` in `' + name + '` with ttl ' + self.ttl +'...');
 
-          function finish(err) {
-            log('saved hash `' + hash + '` in `' + name + '`.');
-            cb(err, _res);
-          }
-        });
-      }
+      self.set(hash, JSON.stringify(_res));
 
-      cb(err, JSON.parse(res));
+      log('saved hash `' + hash + '` in `' + name + '`.');
+      cb(err, _res);
     });
-  };
+  }
 };
 
 var SECONDS = 1000,
@@ -61,44 +73,52 @@ var SECONDS = 1000,
     HOURS = 60 * MINUTES,
     DAYS = 24 * HOURS;
 
-var c = module.exports = function (location) {
+module.exports = function (location) {
 
-  var cache = new Cache(location),
-      bundles, multibundles, aliases;
+  var store = new Store(location);
 
-  bundles = cache.open('bundles', {
-    ttl: 30 * DAYS
+  store.register('bundles', function () {
+    var bundles = new Cache();
+    bundles.set('name', 'bundles');
+    return bundles;
   });
 
-  aliases = cache.open('aliases', {
-    hashfxn: function (o) {
-      return o.module + '@' + o.semver;
-    },
-    ttl: 1 * DAYS
+  store.register('builds', function () {
+    var builds = new Cache();
+    builds.set('name', 'builds');
+    builds.hashfxn = function (o) { return o.module; };
+    return builds;
   });
 
-  multibundles = cache.open('multibundles', {
-    hashfxn: function (o) {
+  store.register('multibundles', function () {
+    var multis = new Cache();
+    multis.set('name', 'multibundles');
+    multis._hashfxn = multis.hashfxn;
+    multis.hashfxn = function (o) {
       if (typeof o === 'string' && o.length === 24) {
         log('cache: Input for `multibundles` appears to be an md5 hash already');
         return o;
       }
-      return defaultHashFxn(o);
-    },
-    ttl: 30 * DAYS
+      return multis._hashfxn;
+    };
+    return multis;
   });
 
-  cull(cache);
+  store.register('aliases', function () {
+    var aliases = new Cache({
+      name: 'aliases',
+      maxAge: 1 * DAYS
+    });
+    aliases.hashfxn = function (o) {
+      return o.module + '@' + o.semver;
+    };
+    return aliases;
+  });
 
-  return {
-    bundles: bundles,
-    multibundles: multibundles,
-    aliases: aliases,
-    defaultHashFxn: defaultHashFxn
-  };
+  store.defaultHashFxn = defaultHashFxn;
+
+  return store;
 };
-
-c.defaultHashFxn = defaultHashFxn;
 
 function defaultHashFxn(o) {
   return crypto
@@ -107,3 +127,4 @@ function defaultHashFxn(o) {
     .digest('base64')
   ;
 }
+

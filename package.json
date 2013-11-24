@@ -19,7 +19,11 @@
     "level-sublevel": "~4.7.0",
     "cors": "~1.0.1",
     "npm-publish-stream": "~0.2.0",
-    "glob": "~3.2.6"
+    "glob": "~3.2.6",
+    "scuttlebutt": "~5.6.8",
+    "level-scuttlebutt": "~5.0.6",
+    "expiry-model": "~1.0.2",
+    "udid": "~0.1.3"
   },
   "bundledDependencies": [
     "temp",

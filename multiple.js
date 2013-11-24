@@ -25,7 +25,21 @@ function create(bundle) {
 
   var cache = bundle.cache;
 
-  return function (req, res) {
+  var middleware = function (req, res) {
+    if (!cache.multibundles) {
+      return cache.open('multibundles', function (err, multibundles) {
+        if (err) {
+          res.statusCode = 500;
+          res.setHeader('content-type', 'text/plain');
+          res.write(stringifyError.hello);
+          res.write(stringifyError(err));
+          res.end(stringifyError.goodbye);
+        }
+        cache.multibundles = multibundles;
+        middleware(req, res);
+      });
+    }
+
     var opts = req.body;
 
     var deps = opts.dependencies,
@@ -42,7 +56,7 @@ function create(bundle) {
       return res.end(stringifyError.goodbye);
     }
 
-    cache.multibundles(cache.defaultHashFxn(opts), function multibundle(cb) {
+    cache.multibundles.check(cache.defaultHashFxn(opts), function multibundle(cb) {
       var keys = Object.keys(deps),
           count = keys.length,
           modules = {},
@@ -115,6 +129,7 @@ function create(bundle) {
       res.end(_b);
     });
   };
+  return middleware;
 };
 
 function get(bundle) {
