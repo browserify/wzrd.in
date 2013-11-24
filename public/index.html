@@ -3,6 +3,20 @@
   <head>
     <title>Browserify-CDN</title>
     <link rel="stylesheet" href="style.css">
+    <script type="text/javascript">
+      window.onload = function(){
+        document.getElementById('url-generator').onsubmit = function() {
+          module = this.elements["module"].value
+          ver = this.elements["ver"].value
+          path = "http://wzrd.in/standalone/" + module + "@" + ver
+          link = document.createElement('a')
+          link.href = path
+          link.target = '_blank'
+          link.click()
+          return false
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="logo">
@@ -20,6 +34,18 @@
 <h1>Quick Start</h1>
 <p>Try visiting this link:</p>
 <p><a href="/standalone/concat-stream@latest">/standalone/concat-stream@latest</a></p>
+<form method="get" id="url-generator">
+  Or..
+  <label>
+    Module:
+    <input type="text" name="module" value="concat-stream" required />
+  </label>
+  <label>
+    Version: 
+    <input type="text" name="ver" value="latest" required />
+  </label>
+  <input type="submit" value="Go!" />
+</form>
 <h2>What just happened?</h2>
 <p>Well, in <em>this</em> case, since someone has visited this link before you,
 the file was cached with <a href="https://github.com/rvagg/node-levelup">leveldb</a>.

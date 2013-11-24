@@ -98,3 +98,18 @@ pre {
 pre code {
   color: rgb(200,220,235);
 }
+
+input[type='text'] {
+  border-color: rgb(90,140,230);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5px;
+  background-color: rgb(20,40,65);
+  color: rgb(230,182,91);
+}
+
+input[type='submit'] {
+  background-color: rgb(230,182,91);
+  border: 0;
+  border-radius: 5px;
+}
