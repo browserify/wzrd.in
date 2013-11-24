@@ -6,54 +6,54 @@ var level = require('level'),
     cull = require('./npm-cull'),
     log = require('minilog')('leveldb');
 
-var Cache = function (location) {
-  this.db = sublevel(ttl(level(location)));
+var Cache = function (name, db, opts) {
+  opts = opts || {}
+  this.db = db.sublevel(name);
+  this.name = name;
+  this.hashfxn = opts.hashfxn || opts.hashFunction || defaultHashFxn
+  this.ttl = opts.ttl;
 };
 
-Cache.prototype.open = function (name, options) {
-  var db = this.db.sublevel(name),
-      hashfxn = options.hashFunction || defaultHashFxn,
-      ttl = options.ttl;
+Cache.prototype.check = function check(body, generate, cb) {
+  var hash = this.hashfxn(body),
+      db = this.db,
+      name = this.name,
+      ttl = this.ttl;
 
-  return function check(body, generate, cb) {
+  log('cache: checking `' + name + '` for hash `' + hash + '`...');
 
-    var hash = hashfxn(body);
+  db.get(hash, function (err, res) {
 
-    log('cache: checking `' + name + '` for hash `' + hash + '`...');
+    if (err && err.name === 'NotFoundError') {
 
-    db.get(hash, function (err, res) {
+      log('cache: `' + name + '` did not have `' + hash + '`.');
+      return generate(function (err, _res) {
+        if (err) return cb(err);
 
-      if (err && err.name === 'NotFoundError') {
+        log(
+          'cache: saving hash `' + hash + '` in `' + name + '` ' + (
+            (typeof ttl === 'number')
+              ? 'with ttl ' + ttl +'...'
+              : '...'
+          )
+        );
 
-        log('cache: `' + name + '` did not have `' + hash + '`.');
-        return generate(function (err, _res) {
-          if (err) return cb(err);
+        if (ttl) {
+          db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
+        }
+        else {
+          db.put(hash, JSON.stringify(_res), finish);
+        }
 
-          log(
-            'cache: saving hash `' + hash + '` in `' + name + '` ' + (
-              (typeof ttl === 'number')
-                ? 'with ttl ' + ttl +'...'
-                : '...'
-            )
-          );
+        function finish(err) {
+          log('saved hash `' + hash + '` in `' + name + '`.');
+          cb(err, _res);
+        }
+      });
+    }
 
-          if (ttl) {
-            db.put(hash, JSON.stringify(_res), { ttl: ttl }, finish);
-          }
-          else {
-            db.put(hash, JSON.stringify(_res), finish);
-          }
-
-          function finish(err) {
-            log('saved hash `' + hash + '` in `' + name + '`.');
-            cb(err, _res);
-          }
-        });
-      }
-
-      cb(err, JSON.parse(res));
-    });
-  };
+    cb(err, JSON.parse(res));
+  });
 };
 
 var SECONDS = 1000,
@@ -63,21 +63,22 @@ var SECONDS = 1000,
 
 var c = module.exports = function (location) {
 
-  var cache = new Cache(location),
-      bundles, multibundles, aliases;
+  var db = sublevel(ttl(level(location)));
 
-  bundles = cache.open('bundles', {
+  var bundles, multibundles, aliases;
+
+  bundles = new Cache('bundles', db, {
     ttl: 30 * DAYS
   });
 
-  aliases = cache.open('aliases', {
+  aliases = cull(new Cache('aliases', db, {
     hashfxn: function (o) {
       return o.module + '@' + o.semver;
     },
     ttl: 1 * DAYS
-  });
+  }));
 
-  multibundles = cache.open('multibundles', {
+  multibundles = new Cache('multibundles', db, {
     hashfxn: function (o) {
       if (typeof o === 'string' && o.length === 24) {
         log('cache: Input for `multibundles` appears to be an md5 hash already');
@@ -88,8 +89,6 @@ var c = module.exports = function (location) {
     ttl: 30 * DAYS
   });
 
-  cull(cache);
-
   return {
     bundles: bundles,
     multibundles: multibundles,
@@ -99,6 +98,7 @@ var c = module.exports = function (location) {
 };
 
 c.defaultHashFxn = defaultHashFxn;
+c.Cache = Cache;
 
 function defaultHashFxn(o) {
   return crypto

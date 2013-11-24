@@ -2,7 +2,7 @@ var NpmPublishStream = require('npm-publish-stream'),
     log = require('minilog')('cull');
 
 module.exports = function (cache) {
-  var aliases = cache.db.sublevel('aliases'),
+  var aliases = cache.db,
       pubStream = new NpmPublishStream;
 
   pubStream.on('data', function (data) {
