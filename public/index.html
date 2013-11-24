@@ -6,8 +6,8 @@
     <script type="text/javascript">
       window.onload = function(){
         document.getElementById('url-generator').onsubmit = function(e) {
-          module = e.target.elements["module"].value
-          ver = e.target.elements["ver"].value
+          module = this.elements["module"].value
+          ver = this.elements["ver"].value
           path = "http://wzrd.in/standalone/" + module + "@" + ver
           link = document.createElement('a')
           link.href = path
