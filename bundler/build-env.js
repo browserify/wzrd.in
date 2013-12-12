@@ -48,7 +48,7 @@ module.exports = function buildEnv(options, cb) {
       var argv = [].slice.call(arguments),
           _env = JSON.parse(JSON.stringify(process.env));
 
-      _env.path = path.resolve(__dirname + '/node_modules/.bin');
+      _env.path = path.resolve(__dirname + '../node_modules/.bin');
 
       if (!argv[1]) {
         argv[1] = [];
