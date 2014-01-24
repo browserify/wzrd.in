@@ -19,14 +19,14 @@
     "level-sublevel": "~5.2.0",
     "cors": "~2.1.1",
     "npm-publish-stream": "~0.3.1",
-    "glob": "~3.2.8"
+    "glob": "3.2.6"
   },
   "bundledDependencies": [
     "temp",
     "scopedfs"
   ],
   "scripts": {
-    "test": "tap ./test/*.js && rm -r ./test/cdn.db",
+    "test": "tap ./test/*.js && rm -rf ./test/cdn.db",
     "start": "node ./bin/browserify-cdn",
     "index-page": "marked README.md | sed s_http://wzrd.in/standalone/concat-stream@latest_/standalone/concat-stream@latest_ | sed 's_<p>Also, <a href=\"http://wzrd.in\">wzrd.in</a> has a nice url generating form.</p>_<form method=\"get\" id=\"url-generator\"><h3>Or choose a module here:</h3><label>Module:<input type=\"text\" name=\"module\" value=\"concat-stream\" required /></label><label>Version:<input type=\"text\" name=\"ver\" value=\"latest\" required /></label><input type=\"submit\" value=\"Go!\" /></form>_' | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },
