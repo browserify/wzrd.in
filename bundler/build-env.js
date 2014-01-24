@@ -117,7 +117,7 @@ module.exports = function buildEnv(options, cb) {
 
     env.glob = function (g, opts, cb) {
       opts.cwd = path.join(dirPath, opts.cwd);
-      return glob.call(glob, g, opts, cb);
+      return glob(g, opts, cb);
     };
 
     env.log.info('build-env: set up build environment.');
