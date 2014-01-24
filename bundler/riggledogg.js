@@ -5,23 +5,38 @@ var path = require('path');
 //
 module.exports = function riggledogg(env, module, cb) {
 
-  env.log.info('riggledogg: reading `package.json...`');
+  var package, output;
 
-  env.fs.readFile('package/package.json', function (err, input) {
-    if (err) {
-      return cb(err);
-    }
+  readPkg(function () {
+    attachReadme(function () {
+      blitzScripts();
+      writePkg(function () {
+        moveFolder()
+      });
+    });
+  });
 
-    env.log.info('riggledogg: read `package.json`.');
+  function readPkg(next) {
+    env.log.info('riggledogg: reading `package.json...`');
 
-    var package, output;
+    env.fs.readFile('package/package.json', function (err, input) {
+      if (err) {
+        return cb(err);
+      }
 
-    try {
-      package = JSON.parse(input.toString());
-    }
-    catch (err) {
-      return cb(err);
-    }
+      env.log.info('riggledogg: read `package.json`.');
+
+      try {
+        package = JSON.parse(input.toString());
+      }
+      catch (err) {
+        return cb(err);
+      }
+      next();
+    });
+  }
+
+  function attachReadme(next) {
 
     env.log.info('riggledogg: attach readme');
     //
@@ -31,44 +46,57 @@ module.exports = function riggledogg(env, module, cb) {
       if (err) return cb(err);
 
       files = files.filter(function (f) { return !f.match(/\/$/); });
-      if (!files.length) return cb();
+
+      if (!files.length) {
+        return next();
+      }
+
       var p = path.join('package/', files[0]);
       env.fs.readFile(p, function (err, readme) {
         if (err) return cb();
         package.readme = readme.toString();
         package.readmeFilename = p;
 
-        //
-        // Relatively naive. May be less blitz-ish later.
-        //
-        package.scripts = {};
-
-        output = JSON.stringify(package, true, 2);
-
-        env.log.info('riggledogg: writing `package.json`...');
-
-        env.fs.writeFile('package/package.json', output, function (err) {
-          if (err) {
-            return cb(err);
-          }
-
-          env.log.info('riggledogg: making node_modules folder...');
-
-          env.mkdirp('node_modules', function (err) {
-            if (err) {
-              return cb(err);
-            }
-
-            env.log.info('riggledogg: renaming package folder...');
-
-            env.fs.rename('package', 'node_modules/' + module, function (err) {
-              if (err) return cb(err);
-              cb(null, package);
-            });
-          });
-        });
+        next();
       });
     });
-  })
+  }
+
+  function blitzScripts() {
+    //
+    // Relatively naive. May be less blitz-ish later.
+    //
+    package.scripts = {};
+  }
+
+  function writePkg(next) {
+    output = JSON.stringify(package, true, 2);
+
+    env.log.info('riggledogg: writing `package.json`...');
+
+    env.fs.writeFile('package/package.json', output, function (err) {
+      if (err) {
+        return cb(err);
+      }
+      next();
+    });
+  }
+
+  function moveFolder() {
+    env.log.info('riggledogg: making node_modules folder...');
+
+    env.mkdirp('node_modules', function (err) {
+      if (err) {
+        return cb(err);
+      }
+
+      env.log.info('riggledogg: renaming package folder...');
+
+      env.fs.rename('package', 'node_modules/' + module, function (err) {
+        if (err) return cb(err);
+        cb(null, package);
+      });
+    });
+  }
 };
 
