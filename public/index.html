@@ -23,19 +23,20 @@
       <img src="/img/browserify.png">
     </div>
     <div id="content">
-      <h1>browserify-as-a-service</h1>
-<h4>Places</h4>
+      <h1 id="browserify-as-a-service">browserify-as-a-service</h1>
+<p><a href="https://travis-ci.org/jesusabdullah/browserify-cdn"><img src="https://travis-ci.org/jesusabdullah/browserify-cdn.png?branch=master" alt="Build Status"></a></p>
+<h4 id="places">Places</h4>
 <ul>
 <li><a href="https://github.com/jesusabdullah/browserify-cdn">fork me on github</a></li>
 <li><a href="http://browserify.org">browserify on the web</a></li>
 <li><a href="https://github.com/maxogden/browser-module-sandbox">browser-module-sandbox</a> - helpful for using multi-bundles</li>
 <li><a href="http://requirebin.com">requirebin.com</a> - powered by browserify-cdn</li>
 </ul>
-<h1>Quick Start</h1>
+<h1 id="quick-start">Quick Start</h1>
 <p>Try visiting this link:</p>
 <p><a href="/standalone/concat-stream@latest">/standalone/concat-stream@latest</a></p>
 <form method="get" id="url-generator"><h3>Or choose a module here:</h3><label>Module:<input type="text" name="module" value="concat-stream" required /></label><label>Version:<input type="text" name="ver" value="latest" required /></label><input type="submit" value="Go!" /></form>
-<h2>What just happened?</h2>
+<h2 id="what-just-happened-">What just happened?</h2>
 <p>Well, in <em>this</em> case, since someone has visited this link before you,
 the file was cached with <a href="https://github.com/rvagg/node-levelup">leveldb</a>.
 But if you were to try and grab a bundle that
@@ -46,23 +47,23 @@ But if you were to try and grab a bundle that
 <li>The module gets sent to you, piping hot</li>
 <li>The module gets cached so that you don&#39;t have to wait later on</li>
 </ul>
-<h1>API</h1>
+<h1 id="api">API</h1>
 <p>There are a few API endpoints:</p>
-<h2>GET /bundle/:module</h2>
+<h2 id="get-bundle-module">GET /bundle/:module</h2>
 <p>Get the latest version of :module.</p>
-<h2>GET /bundle/:module@:version</h2>
+<h2 id="get-bundle-module-version">GET /bundle/:module@:version</h2>
 <p>Get a version of <code>:module</code> which satisfies the given <code>:version</code>
 <a href="https://github.com/rvagg/node-levelup">semver</a> range. Defaults to latest.</p>
-<h2>GET /debug-bundle/:module</h2>
-<h2>GET /debug-bundle/:module@:version</h2>
+<h2 id="get-debug-bundle-module">GET /debug-bundle/:module</h2>
+<h2 id="get-debug-bundle-module-version">GET /debug-bundle/:module@:version</h2>
 <p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
-<h2>GET /standalone/:module</h2>
-<h2>GET /standalone/:module@:version</h2>
+<h2 id="get-standalone-module">GET /standalone/:module</h2>
+<h2 id="get-standalone-module-version">GET /standalone/:module@:version</h2>
 <p>In this case, <code>--standalone</code> is passed to browserify.</p>
-<h2>GET /debug-standalone/:module</h2>
-<h2>GET /debug-standalone/:module@:version</h2>
+<h2 id="get-debug-standalone-module">GET /debug-standalone/:module</h2>
+<h2 id="get-debug-standalone-module-version">GET /debug-standalone/:module@:version</h2>
 <p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
-<h2>POST /multi</h2>
+<h2 id="post-multi">POST /multi</h2>
 <p>POST a body that looks something like this:</p>
 <pre><code class="lang-json">{
   &quot;options&quot;: {
@@ -72,7 +73,8 @@ But if you were to try and grab a bundle that
     &quot;concat-stream&quot;: &quot;0.1.x&quot;,
     &quot;hyperstream&quot;: &quot;0.2.x&quot;
   }
-}</code></pre>
+}
+</code></pre>
 <p>&quot;options&quot; is where you get to set &quot;debug&quot; and &quot;standalone&quot;. Usually, in this
 case, you&#39;ll probably only really care about debug. If you don&#39;t define
 &quot;options&quot;, this will default to <code>{ &quot;debug&quot;: false, &quot;standalone&quot;: false }</code>.
@@ -95,19 +97,19 @@ Transfer-Encoding: chunked
     &quot;package&quot;: /* the hyperstream package.json */,
     &quot;bundle&quot;: /* the hyperstream bundle */
   }
-}</code></pre>
-<p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
+}
+</code></pre><p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
 future GETs.</p>
-<h2>GET /multi/:existing-bundle</h2>
+<h2 id="get-multi-existing-bundle">GET /multi/:existing-bundle</h2>
 <p>If you saved the Location url from the POST earlier, you can just GET it instead of
 POSTing again.</p>
-<h2>Heroku Installation</h2>
+<h2 id="heroku-installation">Heroku Installation</h2>
 <p>It&#39;s possible to run browserify-cdn on Heroku using the included Procfile:</p>
 <pre><code>heroku create
 git push heroku master
-heroku ps:scale web=1</code></pre>
-<p>Keep in mind that a new deploy will wipe the cache.</p>
-<h2>License</h2>
+heroku ps:scale web=1
+</code></pre><p>Keep in mind that a new deploy will wipe the cache.</p>
+<h2 id="license">License</h2>
 <p>MIT</p>
 
 

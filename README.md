@@ -1,5 +1,7 @@
 # browserify-as-a-service
 
+[![Build Status](https://travis-ci.org/jesusabdullah/browserify-cdn.png?branch=master)](https://travis-ci.org/jesusabdullah/browserify-cdn)
+
 #### Places
 
 * [fork me on github](https://github.com/jesusabdullah/browserify-cdn)
