@@ -1,4 +1,5 @@
-var path = require('path');
+var path = require('path'),
+    EventEmitter = require('events').EventEmitter;
 
 var log = require('minilog')('bundler');
 
@@ -20,10 +21,16 @@ module.exports = function bundler(opts) {
 
   var c = cache(db);
 
+    //
+    // Used to handle the case where a build is already in-progress
+    //
+    var inProgress = {};
+
   var _bundle = function bundle(pkg, callback) {
 
     var module = pkg.module,
         semver = pkg.version;
+
 
     if (core.test(module)) {
       return checkBundles(null, process.version);
@@ -50,7 +57,44 @@ module.exports = function bundler(opts) {
     function build(pkg, cb) {
       var module = pkg.module,
           version = pkg.version,
-          subfile = pkg.subfile;
+          subfile = pkg.subfile,
+          key = [module, version, subfile].join('::');
+
+      if (inProgress[key]) {
+        inProgress[key].once('bundle', handleBundleEvent);
+        inProgress[key].once('error', handleErrorEvent);
+        return;
+      }
+
+      function handleBundleEvent(res) {
+        cb(null, res);
+        inProgress[key].removeListener('error', handleErrorEvent);
+        cleanupInProgress();
+      }
+
+      function handleErrorEvent(err) {
+        cb(err);
+        inProgress[key].removeListener('bundle', handleBundleEvent);
+        cleanupInProgress();
+      }
+
+      function cleanupInProgress() {
+        if (!(
+          inProgress[key].listeners('error').length +
+          inProgress[key].listeners('bundle').length
+        )) {
+          destroyInProgress();
+        }
+      }
+
+      function destroyInProgress() {
+        inProgress[key] = undefined;
+      }
+
+      //
+      // Set up the EE
+      //
+      inProgress[key] = new EventEmitter;
 
       log.info('about to browserify `' + module + '@' + version + '`...');
 
@@ -67,28 +111,44 @@ module.exports = function bundler(opts) {
         }
 
         unpack(env, registry.download(module, version), function (err) {
-          if (err) return cb(withPath(err));
+          if (err) return handleError(err);
 
           riggledogg(env, module, function (err, json) {
-            if (err) return cb(withPath(err));
+            if (err) return handleError(err);
 
             install(env, module, function (err) {
-              if (err) return cb(withPath(err));
+              if (err) return handleError(err);
 
               browserify(env, pkg, function (err, bundle) {
+                if (err) return handleError(err);
                 return finish(err, bundle, json);
               });
             });
           });
         });
         function finish(err, bundle, json) {
-          if (err) return cb(withPath(err));
+          if (err) return handleError(err);
 
           log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
 
-          cb(null, { package: json, bundle: bundle });
+          var result = { package: json, bundle: bundle };
+
+          inProgress[key].emit('bundle', result);
+          destroyInProgress();
+
+          cb(null, result);
           env.teardown();
         }
+
+        function handleError(err) {
+          err = withPath(err);
+
+          inProgress[key].emit('error', err);
+          destroyInProgress();
+
+          return cb(err);
+        }
+
         function withPath(err) {
           err.dirPath = env.dirPath;
           return err;
