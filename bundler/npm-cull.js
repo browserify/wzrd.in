@@ -1,7 +1,7 @@
 var NpmPublishStream = require('npm-publish-stream'),
     log = require('minilog')('cull');
 
-module.exports = function (cache) {
+module.exports = function _cull(cache) {
   var aliases = cache.db,
       pubStream = new NpmPublishStream;
 
@@ -22,6 +22,14 @@ module.exports = function (cache) {
         aliases.del(key);
       }
     });
+  });
+
+
+  pubStream.on('error', function (err) {
+    log(err.message);
+    setTimeout(function () {
+      _cull(cache);
+    }, 1000 * 60);
   });
 
   return cache;
