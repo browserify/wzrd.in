@@ -55,7 +55,7 @@ tap.test('singular bundles of standalone core modules build the first time', fun
 });
 
 tap.test('teardown', function (t) {
-  rimraf(path.resolve(__dirname, '../cdn.db'), function (err) {
+  rimraf('../cdn.db', function (err) {
     t.error(err, 'removed the database');
     t.end();
     setTimeout(function () {

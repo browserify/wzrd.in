@@ -14,6 +14,14 @@ var Cache = function (name, db, opts) {
   this.ttl = opts.ttl;
 };
 
+Cache.prototype.get = function get(key, cb) {
+  this.db.get(this.hashfxn(key), cb);
+};
+
+Cache.prototype.put = function put(key, val, cb) {
+  this.db.put(this.hashfxn(key), val, cb);
+};
+
 Cache.prototype.check = function check(body, generate, cb) {
   var hash = this.hashfxn(body),
       db = this.db,
@@ -65,7 +73,7 @@ var c = module.exports = function (location) {
 
   var db = sublevel(ttl(level(location)));
 
-  var bundles, multibundles, aliases;
+  var bundles, multibundles, aliases, statuses;
 
   bundles = new Cache('bundles', db, {
     ttl: 30 * DAYS
@@ -89,10 +97,18 @@ var c = module.exports = function (location) {
     ttl: 30 * DAYS
   });
 
+  statuses = new Cache('statuses', db, {
+    hashfxn: function (o) {
+      return o.module + '@' + o.semver;
+    },
+    ttl: 30 * DAYS
+  });
+
   return {
     bundles: bundles,
     multibundles: multibundles,
     aliases: aliases,
+    statuses: statuses,
     defaultHashFxn: defaultHashFxn
   };
 };

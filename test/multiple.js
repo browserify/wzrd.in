@@ -88,7 +88,7 @@ tap.test('multi-bundles are cached the second time', function (t) {
 });
 
 tap.test('teardown', function (t) {
-  rimraf(path.resolve(__dirname, '../cdn.db'), function (err) {
+  rimraf('./cdn.db', function (err) {
     t.error(err, 'removed the database');
     t.end();
     setTimeout(function () {
