@@ -106,8 +106,47 @@ future GETs.
 
 ## GET /multi/:existing-bundle
 
-If you saved the Location url from the POST earlier, you can just GET it instead of
-POSTing again.
+If you saved the Location url from the POST earlier, you can just GET it
+instead of POSTing again.
+
+## GET /status/:module
+## GET /status/:module@:version
+
+Get information on the build status of a module. Returns build information for
+all versions which satisfy the given semver (or latest in the event of a
+missing semver).
+
+Blobs generally look something like this:
+
+```
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 109
+ETag: "-9450086"
+Date: Sun, 26 Jan 2014 08:05:59 GMT
+Connection: keep-alive
+
+{
+  "module": "concat-stream",
+  "builds": {
+    "1.4.1": {
+      "built": true,
+      "ok": true
+    }
+  }
+}
+```
+
+The "module" and "builds" fields should both exist. Keys for "builds" are the
+versions. Properties:
+
+* "built": Whether a build has been attempted recently or not
+* "ok": Whether the package has last built *successfully* or not
+* "error": If the package was built *insuccessfully* ("built" is true, "ok" is
+false), this property will contain information about the error
+
 
 ## Heroku Installation
 
