@@ -17,8 +17,9 @@ tap.test('latest has not been built', function (t) {
       var builds = JSON.parse(res.text);
 
       t.doesNotThrow(function () {
-        t.equal(Object.keys(builds).length, 1, 'there is only 1 `latest`');
-        t.equal(builds[Object.keys(builds)].built, false, 'has not been built');
+        t.equal(builds.module, 'concat-stream', 'module is concat-stream');
+        t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
+        t.equal(builds.builds[Object.keys(builds.builds)].built, false, 'has not been built');
       }, 'returns an object');
       t.end();
     })
@@ -48,9 +49,10 @@ tap.test('latest has been built', function (t) {
       var builds = JSON.parse(res.text);
 
       t.doesNotThrow(function () {
-        t.equal(Object.keys(builds).length, 1, 'there is only 1 `latest`');
-        t.equal(builds[Object.keys(builds)].built, true, 'has been built');
-        t.equal(builds[Object.keys(builds)].ok, true, 'worked correctly');
+        t.equal(builds.module, 'concat-stream', 'module is concat-stream');
+        t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
+        t.equal(builds.builds[Object.keys(builds.builds)].built, true, 'has been built');
+        t.equal(builds.builds[Object.keys(builds.builds)].ok, true, 'worked correctly');
       }, 'returns an object');
       t.end();
     })

@@ -34,7 +34,10 @@ function status(bundle) {
           hints: stringifyError.goodbye
         });
       }
-      res.json(sts);
+      res.json({
+        module: module,
+        builds: sts
+      });
     });
   };
 }

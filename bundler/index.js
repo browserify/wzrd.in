@@ -129,8 +129,7 @@ module.exports = function bundler(opts) {
 
           var result = { package: json, bundle: bundle };
 
-          // Save build metadata to c.builds
-          c.statuses.put(pkg, { module: module, version: version, built: true, ok: true });
+          c.statuses.put(pkg, { built: true, ok: true });
 
           inProgress[key].emit('bundle', result);
           destroyInProgress();
@@ -146,8 +145,6 @@ module.exports = function bundler(opts) {
           destroyInProgress();
 
           c.statuses.db.put(pkg, {
-            module: module,
-            version: version,
             built: true,
             ok: false,
             error: xtend(
