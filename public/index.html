@@ -53,7 +53,7 @@ But if you were to try and grab a bundle that
 <p>Get the latest version of :module.</p>
 <h2 id="get-bundle-module-version">GET /bundle/:module@:version</h2>
 <p>Get a version of <code>:module</code> which satisfies the given <code>:version</code>
-<a href="https://github.com/rvagg/node-levelup">semver</a> range. Defaults to latest.</p>
+<a href="https://github.com/isaacs/node-semver#ranges">semver range</a>. Defaults to latest.</p>
 <h2 id="get-debug-bundle-module">GET /debug-bundle/:module</h2>
 <h2 id="get-debug-bundle-module-version">GET /debug-bundle/:module@:version</h2>
 <p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
@@ -101,8 +101,40 @@ Transfer-Encoding: chunked
 </code></pre><p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
 future GETs.</p>
 <h2 id="get-multi-existing-bundle">GET /multi/:existing-bundle</h2>
-<p>If you saved the Location url from the POST earlier, you can just GET it instead of
-POSTing again.</p>
+<p>If you saved the Location url from the POST earlier, you can just GET it
+instead of POSTing again.</p>
+<h2 id="get-status-module">GET /status/:module</h2>
+<h2 id="get-status-module-version">GET /status/:module@:version</h2>
+<p>Get information on the build status of a module. Returns build information for
+all versions which satisfy the given semver (or latest in the event of a
+missing semver).</p>
+<p>Blobs generally look something like this:</p>
+<pre><code>HTTP/1.1 200 OK
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 109
+ETag: &quot;-9450086&quot;
+Date: Sun, 26 Jan 2014 08:05:59 GMT
+Connection: keep-alive
+
+{
+  &quot;module&quot;: &quot;concat-stream&quot;,
+  &quot;builds&quot;: {
+    &quot;1.4.1&quot;: {
+      &quot;built&quot;: true,
+      &quot;ok&quot;: true
+    }
+  }
+}
+</code></pre><p>The &quot;module&quot; and &quot;builds&quot; fields should both exist. Keys for &quot;builds&quot; are the
+versions. Properties:</p>
+<ul>
+<li>&quot;built&quot;: Whether a build has been attempted recently or not</li>
+<li>&quot;ok&quot;: Whether the package has last built <em>successfully</em> or not</li>
+<li>&quot;error&quot;: If the package was built <em>insuccessfully</em> (&quot;built&quot; is true, &quot;ok&quot; is
+false), this property will contain information about the error</li>
+</ul>
 <h2 id="heroku-installation">Heroku Installation</h2>
 <p>It&#39;s possible to run browserify-cdn on Heroku using the included Procfile:</p>
 <pre><code>heroku create

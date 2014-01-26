@@ -40,7 +40,7 @@ Get the latest version of :module.
 ## GET /bundle/:module@:version
 
 Get a version of `:module` which satisfies the given `:version`
-[semver](https://github.com/rvagg/node-levelup) range. Defaults to latest.
+[semver range](https://github.com/isaacs/node-semver#ranges). Defaults to latest.
 
 ## GET /debug-bundle/:module
 ## GET /debug-bundle/:module@:version
