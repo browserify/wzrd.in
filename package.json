@@ -1,6 +1,7 @@
 {
   "name": "browserify-cdn",
   "version": "0.3.1",
+  "repository": "https://github.com/jesusabdullah/browserify-cdn.git",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
@@ -19,14 +20,16 @@
     "level-sublevel": "~5.2.0",
     "cors": "~2.1.1",
     "npm-publish-stream": "~0.3.1",
-    "glob": "3.2.6"
+    "glob": "3.2.6",
+    "xtend": "~2.1.2",
+    "waitress": "~0.1.5"
   },
   "bundledDependencies": [
     "temp",
     "scopedfs"
   ],
   "scripts": {
-    "test": "tap ./test/*.js && rm -rf ./test/cdn.db",
+    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js",
     "start": "node ./bin/browserify-cdn",
     "index-page": "marked README.md | sed s_http://wzrd.in/standalone/concat-stream@latest_/standalone/concat-stream@latest_ | sed 's_<p>Also, <a href=\"http://wzrd.in\">wzrd.in</a> has a nice url generating form.</p>_<form method=\"get\" id=\"url-generator\"><h3>Or choose a module here:</h3><label>Module:<input type=\"text\" name=\"module\" value=\"concat-stream\" required /></label><label>Version:<input type=\"text\" name=\"ver\" value=\"latest\" required /></label><input type=\"submit\" value=\"Go!\" /></form>_' | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },

@@ -35,6 +35,13 @@ registry.metadata = function metadata(module, cb) {
 };
 
 registry.resolve = function resolve(module, version, cb) {
+  registry.versions(module, version, function (err, vs) {
+    if (err) return cb(err);
+    cb(null, vs[0]);
+  });
+};
+
+registry.versions = function versions(module, version, cb) {
   registry.metadata(module, function (err, data) {
     if (err) {
       return cb(err);
@@ -44,7 +51,7 @@ registry.resolve = function resolve(module, version, cb) {
 
     try {
       if (version === 'latest') {
-        v = data['dist-tags'].latest;
+        v = [data['dist-tags'].latest];
       }
       else if (!semver.validRange(version)) {
         console.log('not a valid range ' + version);
@@ -53,7 +60,6 @@ registry.resolve = function resolve(module, version, cb) {
           .filter(function (v) {
             return v === version;
           })
-          [0]
         ;
       }
       else {
@@ -64,7 +70,6 @@ registry.resolve = function resolve(module, version, cb) {
           .sort(function (a, b) {
             return semver.lte(a, b);
           })
-          [0]
         ;
       }
     }

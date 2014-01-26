@@ -1,7 +1,9 @@
 var path = require('path'),
     EventEmitter = require('events').EventEmitter;
 
-var log = require('minilog')('bundler');
+var log = require('minilog')('bundler'),
+    xtend = require('xtend'),
+    waitress = require('waitress');
 
 var cache = require('./cache'),
     core = require('./node-core'),
@@ -21,10 +23,10 @@ module.exports = function bundler(opts) {
 
   var c = cache(db);
 
-    //
-    // Used to handle the case where a build is already in-progress
-    //
-    var inProgress = {};
+  //
+  // Used to handle the case where a build is already in-progress
+  //
+  var inProgress = {};
 
   var _bundle = function bundle(pkg, callback) {
 
@@ -36,13 +38,7 @@ module.exports = function bundler(opts) {
       return checkBundles(null, process.version);
     }
 
-    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
-      registry.resolve(module, semver, function (err, v) {
-        if (err) return callback(err);
-
-        cb(null, v);
-      });
-    }, checkBundles);
+    alias(module, semver, checkBundles);
 
     function checkBundles(err, version) {
       if (err) return callback(err);
@@ -129,9 +125,11 @@ module.exports = function bundler(opts) {
         function finish(err, bundle, json) {
           if (err) return handleError(err);
 
-          log.info('bundler: successfully browserified `' + module + '@' + semver + '`.');
+          log.info('bundler: successfully browserified `' + module + '@' + version + '`.');
 
           var result = { package: json, bundle: bundle };
+
+          c.statuses.put(pkg, { built: true, ok: true });
 
           inProgress[key].emit('bundle', result);
           destroyInProgress();
@@ -146,6 +144,18 @@ module.exports = function bundler(opts) {
           inProgress[key].emit('error', err);
           destroyInProgress();
 
+          c.statuses.db.put(pkg, {
+            built: true,
+            ok: false,
+            error: xtend(
+              {
+                message: err.message,
+                stack: err.stack
+              },
+              err
+            )
+          });
+
           return cb(err);
         }
 
@@ -156,6 +166,44 @@ module.exports = function bundler(opts) {
       });
     }
   };
+
+  _bundle.alias = alias;
+  function alias(module, semver, callback) {
+    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
+      registry.resolve(module, semver, function (err, v) {
+        if (err) return callback(err);
+
+        cb(null, v);
+      });
+    }, callback);
+  }
+
+  _bundle.status = status;
+  function status(module, semver, callback) {
+    registry.versions(module, semver, function (err, vs) {
+      if (err) return callback(err);
+
+      var sts = {},
+          finish = waitress(vs.length, function (err) {
+            if (err) return callback(err);
+            callback(null, sts);
+          });
+
+      vs.forEach(function (v) {
+        c.statuses.get({ module: module, version: v }, function (err, st) {
+          if (err) {
+            if (err.name == 'NotFoundError') {
+              sts[v] = { built: false };
+              return finish();
+            }
+            return finish(err);
+          }
+          sts[v] = st;
+          finish();
+        });
+      });
+    });
+  }
 
   _bundle.cache = c;
 

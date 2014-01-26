@@ -10,7 +10,8 @@ var app = express(),
     bundle = bundler(defaults());
 
 var singular = require('./singular'),
-    multiple = require('./multiple');
+    multiple = require('./multiple'),
+    statuses = require('./statuses');
 
 //
 // Add static assets
@@ -29,6 +30,11 @@ singular(app, bundle);
 // Multiple-module bundles
 //
 multiple(app, bundle);
+
+//
+// Build statuses
+//
+statuses(app, bundle);
 
 //
 // Exports
