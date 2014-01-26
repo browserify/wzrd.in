@@ -2,7 +2,8 @@ var path = require('path'),
     EventEmitter = require('events').EventEmitter;
 
 var log = require('minilog')('bundler'),
-    xtend = require('xtend');
+    xtend = require('xtend'),
+    waitress = require('waitress');
 
 var cache = require('./cache'),
     core = require('./node-core'),
@@ -129,7 +130,7 @@ module.exports = function bundler(opts) {
           var result = { package: json, bundle: bundle };
 
           // Save build metadata to c.builds
-          c.statuses.put(pkg, { module: module, version: version, ok: true });
+          c.statuses.put(pkg, { module: module, version: version, built: true, ok: true });
 
           inProgress[key].emit('bundle', result);
           destroyInProgress();
@@ -147,6 +148,7 @@ module.exports = function bundler(opts) {
           c.statuses.db.put(pkg, {
             module: module,
             version: version,
+            built: true,
             ok: false,
             error: xtend(
               {
@@ -168,6 +170,7 @@ module.exports = function bundler(opts) {
     }
   };
 
+  _bundle.alias = alias;
   function alias(module, semver, callback) {
     c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
       registry.resolve(module, semver, function (err, v) {
@@ -178,16 +181,34 @@ module.exports = function bundler(opts) {
     }, callback);
   }
 
-  _bundle.status = function status(module, semver, callback) {
-    registry.resolve(module, semver, function (err, versions) {
+  _bundle.status = status;
+  function status(module, semver, callback) {
+    registry.versions(module, semver, function (err, vs) {
       if (err) return callback(err);
 
-      _bundle.builds.get({ module: module, version: version }, callback);
+      var sts = {},
+          finish = waitress(vs.length, function (err) {
+            if (err) return callback(err);
+            callback(null, sts);
+          });
+
+      vs.forEach(function (v) {
+        c.statuses.get({ module: module, version: v }, function (err, st) {
+          if (err) {
+            if (err.name == 'NotFoundError') {
+              sts[v] = { built: false };
+              return finish();
+            }
+            return finish(err);
+          }
+          sts[v] = st;
+          finish();
+        });
+      });
     });
   }
 
   _bundle.cache = c;
-  _bundle.alias = alias;
 
   return _bundle;
 };

@@ -15,11 +15,14 @@ var Cache = function (name, db, opts) {
 };
 
 Cache.prototype.get = function get(key, cb) {
-  this.db.get(this.hashfxn(key), cb);
+  this.db.get(this.hashfxn(key), function (err, v) {
+    if (err) return cb(err);
+    return cb(null, JSON.parse(v));
+  });
 };
 
 Cache.prototype.put = function put(key, val, cb) {
-  this.db.put(this.hashfxn(key), val, cb);
+  this.db.put(this.hashfxn(key), JSON.stringify(val), cb);
 };
 
 Cache.prototype.check = function check(body, generate, cb) {

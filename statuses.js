@@ -14,8 +14,6 @@ function status(bundle) {
         semver,
         subfile = module.split('/');
 
-    var serve = serveBundle(res);
-
     if (t.length) {
       semver = t.shift();
     }
@@ -28,22 +26,15 @@ function status(bundle) {
       subfile = subfile.join('/');
     }
 
-    bundle.status(module, semver, function (err, st) {
+    bundle.status(module, semver, function (err, sts) {
       if (err) {
-        if (err.code == 'NotFoundError') {
-          return res.json(404, {
-            message: 'This module has not been built yet.',
-            hints: 'Try GETing /bundle/' + module + '@' + version
-          });
-        }
-
         return res.json(500, {
           ok: false,
           message: err.message,
           hints: stringifyError.goodbye
         });
       }
-      res.json(st);
+      res.json(sts);
     });
   };
 }
