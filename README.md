@@ -150,11 +150,13 @@ false), this property will contain information about the error
 
 ## Heroku Installation
 
-It's possible to run browserify-cdn on Heroku using the included Procfile:
+browserify-cdn is ready to run on Heroku:
 
-    heroku create
-    git push heroku master
-    heroku ps:scale web=1
+```sh
+heroku create my-browserify-cdn
+git push heroku master
+heroku ps:scale web=1
+```
 
 Keep in mind that a new deploy will wipe the cache.
 
