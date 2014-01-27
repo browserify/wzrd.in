@@ -18,8 +18,7 @@ tap.test('latest has not been built', function (t) {
 
       t.doesNotThrow(function () {
         t.equal(builds.module, 'concat-stream', 'module is concat-stream');
-        t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
-        t.equal(builds.builds[Object.keys(builds.builds)].built, false, 'has not been built');
+        t.equal(Object.keys(builds.builds).length, 0, 'no builds for semver range');
       }, 'returns an object');
       t.end();
     })
@@ -51,7 +50,6 @@ tap.test('latest has been built', function (t) {
       t.doesNotThrow(function () {
         t.equal(builds.module, 'concat-stream', 'module is concat-stream');
         t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
-        t.equal(builds.builds[Object.keys(builds.builds)].built, true, 'has been built');
         t.equal(builds.builds[Object.keys(builds.builds)].ok, true, 'worked correctly');
       }, 'returns an object');
       t.end();

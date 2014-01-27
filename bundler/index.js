@@ -129,7 +129,7 @@ module.exports = function bundler(opts) {
 
           var result = { package: json, bundle: bundle };
 
-          c.statuses.put(pkg, { built: true, ok: true });
+          c.statuses.put(pkg, { ok: true });
 
           inProgress[key].emit('bundle', result);
           destroyInProgress();
@@ -145,7 +145,6 @@ module.exports = function bundler(opts) {
           destroyInProgress();
 
           c.statuses.db.put(pkg, {
-            built: true,
             ok: false,
             error: xtend(
               {
@@ -193,7 +192,6 @@ module.exports = function bundler(opts) {
         c.statuses.get({ module: module, version: v }, function (err, st) {
           if (err) {
             if (err.name == 'NotFoundError') {
-              sts[v] = { built: false };
               return finish();
             }
             return finish(err);

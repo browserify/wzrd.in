@@ -132,7 +132,6 @@ Connection: keep-alive
   "module": "concat-stream",
   "builds": {
     "1.4.1": {
-      "built": true,
       "ok": true
     }
   }
@@ -142,11 +141,11 @@ Connection: keep-alive
 The "module" and "builds" fields should both exist. Keys for "builds" are the
 versions. Properties:
 
-* "built": Whether a build has been attempted recently or not
-* "ok": Whether the package has last built *successfully* or not
-* "error": If the package was built *insuccessfully* ("built" is true, "ok" is
+* "ok": Whether the package has last built or not
+* "error": If the package was built *insuccessfully* ("ok" is
 false), this property will contain information about the error
 
+Versions which have not been built will not be keyed onto "builds".
 
 ## Heroku Installation
 
