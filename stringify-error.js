@@ -42,8 +42,12 @@ stringify.hello = '---FLAGRANT SYSTEM ERROR---\n'
 
 stringify.goodbye = [
   '',
-  'Get ahold of @jesusabdullah on freenode, twitter or github',
-  'with the ENTIRETY of the contents of this message, and he can',
+  'This is probably an issue with the package, and not browserify-cdn itself.',
+  'If you feel differently, feel free to file a bug report at:',
+  '',
+  '    https://github.com/jesusabdullah/browserify-cdn/issues',
+  '',
+  'Include the ENTIRETY of the contents of this message, and he can',
   'try to help you out.',
   '',
   'Have a nice day!',
