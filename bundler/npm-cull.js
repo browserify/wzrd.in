@@ -3,7 +3,9 @@ var NpmPublishStream = require('npm-publish-stream'),
 
 module.exports = function _cull(cache) {
   var aliases = cache.db,
-      pubStream = new NpmPublishStream;
+      pubStream = new NpmPublishStream({
+        refreshRate: 2 * 60 * 1000,
+      });
 
   pubStream.on('data', function (data) {
     var module = data.id,
@@ -26,10 +28,8 @@ module.exports = function _cull(cache) {
 
 
   pubStream.on('error', function (err) {
-    log(err.message);
-    setTimeout(function () {
-      _cull(cache);
-    }, 1000 * 60);
+    log('pubstream error:', err.message);
+    log(err.stack);
   });
 
   return cache;
