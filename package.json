@@ -19,7 +19,7 @@
     "level-ttl": "~0.5.0",
     "level-sublevel": "~5.2.0",
     "cors": "~2.1.1",
-    "npm-publish-stream": "maxogden/npm-publish-stream#patch-1",
+    "npm-publish-stream": "~0.4.0",
     "glob": "3.2.6",
     "xtend": "~2.1.2",
     "waitress": "~0.1.5"
