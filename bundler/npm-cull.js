@@ -5,6 +5,7 @@ module.exports = function _cull(cache) {
   var aliases = cache.db,
       pubStream = new NpmPublishStream({
         refreshRate: 2 * 60 * 1000,
+        hostname: 'skimdb.npmjs.com'
       });
 
   pubStream.on('data', function (data) {
