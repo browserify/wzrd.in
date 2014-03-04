@@ -91,6 +91,9 @@ module.exports = function bundler(opts) {
       // Set up the EE
       //
       inProgress[key] = new EventEmitter;
+      
+      // to prevent crashes from 'unhandled error' exceptions
+      inProgress[key].on('error', function noop() {});
 
       log.info('about to browserify `' + module + '@' + version + '`...');
 
