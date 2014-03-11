@@ -1,5 +1,6 @@
 var NpmPublishStream = require('npm-publish-stream'),
-    log = require('minilog')('cull');
+    log = require('minilog')('cull'),
+    semver = require('semver');
 
 module.exports = function _cull(cache) {
   var aliases = cache.db,
@@ -20,6 +21,7 @@ module.exports = function _cull(cache) {
     var stream = aliases.createKeyStream({ start: start, end: end });
 
     stream.on('data', function (key) {
+      console.log('cull stream on data', key);
       var range = key.split('@').pop();
 
       if (semver.satisfies(version, range) || range == 'latest') {
