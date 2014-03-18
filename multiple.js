@@ -16,7 +16,14 @@ function jsonParser(req, res, next) {
   });
 
   req.on('end', function () {
-    req.body = JSON.parse(req.chunks);
+    try {
+      req.body = JSON.parse(req.chunks);
+      
+    } catch(e) {
+      res.setHeader(500)
+      res.end('{"error": "invalid json"}')
+      return
+    }
     next();
   });
 };
