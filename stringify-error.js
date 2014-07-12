@@ -1,9 +1,12 @@
 var util = require('util');
 
 var log = require('minilog')('browserify-cdn');
+var uuid = require('uuid').v1;
 
 var stringify = module.exports = function stringifyError(err) {
-  var internal = [], external = [];
+  var id = uuid(),
+      internal = [],
+      external = [ util.format('\n(logs uuid: %s )\n', id) ]
 
   if (err.stack) {
     err.stack.split('\n').forEach(function (l) {
@@ -32,8 +35,10 @@ var stringify = module.exports = function stringifyError(err) {
   });
 
   internal.forEach(function (l) {
-    log.error(l);
+    log.error(id + ' : ' + l);
   });
+
+  external.push('');
 
   return external.join('\n');
 };
