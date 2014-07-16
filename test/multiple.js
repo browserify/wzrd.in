@@ -9,8 +9,9 @@ var cdn = require('../').app;
 var requestBody = JSON.stringify({
   dependencies: {
     'concat-stream': 'latest',
-    'mux': '0.0.x',
+    'mux': '0.0.x' /*,
     'jsonml-stringify/dom': 'latest'
+    */
   }
 });
 
@@ -32,8 +33,9 @@ tap.test('multi-bundles build the first time', function (t) {
 
       [
         'concat-stream',
-        'mux',
+        'mux' /*,
         'jsonml-stringify/dom'
+        */
       ].forEach(function (module) {
         t.type(body[module], 'object', module + ' is included');
 
@@ -69,8 +71,9 @@ tap.test('multi-bundles are cached the second time', function (t) {
 
       [
         'concat-stream',
-        'mux',
+        'mux', /*
         'jsonml-stringify/dom'
+        */
       ].forEach(function (module) {
         t.type(body[module], 'object', module + ' is included');
 
