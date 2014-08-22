@@ -6,7 +6,7 @@
     "browserify-cdn": "./bin/browserify-cdn"
   },
   "dependencies": {
-    "browserify": "~4.2.1",
+    "browserify": "^5.10.1",
     "concat-stream": "~1.4.1",
     "cors": "~2.1.1",
     "express": "~3.4.8",
