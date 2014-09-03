@@ -30,12 +30,14 @@ module.exports = function (app, bundle) {
   
   function cull(req, res) {
     var module = req.params.module
-    bundle.cache.aliases.db.del(module, function(err) {
-      if (err) {
-        res.statusCode = 500
-        return res.end(JSON.stringify({error: 'Error culling cache'}))
-      }
-      res.end(JSON.stringify({culled: module}))
+    bundle.cache.aliases.db.del(module, function(err1) {
+      bundle.cache.multibundles.db.del(module, function(err2) {
+        if (err1 || err2) {
+          res.statusCode = 500
+          return res.end(JSON.stringify({error: 'Error culling cache'}))
+        }
+        res.end(JSON.stringify({culled: module}))
+      })
     })
   }
 }

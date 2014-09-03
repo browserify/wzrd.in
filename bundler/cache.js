@@ -91,7 +91,7 @@ var c = module.exports = function (location) {
 
   multibundles = new Cache('multibundles', db, {
     hashfxn: function (o) {
-      if (typeof o === 'string' && o.length === 24) {
+      if (typeof o === 'string' && o.length === 32) {
         log('cache: Input for `multibundles` appears to be an md5 hash already');
         return o;
       }
@@ -123,6 +123,6 @@ function defaultHashFxn(o) {
   return crypto
     .createHash('md5')
     .update(JSON.stringify(o))
-    .digest('base64')
+    .digest('hex')
   ;
 }
