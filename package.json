@@ -1,11 +1,12 @@
 {
   "name": "browserify-cdn",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "repository": "https://github.com/jesusabdullah/browserify-cdn.git",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
   "dependencies": {
+    "basic": "0.0.3",
     "browserify": "^5.10.1",
     "concat-stream": "~1.4.1",
     "cors": "~2.1.1",

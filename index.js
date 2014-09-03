@@ -4,6 +4,7 @@ var express = require('express'),
 
 var bundler = require('./bundler'),
     defaults = require('./defaults'),
+    admin = require('./admin'),
     requestLogger = require('./request-logger');
 
 var app = express(),
@@ -20,6 +21,11 @@ app.use(requestLogger);
 app.use(app.routes);
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
+
+//
+// Admin REST API
+//
+admin(app, bundle);
 
 //
 // Single-module bundles
