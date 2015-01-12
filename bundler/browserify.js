@@ -1,4 +1,5 @@
 var gatherOutputs = require('./gather-outputs');
+var path = require('path');
 
 //
 // Run browserify
@@ -50,7 +51,7 @@ module.exports = function (env, options, cb) {
     }
 
     env.log.info('browserify: running browserify with options: `' + JSON.stringify(argv) + '`...');
-    var bfy = env.spawn('browserify', argv);
+    var bfy = env.spawn('browserify', argv, { cwd: 'node_modules/' + module });
 
     gatherOutputs('browserify', bfy, function (err, data) {
       if (err) {
