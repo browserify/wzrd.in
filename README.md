@@ -13,9 +13,9 @@
 
 Try visiting this link:
 
-[/standalone/concat-stream@latest](http://wzrd.in/standalone/concat-stream@latest)
+[/standalone/concat-stream@latest](https://wzrd.in/standalone/concat-stream@latest)
 
-Also, [wzrd.in](http://wzrd.in) has a nice url generating form.
+Also, [wzrd.in](https://wzrd.in) has a nice url generating form.
 
 ## What just happened?
 
