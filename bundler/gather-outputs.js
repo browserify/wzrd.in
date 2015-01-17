@@ -23,6 +23,8 @@ module.exports = function gatherOutputs(name, child, cb) {
     finish();
   });
 
+  child.on('error', cb);
+
   function finish() {
     ct++;
     if (ct >= 3) {
