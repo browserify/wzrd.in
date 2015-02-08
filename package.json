@@ -1,7 +1,7 @@
 {
   "name": "browserify-cdn",
   "version": "0.4.0",
-  "repository": "https://github.com/jesusabdullah/browserify-cdn.git",
+  "repository": "https://github.com/jfhbrook/browserify-cdn.git",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
