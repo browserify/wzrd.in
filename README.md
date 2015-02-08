@@ -1,10 +1,10 @@
 # browserify-as-a-service
 
-[![Build Status](https://travis-ci.org/jesusabdullah/browserify-cdn.png?branch=master)](https://travis-ci.org/jesusabdullah/browserify-cdn)
+[![Build Status](https://travis-ci.org/jfhbrook/browserify-cdn.png?branch=master)](https://travis-ci.org/jesusabdullah/browserify-cdn)
 
 #### Places
 
-* [fork me on github](https://github.com/jesusabdullah/browserify-cdn)
+* [fork me on github](https://github.com/jfhbrook/browserify-cdn)
 * [browserify on the web](http://browserify.org)
 * [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox) - helpful for using multi-bundles
 * [requirebin.com](http://requirebin.com) - powered by browserify-cdn

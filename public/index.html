@@ -24,10 +24,10 @@
     </div>
     <div id="content">
       <h1 id="browserify-as-a-service">browserify-as-a-service</h1>
-<p><a href="https://travis-ci.org/jesusabdullah/browserify-cdn"><img src="https://travis-ci.org/jesusabdullah/browserify-cdn.png?branch=master" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/jesusabdullah/browserify-cdn"><img src="https://travis-ci.org/jfhbrook/browserify-cdn.png?branch=master" alt="Build Status"></a></p>
 <h4 id="places">Places</h4>
 <ul>
-<li><a href="https://github.com/jesusabdullah/browserify-cdn">fork me on github</a></li>
+<li><a href="https://github.com/jfhbrook/browserify-cdn">fork me on github</a></li>
 <li><a href="http://browserify.org">browserify on the web</a></li>
 <li><a href="https://github.com/maxogden/browser-module-sandbox">browser-module-sandbox</a> - helpful for using multi-bundles</li>
 <li><a href="http://requirebin.com">requirebin.com</a> - powered by browserify-cdn</li>
@@ -122,7 +122,6 @@ Connection: keep-alive
   &quot;module&quot;: &quot;concat-stream&quot;,
   &quot;builds&quot;: {
     &quot;1.4.1&quot;: {
-      &quot;built&quot;: true,
       &quot;ok&quot;: true
     }
   }
@@ -130,17 +129,18 @@ Connection: keep-alive
 </code></pre><p>The &quot;module&quot; and &quot;builds&quot; fields should both exist. Keys for &quot;builds&quot; are the
 versions. Properties:</p>
 <ul>
-<li>&quot;built&quot;: Whether a build has been attempted recently or not</li>
-<li>&quot;ok&quot;: Whether the package has last built <em>successfully</em> or not</li>
-<li>&quot;error&quot;: If the package was built <em>insuccessfully</em> (&quot;built&quot; is true, &quot;ok&quot; is
+<li>&quot;ok&quot;: Whether the package has last built or not</li>
+<li>&quot;error&quot;: If the package was built <em>insuccessfully</em> (&quot;ok&quot; is
 false), this property will contain information about the error</li>
 </ul>
+<p>Versions which have not been built will not be keyed onto &quot;builds&quot;.</p>
 <h2 id="heroku-installation">Heroku Installation</h2>
-<p>It&#39;s possible to run browserify-cdn on Heroku using the included Procfile:</p>
-<pre><code>heroku create
+<p>browserify-cdn is ready to run on Heroku:</p>
+<pre><code class="lang-sh">heroku create my-browserify-cdn
 git push heroku master
 heroku ps:scale web=1
-</code></pre><p>Keep in mind that a new deploy will wipe the cache.</p>
+</code></pre>
+<p>Keep in mind that a new deploy will wipe the cache.</p>
 <h2 id="license">License</h2>
 <p>MIT</p>
 
