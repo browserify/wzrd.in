@@ -52,7 +52,7 @@ stringify.goodbye = [
   '',
   '    https://github.com/jesusabdullah/browserify-cdn/issues',
   '',
-  'Include the ENTIRETY of the contents of this message, and he can',
+  'Include the ENTIRETY of the contents of this message, and he or she can',
   'try to help you out.',
   '',
   'Have a nice day!',
