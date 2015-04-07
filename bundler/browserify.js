@@ -52,23 +52,32 @@ module.exports = function (env, options, cb) {
     }
 
     env.log.info('browserify: running browserify with options: `' + JSON.stringify(argv) + '`...');
-    var bfy = env.spawn('browserify', argv, {
-      cwd: path.join('node_modules', moduleFolder)
-    });
 
-    gatherOutputs('browserify', bfy, function (err, data) {
-      if (err) {
-        delete err.stdout;
-        return cb(err);
+    var cwdPath = path.join('node_modules', moduleFolder);
+    var bfy;
+    env.fs.exists(cwdPath, function (exists) {
+      var opt;
+      if (exists) {
+        opt = {
+          cwd: path.join('node_modules', moduleFolder)
+        };
       }
+      var bfy = env.spawn('browserify', argv, opt);
+      gatherOutputs('browserify', bfy, function (err, data) {
+        if (err) {
+          delete err.stdout;
+          return cb(err);
+        }
 
-      env.log.info('browserify: browserification complete.');
+        env.log.info('browserify: browserification complete.');
 
-      data.stderr.split('\n').forEach(function (l) {
-        env.log.info('browserify: stderr - ' + l);
+        data.stderr.split('\n').forEach(function (l) {
+          env.log.info('browserify: stderr - ' + l);
+        });
+
+        cb(null, data.stdout);
       });
-
-      cb(null, data.stdout);
     });
+
   }
 };
