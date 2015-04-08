@@ -42,6 +42,7 @@ tap.test('singular bundles with subfiles build the first time', function (t) {
     })
   ;
 });
+*/
 
 tap.test('singular bundles of standalone core modules build the first time', function (t) {
   supertest(cdn)
@@ -54,7 +55,6 @@ tap.test('singular bundles of standalone core modules build the first time', fun
     })
   ;
 });
-*/
 
 tap.test('teardown', function (t) {
   rimraf('./cdn.db', function (err) {
