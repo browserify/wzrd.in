@@ -1,4 +1,5 @@
 var gatherOutputs = require('./gather-outputs');
+var registryURL = require('./registry').registryURL;
 
 //
 // Run npm install
@@ -8,7 +9,7 @@ module.exports = function install(env, module, cb) {
 
   env.log.info('install: installing `' + module + '`...');
 
-  npm = env.spawn('npm', [ 'install', '--production' ], {
+  npm = env.spawn('npm', [ 'install', '--production', '--registry', registryURL ], {
     cwd: 'node_modules/' + module
   });
 

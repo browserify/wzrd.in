@@ -12,9 +12,11 @@ var registry = module.exports = function get(module, version, cb) {
   });
 };
 
+var registryURL = registry.registryURL = process.env.REGISTRY || 'http://registry.npmjs.org/';
+
 registry.metadata = function metadata(module, cb) {
   request({
-    uri: 'http://registry.npmjs.org/' + module,
+    uri: registryURL + module,
     json: true
   }, function (err, res, body) {
     if (res.statusCode !== 200) {
@@ -89,7 +91,7 @@ registry.versions = function versions(module, version, cb) {
 
 registry.download = function download(module, version) {
   return request(
-    'http://registry.npmjs.org/' +
+    registryURL +
     module + '/-/' +
     module + '-' + version + '.tgz'
   );
