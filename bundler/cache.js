@@ -79,7 +79,7 @@ var c = module.exports = function (location) {
   var bundles, multibundles, aliases, statuses;
 
   bundles = new Cache('bundles', db, {
-    ttl: 30 * DAYS
+    ttl: 14 * DAYS
   });
 
   aliases = cull(new Cache('aliases', db, {
