@@ -1,9 +1,11 @@
 var path = require('path'),
-    EventEmitter = require('events').EventEmitter;
+    EventEmitter = require('events').EventEmitter,
+    fs = require('fs');
 
 var log = require('minilog')('bundler'),
     xtend = require('xtend'),
-    waitress = require('waitress');
+    waitress = require('waitress'),
+    npm = require('npm');
 
 var cache = require('./cache'),
     core = require('./node-core'),
@@ -12,6 +14,7 @@ var cache = require('./cache'),
     unpack = require('./unpack'),
     riggledogg = require('./riggledogg'),
     install = require('./install'),
+    link = require('./link'),
     browserify = require('./browserify');
 
 
@@ -22,6 +25,7 @@ module.exports = function bundler(opts) {
       root = opts.root;
 
   var c = cache(db);
+
 
   //
   // Used to handle the case where a build is already in-progress
@@ -40,17 +44,23 @@ module.exports = function bundler(opts) {
 
     alias(module, semver, checkBundles);
 
-    function checkBundles(err, version) {
+    function checkBundles(err, moduleIsLinked, version) {
       if (err) return callback(err);
 
       pkg.version = version;
 
-      c.bundles.check(pkg, function (cb) {
-        return build(pkg, cb);
-      }, callback);
+
+      if(moduleIsLinked) {
+        build(pkg, moduleIsLinked, callback);
+      }
+      else {
+        c.bundles.check(pkg, function (cb) {
+          return build(pkg, moduleIsLinked, cb);
+        }, callback);
+      }
     }
 
-    function build(pkg, cb) {
+    function build(pkg, linkedModule, cb) {
       var module = pkg.module,
           version = pkg.version,
           subfile = pkg.subfile,
@@ -109,22 +119,46 @@ module.exports = function bundler(opts) {
           });
         }
 
-        unpack(env, registry.download(module, version), function (err) {
-          if (err) return handleError(err);
+        
 
-          riggledogg(env, module, function (err, json) {
-            if (err) return handleError(err);
+        if(linkedModule) {
+          console.log('calling bundleFromLinkedModule');
+          bundleFromLinkedModule();
+        }
+        else {
+          console.log('calling bundleFromRegistry');
+          bundleFromRegistry();
+        }
 
-            install(env, module, function (err) {
-              if (err) return handleError(err);
-
+        function bundleFromLinkedModule() {
+            link(env, module, function(err) {
               browserify(env, pkg, function (err, bundle) {
                 if (err) return handleError(err);
-                return finish(err, bundle, json);
+                return finish(err, bundle, {});
+              });
+            });
+        }
+        
+
+        function bundleFromRegistry() {
+          unpack(env, registry.download(module, version), function (err) {
+            if (err) return handleError(err);
+
+            riggledogg(env, module, function (err, json) {
+              if (err) return handleError(err);
+
+              install(env, module, function (err) {
+                if (err) return handleError(err);
+
+                browserify(env, pkg, function (err, bundle) {
+                  if (err) return handleError(err);
+                  return finish(err, bundle, json);
+                });
               });
             });
           });
-        });
+        }
+
         function finish(err, bundle, json) {
           if (err) return handleError(err);
 
@@ -132,7 +166,9 @@ module.exports = function bundler(opts) {
 
           var result = { package: json, bundle: bundle };
 
-          c.statuses.put(pkg, { ok: true });
+          if(json) {
+            c.statuses.put(pkg, { ok: true });
+          }
 
           inProgress[key].emit('bundle', result);
           destroyInProgress();
@@ -171,13 +207,30 @@ module.exports = function bundler(opts) {
 
   _bundle.alias = alias;
   function alias(module, semver, callback) {
-    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
-      registry.resolve(module, semver, function (err, v) {
-        if (err) return callback(err);
+    npm.load({}, function() {
+      npmPrefix = npm.config.get('prefix');
+      fs.exists(path.join(npmPrefix, 'lib/node_modules'), function(moduleIsLinked) {
+        if(moduleIsLinked) {
+          callback(null, true);
+        }
+        else {
+          c.aliases.check(
+            { module: module, semver: semver },
+            function resolve(cb) {
+              registry.resolve(module, semver, function (err, v) {
+                if (err) return callback(err);
 
-        cb(null, v);
+                cb(null, false, v);
+              });
+            },
+            callback
+          );
+        }
+
+
+
       });
-    }, callback);
+    });
   }
 
   _bundle.status = status;

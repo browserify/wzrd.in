@@ -1,10 +1,16 @@
-var request = require('request'),
-    semver = require('semver');
+var log = require('minilog')('registry'),
+    request = require('request'),
+    semver = require('semver'),
+    npm = require('npm');
+
+var npmRegistry;
 
 //
 // Find tarballs on npm
 //
 var registry = module.exports = function get(module, version, cb) {
+  console.log('*** registry.get');
+  log.info('getting npm registry');
   registry.resolve(module, version, function (err, v) {
     if (err) return cb(err);
 
@@ -13,8 +19,9 @@ var registry = module.exports = function get(module, version, cb) {
 };
 
 registry.metadata = function metadata(module, cb) {
+  console.log('metadata: npmRegistry = ' + npmRegistry);
   request({
-    uri: 'http://registry.npmjs.org/' + module,
+    uri: npmRegistry + module,
     json: true
   }, function (err, res, body) {
     if (res.statusCode !== 200) {
@@ -35,13 +42,19 @@ registry.metadata = function metadata(module, cb) {
 };
 
 registry.resolve = function resolve(module, version, cb) {
-  registry.versions(module, version, function (err, vs) {
-    if (err) return cb(err);
-    cb(null, vs[0]);
+  npm.load({}, function() {
+    npmRegistry = npm.config.get('registry');
+    
+    registry.versions(module, version, function (err, vs) {
+      if (err) return cb(err);
+      cb(null, vs[0]);
+    });
   });
+
 };
 
 registry.versions = function versions(module, version, cb) {
+  console.log('*** registry.versions');
   registry.metadata(module, function (err, data) {
     if (err) {
       return cb(err);
@@ -89,7 +102,7 @@ registry.versions = function versions(module, version, cb) {
 
 registry.download = function download(module, version) {
   return request(
-    'http://registry.npmjs.org/' +
+    npmRegistry +
     module + '/-/' +
     module + '-' + version + '.tgz'
   );
