@@ -12,7 +12,14 @@ var registry = module.exports = function get(module, version, cb) {
   });
 };
 
-var registryURL = registry.registryURL = process.env.REGISTRY || 'http://registry.npmjs.org/';
+//
+// Define the registry that will be used for installing npm packages
+//
+var registryURL = process.env.REGISTRY || 'http://registry.npmjs.org/';
+if (registryURL.substr(-1) !== '/') {
+  registryURL += '/';
+}
+registry.registryURL = registryURL;
 
 registry.metadata = function metadata(module, cb) {
   request({
