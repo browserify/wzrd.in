@@ -132,7 +132,7 @@ function get(bundle) {
 
     var hash = req.params.bundle;
 
-    cache.multibundles(decodeURIComponent(hash), function nope(cb) {
+    cache.multibundles.get(decodeURIComponent(hash), function nope(cb) {
       res.statusCode = 404;
       res.setHeader('content-type', 'text/plain');
       res.write(stringifyError.hello);
