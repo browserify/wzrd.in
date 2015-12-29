@@ -1,6 +1,6 @@
 # browserify-as-a-service
 
-[![Build Status](https://travis-ci.org/jfhbrook/browserify-cdn.png?branch=master)](https://travis-ci.org/jfhbrook/browserify-cdn)
+[![Build Status](https://travis-ci.org/jfhbrook/wzrd.in.png?branch=master)](https://travis-ci.org/jfhbrook/wzrd.in)
 
 #### Places
 
