@@ -4,10 +4,10 @@ module.exports = function (app, bundle) {
   //
   // Singular bundles
   //
-  app.get('/bundle/:module', singular(bundle));
-  app.get('/debug-bundle/:module', singular(bundle, { debug: true }));
-  app.get('/standalone/:module', singular(bundle, { standalone: true }));
-  app.get('/debug-standalone/:module', singular(bundle, { standalone: true, debug: true }));
+  app.get('/bundle/:scope?/:module', singular(bundle));
+  app.get('/debug-bundle/:scope?/:module', singular(bundle, { debug: true }));
+  app.get('/standalone/:scope?/:module', singular(bundle, { standalone: true }));
+  app.get('/debug-standalone/:scope?/:module', singular(bundle, { standalone: true, debug: true }));
 };
 
 function singular(bundle, opts) {
@@ -17,6 +17,7 @@ function singular(bundle, opts) {
     var t = req.params.module.split('@'),
         module = t.shift(),
         version,
+        scope = req.params.scope,
         subfile = module.split('/');
 
     var o = JSON.parse(JSON.stringify(opts));
@@ -34,7 +35,12 @@ function singular(bundle, opts) {
       o.subfile = subfile;
     }
 
-    o.module = module;
+    if (scope) {
+      o.module = scope + '%2F' + module;
+    }
+    else {
+      o.module = module;
+    }
     o.version = version;
 
     bundle(o, serveBundle(res));

@@ -4,7 +4,7 @@ module.exports = function (app, bundle) {
   //
   // Build statuses
   //
-  app.get('/status/:module', status(bundle));
+  app.get('/status/:scope?/:module', status(bundle));
 };
 
 function status(bundle) {
@@ -12,6 +12,7 @@ function status(bundle) {
     var t = req.params.module.split('@'),
         module = t.shift(),
         semver,
+        scope = req.params.scope,
         subfile = module.split('/');
 
     if (t.length) {
@@ -24,6 +25,13 @@ function status(bundle) {
     if (subfile.length > 1) {
       module = subfile.shift();
       subfile = subfile.join('/');
+    }
+    
+    if (scope) {
+      module = scope + '%2F' + module;
+    }
+    else {
+      module = module;
     }
 
     bundle.status(module, semver, function (err, sts) {

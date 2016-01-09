@@ -57,6 +57,58 @@ tap.test('latest has been built', function (t) {
   ;
 });
 
+tap.test('latest scoped has not been built', function (t) {
+  supertest(cdn)
+    .get('/status/@tatumcreative/color@latest')
+    .expect('Content-Type', 'application/json; charset=utf-8') // due to res.json
+    .expect(200)
+    .end(function (err, res) {
+      t.ok(!err, 'requesting /status/@tatumcreative/color@latest doesn\'t explode');
+
+      var builds = JSON.parse(res.text);
+
+      t.doesNotThrow(function () {
+        t.equal(builds.module, '@tatumcreative%2Fcolor', 'module is @tatumcreative%2Fcolor');
+        t.equal(Object.keys(builds.builds).length, 0, 'no builds for semver range');
+      }, 'returns an object');
+      t.end();
+    })
+  ;
+});
+
+tap.test('build latest scoped', function (t) {
+  supertest(cdn)
+    .get('/standalone/@tatumcreative/color@latest')
+    .expect('Content-Type', 'text/javascript')
+    .expect(200)
+    .end(function (err, res) {
+      t.error(err, 'requesting /standalone/@tatumcreative/color@latest doesn\'t explode');
+      t.end();
+    })
+  ;
+});
+
+tap.test('latest scoped has been built', function (t) {
+  supertest(cdn)
+    .get('/status/@tatumcreative/color@latest')
+    .expect('Content-Type', 'application/json; charset=utf-8') // due to res.json
+    .expect(200)
+    .end(function (err, res) {
+      t.ok(!err, 'requesting /status/@tatumcreative/color@latest doesn\'t explode');
+
+      var builds = JSON.parse(res.text);
+
+      t.doesNotThrow(function () {
+        t.equal(builds.module, '@tatumcreative%2Fcolor', 'module is @tatumcreative%2Fcolor');
+        t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
+        t.equal(builds.builds[Object.keys(builds.builds)].ok, true, 'worked correctly');
+      }, 'returns an object');
+      t.end();
+    })
+  ;
+});
+
+
 tap.test('teardown', function (t) {
   rimraf('./cdn.db', function (err) {
     t.error(err, 'removed the database');

@@ -97,9 +97,22 @@ registry.versions = function versions(module, version, cb) {
 };
 
 registry.download = function download(module, version) {
-  return request(
-    registryURL +
-    module + '/-/' +
-    module + '-' + version + '.tgz'
-  );
+  
+  if (module[0] === "@") {
+    var matches = module.match(/^@([^/]+)%2F(.+)/);
+    var scope = matches[1];
+    var name = matches[2];
+
+    return request(
+      registryURL +
+      '@' + scope + '/' + name + '/-/' +
+      name + '-' + version + '.tgz'
+    );
+  } else {
+    return request(
+      registryURL +
+      module + '/-/' +
+      module + '-' + version + '.tgz'
+    );
+  }
 };
