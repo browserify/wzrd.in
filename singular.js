@@ -14,19 +14,19 @@ function singular(bundle, opts) {
   opts = opts || {};
 
   return function (req, res) {
-    var t = req.params.module.split('@'),
-        module = t.shift(),
-        version,
-        subfile = module.split('/');
+    var scope,
+        version = 'latest',
+        module = req.params.module,
+        matches = module.match(/^(@[^/]+)?(\/)?([^@]+)@?(.+)?/);
 
-    var o = JSON.parse(JSON.stringify(opts));
+    if (matches) {
+      scope = matches[1];
+      module = matches[3] ? matches[3] : module;
+      version = matches[4] ? matches[4] : version;
+    }
 
-    if (t.length) {
-      version = t.shift();
-    }
-    else {
-      version = 'latest';
-    }
+    var subfile = module.split('/'),
+        o = JSON.parse(JSON.stringify(opts));
 
     if (subfile.length > 1) {
       module = subfile.shift();
@@ -34,7 +34,12 @@ function singular(bundle, opts) {
       o.subfile = subfile;
     }
 
-    o.module = module;
+    if (scope) {
+      o.module = scope + '%2F' + module;
+    }
+    else {
+      o.module = module;
+    }
     o.version = version;
 
     bundle(o, serveBundle(res));
