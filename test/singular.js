@@ -32,11 +32,11 @@ tap.test('singular bundles are cached the second time', function (t) {
 
 tap.test('singular scoped bundles build the first time', function (t) {
   supertest(cdn)
-    .get('/standalone/@tatumcreative/color@latest')
+    .get('/standalone/@tatumcreative%2Fcolor@latest')
     .expect('Content-Type', 'text/javascript')
     .expect(200)
     .end(function (err, res) {
-      t.error(err, 'requesting /standalone/@tatumcreative/color@latest doesn\'t explode');
+      t.error(err, 'requesting /standalone/@tatumcreative%2Fcolor@latest doesn\'t explode');
       t.end();
     })
   ;

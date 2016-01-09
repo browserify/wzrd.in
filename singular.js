@@ -4,30 +4,29 @@ module.exports = function (app, bundle) {
   //
   // Singular bundles
   //
-  app.get('/bundle/:scope?/:module', singular(bundle));
-  app.get('/debug-bundle/:scope?/:module', singular(bundle, { debug: true }));
-  app.get('/standalone/:scope?/:module', singular(bundle, { standalone: true }));
-  app.get('/debug-standalone/:scope?/:module', singular(bundle, { standalone: true, debug: true }));
+  app.get('/bundle/:module', singular(bundle));
+  app.get('/debug-bundle/:module', singular(bundle, { debug: true }));
+  app.get('/standalone/:module', singular(bundle, { standalone: true }));
+  app.get('/debug-standalone/:module', singular(bundle, { standalone: true, debug: true }));
 };
 
 function singular(bundle, opts) {
   opts = opts || {};
 
   return function (req, res) {
-    var t = req.params.module.split('@'),
-        module = t.shift(),
-        version,
-        scope = req.params.scope,
-        subfile = module.split('/');
+    var scope,
+        version = 'latest',
+        module = req.params.module,
+        matches = module.match(/^(@[^/]+)?(\/)?([^@]+)@?(.+)?/);
 
-    var o = JSON.parse(JSON.stringify(opts));
+    if (matches) {
+      scope = matches[1];
+      module = matches[3] ? matches[3] : module;
+      version = matches[4] ? matches[4] : version;
+    }
 
-    if (t.length) {
-      version = t.shift();
-    }
-    else {
-      version = 'latest';
-    }
+    var subfile = module.split('/'),
+        o = JSON.parse(JSON.stringify(opts));
 
     if (subfile.length > 1) {
       module = subfile.shift();
