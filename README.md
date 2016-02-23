@@ -8,6 +8,7 @@
 * [browserify on the web](http://browserify.org)
 * [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox) - helpful for using multi-bundles
 * [requirebin.com](http://requirebin.com) - powered by browserify-cdn
+* [esnextb.in](http://esnextb.in) - also powered by browserify-cdn
 
 # Quick Start
 
