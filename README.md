@@ -157,6 +157,15 @@ git push heroku master
 heroku ps:scale web=1
 ```
 
+## Docker Installation
+
+You can build and run an image doing the following:
+
+```sh
+docker build -t "wzrd.in" /path/to/wzrd.in
+docker run -p 8080:8080 wzrd.in
+```
+
 Keep in mind that a new deploy will wipe the cache.
 
 ## License
