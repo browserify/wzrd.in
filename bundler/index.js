@@ -123,9 +123,7 @@ module.exports = function bundler(opts) {
                 if (err) return handleError(err);
                 if (pkg.debug) return finish(err, bundle, json);
 
-                minify(env, bundle, function (err, cbundle) {
-                  return finish(null, err ? bundle : cbundle, json);
-                });
+                finish(err, minify(env, bundle) || bundle, json);
               });
             });
           });
