@@ -3,6 +3,7 @@ var stringifyError = require('./stringify-error');
 module.exports = function (app, bundle) {
   app.post('/multi', jsonParser, create(bundle));
   app.get('/multi/:bundle', get(bundle));
+  app.purge('/multi:bundle', purge(bundle));
 };
 
 //
@@ -123,6 +124,26 @@ function create(bundle) {
     });
   };
 };
+
+function purge (bundle) {
+  var cache = bundle.cache;
+
+  return function (req, res) {
+    var hash = req.params.bundle;
+
+    cache.multibundles.del(decodeURIComponent(hash), function(err) {
+      if (err) {
+        res.statusCode = 500;
+        res.setHeader('content-type', 'text/plain');
+        res.write(stringifyError.hello);
+        res.write(stringifyError(err));
+        return res.end(stringifyError.goodbye);
+      }
+      res.setHeader('content-type', 'text/plain');
+      res.end('PURGE IS PURGED\n');
+    });
+  };
+}
 
 function get(bundle) {
 

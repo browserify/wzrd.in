@@ -172,6 +172,34 @@ module.exports = function bundler(opts) {
     }
   };
 
+  _bundle.purge = purge;
+  function purge(pkg, callback) {
+    var module = pkg.module,
+        semver = pkg.version;
+
+    if (core.test(module)) {
+      return purgeBundles(null, process.version);
+    }
+
+    alias(module, semver, purgeBundles);
+
+    function purgeBundles(err, version) {
+      if (err) return callback(err);
+
+      log.info('purge: ' + JSON.stringify({ module: module, semver: semver, version: version }));
+
+      var done = waitress(2, callback);
+
+      c.aliases.del({ module: module, semver: semver }, done);
+
+      pkg.version = version;
+
+      delete pkg.purge;
+
+      c.bundles.del(pkg, done);
+    }
+  }
+
   _bundle.alias = alias;
   function alias(module, semver, callback) {
     c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
