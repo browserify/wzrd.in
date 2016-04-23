@@ -25,27 +25,23 @@ Cache.prototype.put = function put(key, val, cb) {
   this.db.put(this.hashfxn(key), JSON.stringify(val), cb);
 };
 
-Cache.prototype.del = function del(key, cb) {
-  this.db.del(this.hashfxn(key), cb);
-}
-
 Cache.prototype.check = function check(body, generate, cb) {
   var hash = this.hashfxn(body),
       db = this.db,
       name = this.name,
       ttl = this.ttl;
 
-  log.info('cache: checking `' + name + '` for hash `' + hash + '`...');
+  log('cache: checking `' + name + '` for hash `' + hash + '`...');
 
   db.get(hash, function (err, res) {
 
     if (err && err.name === 'NotFoundError') {
 
-      log.info('cache: `' + name + '` did not have `' + hash + '`.');
+      log('cache: `' + name + '` did not have `' + hash + '`.');
       return generate(function (err, _res) {
         if (err) return cb(err);
 
-        log.info(
+        log(
           'cache: saving hash `' + hash + '` in `' + name + '` ' + (
             (typeof ttl === 'number')
               ? 'with ttl ' + ttl +'...'
@@ -61,7 +57,7 @@ Cache.prototype.check = function check(body, generate, cb) {
         }
 
         function finish(err) {
-          log.info('saved hash `' + hash + '` in `' + name + '`.');
+          log('saved hash `' + hash + '` in `' + name + '`.');
           cb(err, _res);
         }
       });
