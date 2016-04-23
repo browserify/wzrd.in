@@ -12,7 +12,8 @@ var cache = require('./cache'),
     unpack = require('./unpack'),
     riggledogg = require('./riggledogg'),
     install = require('./install'),
-    browserify = require('./browserify');
+    browserify = require('./browserify'),
+    minify = require('./minify');
 
 
 module.exports = function bundler(opts) {
@@ -120,7 +121,9 @@ module.exports = function bundler(opts) {
 
               browserify(env, pkg, function (err, bundle) {
                 if (err) return handleError(err);
-                return finish(err, bundle, json);
+                if (pkg.debug) return finish(err, bundle, json);
+
+                finish(err, minify(env, bundle) || bundle, json);
               });
             });
           });

@@ -8,6 +8,7 @@
   "dependencies": {
     "basic": "0.0.3",
     "browserify": "~8.0.3",
+    "compression": "~1.6.1",
     "concat-stream": "~1.4.1",
     "cors": "~2.1.1",
     "express": "~3.4.8",
@@ -22,6 +23,7 @@
     "request": "~2.33.0",
     "rimraf": "~2.2.6",
     "semver": "~2.2.1",
+    "uglify-js": "~2.6.2",
     "uuid": "~1.4.1",
     "waitress": "~0.1.5",
     "xtend": "~2.1.2"
