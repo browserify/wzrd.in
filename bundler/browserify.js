@@ -40,6 +40,9 @@ module.exports = function (env, options, cb) {
     if (options.debug) {
       argv.push('--debug');
     }
+    if (options.fullPaths) {
+      argv.push('--full-paths');
+    }
 
     if (options.standalone) {
       argv.push('--standalone');
