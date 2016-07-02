@@ -74,10 +74,10 @@ POST a body that looks something like this:
 }
 ```
 
-"options" is where you get to set "debug" and "standalone". Usually, in this
-case, you'll probably only really care about debug. If you don't define
-"options", this will default to `{ "debug": false, "standalone": false }`.
-"dependencies" is an npm-style deps hash.
+"options" is where you get to set "debug", "standalone", and "fullPaths".
+Usually, in this case, you'll probably only really care about debug. If you
+don't define "options", it will default to
+`{ "debug": false, "standalone": false, "fullPaths": false }`.
 
 What you get in return looks something like this:
 
