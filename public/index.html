@@ -31,6 +31,7 @@
 <li><a href="http://browserify.org">browserify on the web</a></li>
 <li><a href="https://github.com/maxogden/browser-module-sandbox">browser-module-sandbox</a> - helpful for using multi-bundles</li>
 <li><a href="http://requirebin.com">requirebin.com</a> - powered by browserify-cdn</li>
+<li><a href="http://esnextb.in">esnextb.in</a> - also powered by browserify-cdn</li>
 </ul>
 <h1 id="quick-start">Quick Start</h1>
 <p>Try visiting this link:</p>
@@ -50,23 +51,18 @@ But if you were to try and grab a bundle that
 <h1 id="api">API</h1>
 <p>There are a few API endpoints:</p>
 <h2 id="get-bundle-module">GET /bundle/:module</h2>
-<p>Get the latest version of <code>:module</code>.</p>
+<p>Get the latest version of :module.</p>
 <h2 id="get-bundle-module-version">GET /bundle/:module@:version</h2>
 <p>Get a version of <code>:module</code> which satisfies the given <code>:version</code>
 <a href="https://github.com/isaacs/node-semver#ranges">semver range</a>. Defaults to latest.</p>
-<h2 id="get-bundle-scope-module-version">GET /bundle/@:scope%2F:module@:version</h2>
-<p>From the <code>:scope</code>, get a <code>:module</code>, optionally with the <code>:version</code></p>
 <h2 id="get-debug-bundle-module">GET /debug-bundle/:module</h2>
 <h2 id="get-debug-bundle-module-version">GET /debug-bundle/:module@:version</h2>
-<h2 id="get-debug-bundle-scope-module-version">GET /debug-bundle/:@:scope%2F:module@:version</h2>
-<p>The same as the prior three, except with <code>--debug</code> passed to browserify.</p>
+<p>The same as the prior two, except with <code>--debug</code> passed to browserify.</p>
 <h2 id="get-standalone-module">GET /standalone/:module</h2>
 <h2 id="get-standalone-module-version">GET /standalone/:module@:version</h2>
-<h2 id="get-standalone-scope-module-version">GET /standalone/@:scope%2F:module@:version</h2>
 <p>In this case, <code>--standalone</code> is passed to browserify.</p>
 <h2 id="get-debug-standalone-module">GET /debug-standalone/:module</h2>
 <h2 id="get-debug-standalone-module-version">GET /debug-standalone/:module@:version</h2>
-<h2 id="get-debug-standalone-scope-module-version">GET /debug-standalone/@:scope%2F:module@:version</h2>
 <p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
 <h2 id="post-multi">POST /multi</h2>
 <p>POST a body that looks something like this:</p>
@@ -80,10 +76,10 @@ But if you were to try and grab a bundle that
   }
 }
 </code></pre>
-<p>&quot;options&quot; is where you get to set &quot;debug&quot; and &quot;standalone&quot;. Usually, in this
-case, you&#39;ll probably only really care about debug. If you don&#39;t define
-&quot;options&quot;, this will default to <code>{ &quot;debug&quot;: false, &quot;standalone&quot;: false }</code>.
-&quot;dependencies&quot; is an npm-style deps hash.</p>
+<p>&quot;options&quot; is where you get to set &quot;debug&quot;, &quot;standalone&quot;, and &quot;fullPaths&quot;.
+Usually, in this case, you&#39;ll probably only really care about debug. If you
+don&#39;t define &quot;options&quot;, it will default to
+<code>{ &quot;debug&quot;: false, &quot;standalone&quot;: false, &quot;fullPaths&quot;: false }</code>.</p>
 <p>What you get in return looks something like this:</p>
 <pre><code>HTTP/1.1 200 OK
 X-Powered-By: Express
@@ -110,7 +106,6 @@ future GETs.</p>
 instead of POSTing again.</p>
 <h2 id="get-status-module">GET /status/:module</h2>
 <h2 id="get-status-module-version">GET /status/:module@:version</h2>
-<h2 id="get-status-scope-module-version">GET /status/@:scope%2F:module@:version</h2>
 <p>Get information on the build status of a module. Returns build information for
 all versions which satisfy the given semver (or latest in the event of a
 missing semver).</p>
@@ -145,6 +140,11 @@ false), this property will contain information about the error</li>
 <pre><code class="lang-sh">heroku create my-browserify-cdn
 git push heroku master
 heroku ps:scale web=1
+</code></pre>
+<h2 id="docker-installation">Docker Installation</h2>
+<p>You can build and run an image doing the following:</p>
+<pre><code class="lang-sh">docker build -t &quot;wzrd.in&quot; /path/to/wzrd.in
+docker run -p 8080:8080 wzrd.in
 </code></pre>
 <p>Keep in mind that a new deploy will wipe the cache.</p>
 <h2 id="license">License</h2>
