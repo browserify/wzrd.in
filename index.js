@@ -15,6 +15,8 @@ var singular = require('./singular'),
     multiple = require('./multiple'),
     statuses = require('./statuses');
 
+app.routes = new express.Router();
+
 //
 // Add static assets
 //
@@ -27,22 +29,22 @@ app.use(express.static(__dirname + '/public'));
 //
 // Admin REST API
 //
-admin(app, bundle);
+admin(app.routes, bundle);
 
 //
 // Single-module bundles
 //
-singular(app, bundle);
+singular(app.routes, bundle);
 
 //
 // Multiple-module bundles
 //
-multiple(app, bundle);
+multiple(app.routes, bundle);
 
 //
 // Build statuses
 //
-statuses(app, bundle);
+statuses(app.routes, bundle);
 
 //
 // Exports
