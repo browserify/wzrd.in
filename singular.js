@@ -1,54 +1,48 @@
 var stringifyError = require('./stringify-error');
 
-module.exports = function (app, bundle) {
+module.exports = function (app, bundler) {
   //
   // Singular bundles
   //
-  app.get('/bundle/:module', singular(bundle));
-  app.purge('/bundle/:module', singular(bundle, { purge: true }));
-  app.get('/debug-bundle/:module', singular(bundle, { debug: true }));
-  app.purge('/debug-bundle/:module', singular(bundle, { debug: true, purge: true }));
-  app.get('/standalone/:module', singular(bundle, { standalone: true }));
-  app.purge('/standalone/:module', singular(bundle, { standalone: true, purge: true }));
-  app.get('/debug-standalone/:module', singular(bundle, { standalone: true, debug: true }));
-  app.purge('/debug-standalone/:module', singular(bundle, { standalone: true, debug: true, purge: true }));
+  app.get('/bundle/:module', singular(bundler));
+  app.purge('/bundle/:module', singular(bundler, { purge: true }));
+  app.get('/debug-bundle/:module', singular(bundler, { debug: true }));
+  app.purge('/debug-bundle/:module', singular(bundler, { debug: true, purge: true }));
+  app.get('/standalone/:module', singular(bundler, { standalone: true }));
+  app.purge('/standalone/:module', singular(bundler, { standalone: true, purge: true }));
+  app.get('/debug-standalone/:module', singular(bundler, { standalone: true, debug: true }));
+  app.purge('/debug-standalone/:module', singular(bundler, { standalone: true, debug: true, purge: true }));
 };
 
-function singular(bundle, opts) {
-  opts = opts || {};
+function singular(bundler, routeOpts) {
+  routeOpts = routeOpts || {};
 
   return function (req, res) {
-    var scope,
-        version = 'latest',
-        module = req.params.module,
-        matches = module.match(/^(@[^/]+)?(\/)?([^@]+)@?(.+)?/);
+    const input = {
+      module_semver: 'latest',
+      debug: routeOpts.debug,
+      standalone: routeOpts.standalone
+    };
+
+    const params = req.params.module;
+    const matches = params.match(/^(@[^/]+)?(\/)?([^@]+)@?(.+)?/);
 
     if (matches) {
-      scope = matches[1];
-      module = matches[3] ? matches[3] : module;
-      version = matches[4] ? matches[4] : version;
+      input.module_scope = matches[1];
+      input.module_name = matches[3] ? matches[3] : params;
+      input.module_semver = matches[4] ? matches[4] : input.module_semver;
     }
 
-    var subfile = module.split('/'),
-        o = JSON.parse(JSON.stringify(opts));
+    const subfile = input.module_name.split('/');
 
     if (subfile.length > 1) {
-      module = subfile.shift();
-      subfile = subfile.join('/');
-      o.subfile = subfile;
+      input.module_name = subfile.shift();
+      input.module_subfile = subfile.join('/');
     }
-
-    if (scope) {
-      o.module = scope + '%2F' + module;
-    }
-    else {
-      o.module = module;
-    }
-    o.version = version;
 
     var serve = serveBundle(res);
 
-    if (o.purge) {
+    if (routeOpts.purge) {
       return bundle.purge(o, function(err) {
         if (err) {
           return fiveHundred(res, err);
@@ -59,7 +53,7 @@ function singular(bundle, opts) {
       });
     }
 
-    bundle(o, serveBundle(res));
+    bundle(input, serveBundle(res));
   };
 }
 

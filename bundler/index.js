@@ -1,243 +1,138 @@
-var path = require('path'),
-    EventEmitter = require('events').EventEmitter;
+'use strict';
 
-var log = require('minilog')('bundler'),
-    xtend = require('xtend'),
-    waitress = require('waitress');
+const path = require('path');
 
-var cache = require('./cache'),
-    core = require('./node-core'),
-    buildEnv = require('./build-env'),
-    registry = require('./registry'),
-    unpack = require('./unpack'),
-    riggledogg = require('./riggledogg'),
-    install = require('./install'),
-    browserify = require('./browserify'),
-    minify = require('./minify');
+const log = require('minilog')('bundler');
+const Promise = require('bluebird');
+const xtend = require('xtend');
+const waitress = require('waitress');
 
+const Builder = require('../builder');
+const cache = require('./cache');
+const core = require('./node-core');
+const registry = require('./registry');
 
-module.exports = function bundler(opts) {
-  opts = opts || {};
+class Bundler {
+  constructor(opts) {
+    opts = opts || {};
 
-  var db = opts.db,
-      root = opts.root;
-
-  var c = cache(db);
-
-  //
-  // Used to handle the case where a build is already in-progress
-  //
-  var inProgress = {};
-
-  var _bundle = function bundle(pkg, callback) {
-
-    var module = pkg.module,
-        semver = pkg.version;
-
-
-    if (core.test(module)) {
-      return checkBundles(null, process.version);
-    }
-
-    alias(module, semver, checkBundles);
-
-    function checkBundles(err, version) {
-      if (err) return callback(err);
-
-      pkg.version = version;
-
-      c.bundles.check(pkg, function (cb) {
-        return build(pkg, cb);
-      }, callback);
-    }
-
-    function build(pkg, cb) {
-      var module = pkg.module,
-          version = pkg.version,
-          subfile = pkg.subfile,
-          key = [module, version, subfile].join('::');
-
-      if (inProgress[key]) {
-        inProgress[key].once('bundle', handleBundleEvent);
-        inProgress[key].once('error', handleErrorEvent);
-        return;
-      }
-
-      function handleBundleEvent(res) {
-        cb(null, res);
-        inProgress[key].removeListener('error', handleErrorEvent);
-        cleanupInProgress();
-      }
-
-      function handleErrorEvent(err) {
-        cb(err);
-        inProgress[key].removeListener('bundle', handleBundleEvent);
-        cleanupInProgress();
-      }
-
-      function cleanupInProgress() {
-        if (!(
-          inProgress[key].listeners('error').length +
-          inProgress[key].listeners('bundle').length
-        )) {
-          destroyInProgress();
-        }
-      }
-
-      function destroyInProgress() {
-        inProgress[key] = undefined;
-      }
-
-      //
-      // Set up the EE
-      //
-      inProgress[key] = new EventEmitter;
-      
-      // to prevent crashes from 'unhandled error' exceptions
-      inProgress[key].on('error', function noop() {});
-
-      log.info('about to browserify `' + module + '@' + version + '`...');
-
-      buildEnv({
-        root: module
-      }, function (err, env) {
-        if (err) return cb(withPath(err));
-
-        if (core.test(module)) {
-          pkg.__core__ = true;
-          return browserify(env, pkg, function (err, bundle) {
-            return finish(err, bundle, { core: true, version: pkg.version });
-          });
-        }
-
-        unpack(env, registry.download(module, version), function (err) {
-          if (err) return handleError(err);
-
-          riggledogg(env, module, function (err, json) {
-            if (err) return handleError(err);
-
-            install(env, module, function (err) {
-              if (err) return handleError(err);
-
-              browserify(env, pkg, function (err, bundle) {
-                if (err) return handleError(err);
-                if (pkg.debug) return finish(err, bundle, json);
-
-                finish(err, minify(env, bundle) || bundle, json);
-              });
-            });
-          });
-        });
-        function finish(err, bundle, json) {
-          if (err) return handleError(err);
-
-          log.info('bundler: successfully browserified `' + module + '@' + version + '`.');
-
-          var result = { package: json, bundle: bundle };
-
-          c.statuses.put(pkg, { ok: true });
-
-          inProgress[key].emit('bundle', result);
-          destroyInProgress();
-
-          cb(null, result);
-          env.teardown();
-        }
-
-        function handleError(err) {
-          err = withPath(err);
-
-          inProgress[key].emit('error', err);
-          destroyInProgress();
-
-          c.statuses.db.put(pkg, {
-            ok: false,
-            error: xtend(
-              {
-                message: err.message,
-                stack: err.stack
-              },
-              err
-            )
-          });
-
-          return cb(err);
-        }
-
-        function withPath(err) {
-          err.dirPath = env.dirPath;
-          return err;
-        }
-      });
-    }
-  };
-
-  _bundle.purge = purge;
-  function purge(pkg, callback) {
-    var module = pkg.module,
-        semver = pkg.version;
-
-    if (core.test(module)) {
-      return purgeBundles(null, process.version);
-    }
-
-    alias(module, semver, purgeBundles);
-
-    function purgeBundles(err, version) {
-      if (err) return callback(err);
-
-      log.info('purge: ' + JSON.stringify({ module: module, semver: semver, version: version }));
-
-      var done = waitress(2, callback);
-
-      c.aliases.del({ module: module, semver: semver }, done);
-
-      pkg.version = version;
-
-      delete pkg.purge;
-
-      c.bundles.del(pkg, done);
-    }
+    this._db = opts.db;
+    this._root = opts.root;
+    this._cache = cache(this._db);
+    this._builder = new Builder();
   }
 
-  _bundle.alias = alias;
-  function alias(module, semver, callback) {
-    c.aliases.check({ module: module, semver: semver }, function resolve(cb) {
-      registry.resolve(module, semver, function (err, v) {
-        if (err) return callback(err);
-
-        cb(null, v);
-      });
-    }, callback);
+  init() {
+    return this._builder.init();
   }
 
-  _bundle.status = status;
-  function status(module, semver, callback) {
-    registry.versions(module, semver, function (err, vs) {
-      if (err) return callback(err);
+  bundle(input) {
+    return Promise.try(() => {
+      if (core.test(input.module_name)) {
+        return process.version;
+      }
 
-      var sts = {},
-          finish = waitress(vs.length, function (err) {
-            if (err) return callback(err);
-            callback(null, sts);
-          });
+      return this._getAlias(input.module_name, input.module_semver);
+    }).then((module_version) => {
+      input.module_version = module_version;
 
-      vs.forEach(function (v) {
-        c.statuses.get({ module: module, version: v }, function (err, st) {
-          if (err) {
-            if (err.name == 'NotFoundError') {
-              return finish();
-            }
-            return finish(err);
-          }
-          sts[v] = st;
-          finish();
-        });
-      });
+      return this._getBundle(input);
     });
   }
 
-  _bundle.cache = c;
+  _getAlias(module, semver) {
+    return this._cache.aliases.check({ module: module, semver: semver }, () => {
+      return registry.resolve(module, semver)
+    });
+  }
 
-  return _bundle;
+  _getBundle(input) {
+    return this._cache.bundles.check(input, () => {
+      return this._build(input);
+    });
+  }
+
+  _build(input) {
+    return Promise.try(() => {
+      log.info(`about to browserify \`${input.module_name}@${input.module_version}\`...`);
+
+      return this._builder.build(input).then((output) => {
+        log.info(`bundler: successfully browserified \`${output.debug.module_name}@${output.debug.module_version}\`.`);
+
+        this._cache.statuses.put(input, { ok: true });
+
+        return {
+          'package': output.pkg,
+          bundle: output.bundle
+        };
+      }).catch((err) => {
+        err = withPath(err);
+
+        this._cache.statuses.db.put(pkg, {
+          ok: false,
+          error: Object.assign(
+            {
+              message: err.message,
+              stack: err.stack
+            },
+            err
+          )
+        });
+
+        throw err;
+      }
+
+      function withPath(err) {
+        err.dirPath = env.dirPath;
+        return err;
+      }
+    });
+  }
+
+  purge(input) {
+    return Promise.try(() => {
+      if (core.test(input.module_name)) {
+        return purgeBundles(null, process.version);
+      }
+
+      return this._getAlias(module, semver).then(purgeBundles);
+    });
+
+    function purgeBundles(version) {
+      log.info(`purge: ${JSON.stringify(input)}`);
+
+      var done = waitress(2, callback);
+
+      this._cache.aliases.del({ module: module, semver: semver }, done);
+
+      delete pkg.purge;
+
+      this._cache.bundles.del(pkg, done);
+    }
+  }
+
+  status(module, semver) {
+    return registry.versions(module, semver).then((versions) => {
+      const states = {};
+
+      return Promise.all(vs.map((version) => {
+        return this._cache.statuses.get({ module: module, version: version });
+      })).catch((err) => {
+        if (err.name === 'NotFoundError') {
+          return null;
+        }
+        throw err;
+      }).then((sts) => {
+        sts.forEach((st, i) => {
+          states[versions[i]] = st;
+        });
+
+        return states;
+      });
+    });
+  }
+};
+
+module.exports = function createBundler(opts) {
+  return new Bundler(opts);
 };
