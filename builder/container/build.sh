@@ -78,7 +78,6 @@ function die() {
 
   local debug=$(
     jq -n -c -M \
-      --arg error_code "${error_code}" \
       --arg module_scope "${module_scope}" \
       --arg module_name "${module_name}" \
       --arg module_version "${module_version}" \
@@ -87,7 +86,6 @@ function die() {
       --arg debug "${debug}" \
       --arg full_paths "${full_paths}" \
       '{
-        "error_code": $error_code,
         "module_scope": $module_scope,
         "module_name": $module_name,
         "module_version": $module_version,
@@ -99,11 +97,13 @@ function die() {
   )
 
   jq -n -c -M \
+    --arg error_code "${error_code}" \
     --argjson debug "${debug}" \
     --arg logs "${logs}" \
     --argjson pkg "${pkg}" \
     --arg bundle "${bundle}" \
     '{
+      "code": $error_code,
       "debug": $debug,
       "logs": $logs,
       "pkg": $pkg,

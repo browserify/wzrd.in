@@ -6,14 +6,14 @@ var express = require('express'),
 var bundler = require('./bundler'),
     defaults = require('./defaults'),
     admin = require('./admin'),
-    requestLogger = require('./request-logger');
+    requestLogger = require('./middlewares/request-logger');
 
 var app = express(),
     bundle = bundler(defaults());
 
-var singular = require('./singular'),
-    multiple = require('./multiple'),
-    statuses = require('./statuses');
+var singular = require('./routes/singular'),
+    multiple = require('./routes/multiple'),
+    statuses = require('./routes/statuses');
 
 app.routes = new express.Router();
 

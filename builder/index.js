@@ -150,7 +150,7 @@ class Builder {
       catch (parseError) {
         throw this.constructor._execError(
           'Could not parse result from builder',
-          Object.assign(results, { parseError: parseError.message })
+          Object.assign(results, { error: parseError.message })
         );
       }
 
@@ -158,6 +158,26 @@ class Builder {
         throw this.constructor._execError(
           'Unexpected stderr from builder',
           results
+        );
+      }
+
+      // Do some data cleanup to deal with limitations of jq
+      try {
+        output.code = parseInt(output.code, 10);
+
+        [ 'standalone', 'debug', 'full_paths' ].forEach((k) => {
+          if (output.debug[k] === 'true') {
+            output.debug[k] = true;
+          }
+          if (output.debug[k] === 'false') {
+            output.debug[k] = false;
+          }
+        });
+      }
+      catch (malformedError) {
+        throw this.constructor._execError(
+          'Malformed result from builder',
+          Object.assign(results, { error: malformedError.message })
         );
       }
 
