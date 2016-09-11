@@ -4,6 +4,9 @@ const tap = require('tap');
 
 const Builder = require('../builder');
 
+const SECONDS = 1000;
+const MINUTES = 60 * SECONDS;
+
 let builder;
 tap.test('Builder constructor', (t) => {
   t.doesNotThrow(() => {
@@ -12,7 +15,7 @@ tap.test('Builder constructor', (t) => {
   t.end();
 });
 
-tap.test('builder.init', (t) => {
+tap.test('builder.init', { timeout: 3 * MINUTES }, (t) => {
   builder.init().then((result) => {
     t.end();
   }).catch((err) => {
