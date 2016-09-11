@@ -29,9 +29,11 @@ tap.test('builder.init', (t) => {
   t.setTimeout(INIT_TIMEOUT);
 
   builder.init().then((result) => {
-    t.end();
+    t.pass('successfully initted');
   }).catch((err) => {
     t.fail(err, 'did not successfully init');
+    t.end();
+  }).then(() => {
     t.end();
   });
 });
