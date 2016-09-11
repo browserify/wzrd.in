@@ -8,8 +8,8 @@ const Builder = require('../builder');
 const SECONDS = 1000;
 const MINUTES = 60 * SECONDS;
 
-const INIT_TIMEOUT= 5 * MINUTES;
-const BUILD_TIMEOUT = 2 * MINUTES;
+const INIT_TIMEOUT= 2 * MINUTES;
+const BUILD_TIMEOUT = 1 * MINUTES;
 const DEFAULT_TIMEOUT = 5 * SECONDS;
 
 const NODE_VERSION = 'v4';
