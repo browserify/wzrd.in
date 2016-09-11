@@ -32,9 +32,12 @@ tap.test('builder.init', (t) => {
 
   builder.init().then((result) => {
     t.pass('successfully initted');
+    t.ok(builder.versions, 'builder has versions');
+    const versions = builder.versions || {};
+    t.ok(versions.node, 'builder has a node version');
+    t.match(versions.node, /^v4/, 'sure looks like a node version alright');
   }).catch((err) => {
     t.fail(err, 'did not successfully init');
-    t.end();
   }).then(() => {
     t.end();
   });

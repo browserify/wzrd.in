@@ -93,6 +93,35 @@ class Builder {
     return p;
   }
 
+  _getVersions() {
+    return this.constructor._exec(
+      'docker',
+      [ 'run', '--rm', this.DOCKER_TAG, 'bash', './versions.sh' ]
+    ).then((results) => {
+      let output;
+      const stderr = results.stderr;
+
+      try {
+        output = JSON.parse(results.stdout);
+      }
+      catch (parseError) {
+        throw this.constructor._execError(
+          'Could not parse result from fetching versions',
+          Object.assign(results, { error: parseError.message })
+        );
+      }
+
+      if (stderr) {
+        throw this.constructor._execError(
+          'Unexpected stderr while fetching versions',
+          results
+        );
+      }
+
+      return output;
+    });
+  }
+
   init() {
     return this.constructor._exec(
       'docker',
@@ -108,7 +137,12 @@ class Builder {
         );
       }
 
-      return results.stdout;
+      const stdout = results.stdout;
+
+      return this._getVersions().then((versions) => {
+        this.versions = versions;
+        return stdout;
+      });
     });
   }
 

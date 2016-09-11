@@ -17,6 +17,8 @@ RUN bash -c '\
 ENV PATH /var/ws/node_modules/.bin:${PATH}
 COPY build.sh ./
 RUN chmod 555 build.sh
+COPY versions.sh ./
+RUN chmod 555 versions.sh
 USER anon
 
 CMD ["bash", "build.sh"]
