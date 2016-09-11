@@ -9,6 +9,7 @@
   "dependencies": {
     "basic": "2.0.0",
     "bluebird": "3.4.6",
+    "body-parser": "1.15.2",
     "browserify": "13.1.0",
     "compression": "1.6.2",
     "concat-stream": "1.5.2",

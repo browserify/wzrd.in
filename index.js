@@ -18,13 +18,17 @@ const app = express();
 const bundler = new Bundler(config);
 
 const routes = require('./routes');
-app.routes = routes(new express.Router(), bundler);
+app.routes = routes(new express.Router(), bundler, config);
 
 app.use(require('cors')(config.cors));
 app.use(require('compression')());
 app.use(require('./middlewares/request-logger')());
 app.use(app.routes);
 app.use(express.static(__dirname + '/public'));
+
+require('./routes/admin')(router, bundler, config);
+require('./routes/singular')(router, bundler, config);
+require('./routes/multiple')(router, bundler, config);
 
 function start(callback) {
   callback = callback || (err) => { if (err) { throw err; } };

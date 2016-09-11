@@ -1,37 +1,10 @@
-var stringifyError = require('./stringify-error');
+'use strict';
 
-module.exports = function (app, bundle) {
-  app.post('/multi', jsonParser, create(bundle));
-  app.get('/multi/:bundle', get(bundle));
-  app.purge('/multi:bundle', purge(bundle));
-};
+const stringifyError = require('./stringify-error');
 
-//
-// We're only doing JSON bodies, content-type be damned.
-//
-function jsonParser(req, res, next) {
-  req.chunks = '';
+exports.create = function create(bundle) {
 
-  req.on('data', function (buff) {
-    req.chunks += buff.toString();
-  });
-
-  req.on('end', function () {
-    try {
-      req.body = JSON.parse(req.chunks);
-      
-    } catch(e) {
-      res.setHeader(500)
-      res.end('{"error": "invalid json"}')
-      return
-    }
-    next();
-  });
-};
-
-function create(bundle) {
-
-  var cache = bundle.cache;
+  const cache = bundle.cache;
 
   return function (req, res) {
     var opts = req.body;
@@ -125,7 +98,7 @@ function create(bundle) {
   };
 };
 
-function purge (bundle) {
+exports.purge = function purge (bundle) {
   var cache = bundle.cache;
 
   return function (req, res) {
@@ -145,7 +118,7 @@ function purge (bundle) {
   };
 }
 
-function get(bundle) {
+exports.get = function get(bundle) {
 
   var cache = bundle.cache;
 
