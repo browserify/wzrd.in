@@ -3,7 +3,8 @@
   "version": "0.4.0",
   "repository": "https://github.com/jfhbrook/browserify-cdn.git",
   "bin": {
-    "browserify-cdn": "./bin/browserify-cdn"
+    "browserify-cdn": "./bin/wzrd.in",
+    "wzrd.in": "./bin/wzrd.in"
   },
   "dependencies": {
     "basic": "2.0.0",
