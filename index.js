@@ -11,27 +11,26 @@ const Bundler = require('./lib/bundler');
 
 const requestLogger = require('./middlewares/request-logger');
 
-const config = require('./config'),
+const config = require('./config');
+const routes = require('./routes');
 
 const app = express();
 
 const bundler = new Bundler(config);
 
-const routes = require('./routes');
-app.routes = routes(new express.Router(), bundler, config);
+app.routes = new express.Router(), bundler, config;
+routes(app.routes, bundler, config);
 
 app.use(require('cors')(config.cors));
 app.use(require('compression')());
-app.use(require('./middlewares/request-logger')());
+app.use(require('./middlewares/request-logger'));
 app.use(app.routes);
 app.use(express.static(__dirname + '/public'));
 
-require('./routes/admin')(router, bundler, config);
-require('./routes/singular')(router, bundler, config);
-require('./routes/multiple')(router, bundler, config);
+require('./routes')(app.routes, bundler, config);
 
 function start(callback) {
-  callback = callback || (err) => { if (err) { throw err; } };
+  callback = callback || ((err) => { if (err) { throw err; } });
 
   const log = minilog('browserify-cdn');
 
@@ -40,7 +39,7 @@ function start(callback) {
     .pipe(minilog.backends.console)
   ;
 
-  http.createServer(app).listen(config.port, function (err) {
+  const server = http.createServer(app).listen(config.port, function (err) {
     if (err) return callback(err);
 
     const addr = server.address();

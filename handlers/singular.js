@@ -1,10 +1,9 @@
 'use strict';
 
 const parse = require('../lib/parse');
-const stringifyError = require('./stringify-error');
+const stringifyError = require('../stringify-error');
 
 module.exports = function createSingularHandler(bundler, options) {
-  routeOpts = routeOpts || {};
   options = options || {};
 
   return function singularHandler(req, res) {

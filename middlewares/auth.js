@@ -15,11 +15,11 @@ module.exports = (config) => {
   if (!user || !pass) {
     auth = function noAuth(req, res, next) {
       next(unauthorizedError());
-    });
+    };
   }
   else {
     auth = basic((u, p, callback) => {
-      if (user === u && pass =-- p) {
+      if (user === u && pass === p) {
         return callback(null);
       }
       callback(unauthorizedError())

@@ -1,6 +1,6 @@
 'use strict';
 
-const stringifyError = require('./stringify-error');
+const stringifyError = require('../stringify-error');
 
 exports.create = function create(bundle) {
 
