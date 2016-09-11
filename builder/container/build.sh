@@ -82,9 +82,9 @@ function die() {
       --arg module_name "${module_name}" \
       --arg module_version "${module_version}" \
       --arg module_subfile "${module_subfile}" \
-      --arg standalone "${standalone}" \
-      --arg debug "${debug}" \
-      --arg full_paths "${full_paths}" \
+      --argjson standalone "${standalone}" \
+      --argjson debug "${debug}" \
+      --argjson full_paths "${full_paths}" \
       '{
         "module_scope": $module_scope,
         "module_name": $module_name,
@@ -97,7 +97,7 @@ function die() {
   )
 
   jq -n -c -M \
-    --arg error_code "${error_code}" \
+    --argjson error_code "${error_code}" \
     --argjson debug "${debug}" \
     --arg logs "${logs}" \
     --argjson pkg "${pkg}" \
