@@ -3,7 +3,6 @@
 const semver = require('semver');
 const tap = require('tap');
 
-// TODO: de-singleton this!
 const Registry = require('../lib/registry');
 
 const testModule = 'concat-stream';
