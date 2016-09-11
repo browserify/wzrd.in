@@ -17,6 +17,11 @@ function info() {
 source $NVM_BIN &> $LOG_FILE
 nvm use 4 &> $LOG_FILE
 
+node_version=$(node -v)
+npm_version=$(npm -v)
+browserify_version=$(browserify --version)
+uglify_version=$(uglifyjs --version | sed "s/^uglify-js //")
+
 # Things I expect to be passed to me
 module_scope=$(echo $INPUT | jq -r '.module_scope')
 if [ $module_scope == 'null' ]; then
@@ -85,6 +90,10 @@ function die() {
       --argjson standalone "${standalone}" \
       --argjson debug "${debug}" \
       --argjson full_paths "${full_paths}" \
+      --arg node_version "${node_version}" \
+      --arg npm_version "${npm_version}" \
+      --arg browserify_version "${browserify_version}" \
+      --arg uglify_version "${uglify_version}" \
       '{
         "module_scope": $module_scope,
         "module_name": $module_name,
@@ -92,7 +101,13 @@ function die() {
         "module_subfile": $module_subfile,
         "standalone": $standalone,
         "debug": $debug,
-        "full_paths": $full_paths
+        "full_paths": $full_paths,
+        "versions": {
+          "node": $node_version,
+          "npm": $npm_version,
+          "browserify": $browserify_version,
+          "uglify-js": $uglify_version
+        }
       }'
   )
 
