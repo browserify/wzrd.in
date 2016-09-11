@@ -16,7 +16,9 @@ tap.test('Builder constructor', (t) => {
   t.end();
 });
 
-tap.test('builder.init', { timeout: 5 * MINUTES }, (t) => {
+tap.test('builder.init', (t) => {
+  t.setTimeout(5 * MINUTES);
+
   builder.init().then((result) => {
     t.end();
   }).catch((err) => {
@@ -25,7 +27,9 @@ tap.test('builder.init', { timeout: 5 * MINUTES }, (t) => {
   });
 });
 
-tap.test('builder._build creates a bundle -- standalone concat-stream', { timeout: 1 * MINUTES }, (t) => {
+tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
+  t.setTimeout(2 * MINUTES);
+
   builder.build({
     module_name: 'concat-stream',
     module_version: '1.5.2',
