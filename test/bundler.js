@@ -185,3 +185,11 @@ tap.test('bundler._build', (t) => {
     })
   ;
 });
+
+tap.test('bundler.purge', { skip: true }, (t) => {
+  t.end();
+});
+
+tap.test('bundler.status', { skip: true }, (t) => {
+  t.end();
+});
