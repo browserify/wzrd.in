@@ -1,0 +1,25 @@
+{
+  "name": "browserify-builder",
+  "version": "1.0.0",
+  "description": "Build system for wzrd.in",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jfhbrook/wzrd.in.git"
+  },
+  "keywords": [
+    "browserify",
+    "build",
+    "docker"
+  ],
+  "author": "Joshua Holbrok",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jfhbrook/wzrd.in/issues"
+  },
+  "homepage": "https://github.com/jfhbrook/wzrd.in#readme",
+  "dependencies": {
+    "browserify": "~13",
+    "uglifyjs": "~2",
+    "glob": "~7"
+  }
+}

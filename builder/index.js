@@ -58,7 +58,7 @@ class Builder {
           return reject(err);
         }
         if (code) {
-          err = this.constructor._execError(
+          err = this._execError(
             cmd + ' exited with code ' + code,
             { code: code, stdout: stdout, stderr: stderr }
           );
@@ -67,20 +67,20 @@ class Builder {
         return resolve({ stdout: stdout, stderr: stderr });
       });
 
-      child.stdout.pipe(concat(function (_out) {
+      child.stdout.pipe(concat((_out) => {
         if (_out) {
           stdout = _out.toString();
         }
         finish();
       }));
-      child.stderr.pipe(concat(function (_err) {
+      child.stderr.pipe(concat((_err) => {
         if (_err) {
           stderr = _err.toString();
         }
         finish();
       }));
 
-      child.on('exit', function (c) {
+      child.on('exit', (c) => {
         code = c;
         finish();
       });
