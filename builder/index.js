@@ -134,7 +134,8 @@ class Builder {
 
       const p = this.constructor._exec(
         'docker',
-        [ 'run', '-i', this.DOCKER_TAG ]
+        // TODO: Sane setting for --name ?
+        [ 'run', '-i', '--rm', this.DOCKER_TAG ]
       );
 
       p.stdin.end(JSON.stringify(options));
