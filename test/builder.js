@@ -17,6 +17,8 @@ tap.plan(3);
 
 let builder;
 tap.test('Builder constructor', (t) => {
+  t.setTimeout(DEFAULT_TIMEOUT);
+
   t.doesNotThrow(() => {
     builder = new Builder();
   }, 'constructs successfully');
