@@ -5,7 +5,7 @@ NVM_BIN=$HOME/nvm/nvm.sh
 source $NVM_BIN &> /dev/null
 nvm use 4 &> /dev/null
 
-node_version=$(node -v)
+node_version=$(node -v | sed s/^v//)
 npm_version=$(npm -v)
 browserify_version=$(browserify --version)
 uglify_version=$(uglifyjs --version | sed "s/^uglify-js //")

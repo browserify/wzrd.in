@@ -13,7 +13,7 @@ const INIT_TIMEOUT= 2 * MINUTES;
 const BUILD_TIMEOUT = 1 * MINUTES;
 const DEFAULT_TIMEOUT = 5 * SECONDS;
 
-const NODE_VERSION = 'v4';
+const NODE_VERSION = /^4/;
 
 tap.plan(4);
 tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + 2 * DEFAULT_TIMEOUT);
@@ -37,7 +37,7 @@ tap.test('builder.init', (t) => {
     t.ok(builder.versions, 'builder has versions');
     const versions = builder.versions || {};
     t.ok(versions.node, 'builder has a node version');
-    t.match(versions.node, /^v4/, 'sure looks like a node version alright');
+    t.match(versions.node, NODE_VERSION, 'sure looks like a node version alright');
   }).catch((err) => {
     t.fail(err, 'did not successfully init');
   }).then(() => {
@@ -72,7 +72,7 @@ tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
     t.ok(debug.versions, 'versions block is defined');
     const versions = debug.versions || {};
 
-    t.match(versions.node, new RegExp(`^${NODE_VERSION}`), `node is ${NODE_VERSION}`);
+    t.match(versions.node, NODE_VERSION, 'node sure looks like a version');
 
     t.type(versions.npm, 'string', 'npm sure has a version alright');
 
