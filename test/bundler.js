@@ -21,7 +21,10 @@ let bundler;
 tap.test('Bundler constructor', (t) => {
   t.doesNotThrow(() => {
     bundler = new Bundler({
-      db: './cdn.db'
+      level: {
+        db: './cdn.db'
+      },
+      builder: {}
     });
   }, 'constructs successfully');
 

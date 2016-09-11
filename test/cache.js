@@ -8,6 +8,9 @@ const tap = require('tap');
 
 const cacheLib = require('../lib/cache');
 
+const SECONDS = 1000;
+const MINUTES = 60 * SECONDS;
+
 const mockSubDb = {
   get: sinon.stub().yields(null, '{}'),
   put: sinon.stub().yields(null),
@@ -19,6 +22,8 @@ const mockDb = {
 };
 
 const mockHashFxn = sinon.stub().returns('hash_browns');
+
+tap.plan(3);
 
 tap.test('Cache', (t) => {
   let cache;
@@ -203,15 +208,24 @@ tap.test('cull decorator', (t) => {
   const stubKeyStream = new EventEmitter();
   mockSubDb.createKeyStream = sinon.stub().returns(stubKeyStream);
 
+  const options = {
+    npm: {
+      skimdb: 'https://skimdb.npm.im:443',
+      follower: {
+        refreshRate: 2 * SECONDS
+      }
+    }
+  };
+
   t.throws(() => {
-    cacheLib.cull({ db: mockSubDb });
+    cacheLib.cull(options, { db: mockSubDb });
   }, 'fails to decorate without right name');
 
   const stubCacheDel = sinon.stub();
 
   let culledCache;
   t.doesNotThrow(() => {
-    culledCache = cacheLib.cull({
+    culledCache = cacheLib.cull(options, {
       name: 'aliases',
       db: mockSubDb,
       _del: stubCacheDel
@@ -223,12 +237,14 @@ tap.test('cull decorator', (t) => {
   t.ok(culledCache._pubStream, 'has a _pubStream');
   t.ok(culledCache._cullHandler, 'has a _cullHandler');
 
-  // Get rid of garbage pub stream, call _cullHandler directly
-  const oldPubStream = culledCache._pubStream;
+  const pubStream = culledCache._pubStream;
 
-  t.doesNotThrow(() => {
-    oldPubStream.destroy();
-  }, 'publish stream is destroyable (good riddance!)');
+  pubStream.destroy();
+
+  t.equal(pubStream._options.refreshRate, 2 * SECONDS, 'refreshRate got applied');
+  t.equal(pubStream._options.hostname, 'skimdb.npm.im', 'hostname got parsed out');
+  t.equal(pubStream._options.protocol, 'https://', 'protocol got parsed out');
+  t.equal(pubStream._options.port, 443, 'port got parsed out');
 
   culledCache._cullHandler({
     doc: {
@@ -259,6 +275,7 @@ tap.test('cull decorator', (t) => {
 
   t.ok(stubCacheDel.calledOnce, 'cache del was called once for dist-tag');
   t.ok(stubCacheDel.calledWith('concat-stream@latest'), 'cache del was called with `concat-stream@latest`');
+
 
   t.end();
 });
@@ -314,6 +331,7 @@ tap.test('hash functions', (t) => {
       });
 
       t.equal(result, 'zippy@0.0.1');
+
       t.end();
     });
   });

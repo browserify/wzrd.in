@@ -21,8 +21,9 @@ const schema = {
 
 class Builder {
 
-  constructor() {
-    this.DOCKER_TAG = 'browserify-builder';
+  constructor(options) {
+    options = options || {};
+    this.DOCKER_TAG = options.dockerTag || 'browserify-builder';
     this._inProgress = Object.create(null);
   }
 
