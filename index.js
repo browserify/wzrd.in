@@ -1,54 +1,55 @@
-var express = require('express'),
-    log = require('minilog')('browserify-cdn'),
-    cors = require('cors'),
-    compression = require('compression');
+'use strict';
 
-var bundler = require('./bundler'),
-    defaults = require('./defaults'),
-    admin = require('./admin'),
-    requestLogger = require('./middlewares/request-logger');
+const http = require('http');
 
-var app = express(),
-    bundle = bundler(defaults());
+const express = require('express');
+const minilog = require('minilog');
+const cors = require('cors');
+const compression = require('compression');
 
-var singular = require('./routes/singular'),
-    multiple = require('./routes/multiple'),
-    statuses = require('./routes/statuses');
+const Bundler = require('./lib/bundler');
 
-app.routes = new express.Router();
+const requestLogger = require('./middlewares/request-logger');
 
-//
-// Add static assets
-//
-app.use(requestLogger);
+const config = require('./defaults'),
+
+const app = express();
+
+const bundler = new Bundler(config);
+
+const routes = require('./routes');
+app.routes = routes(new express.Router(), bundler);
+
+app.use(require('cors')());
+app.use(require('compression')());
+app.use(require('./middlewares/request-logger')());
 app.use(app.routes);
-app.use(cors());
-app.use(compression());
 app.use(express.static(__dirname + '/public'));
 
-//
-// Admin REST API
-//
-admin(app.routes, bundle);
+function start(callback) {
+  callback = callback || (err) => { if (err) { throw err; } };
 
-//
-// Single-module bundles
-//
-singular(app.routes, bundle);
+  const log = minilog('browserify-cdn');
 
-//
-// Multiple-module bundles
-//
-multiple(app.routes, bundle);
+  minilog
+    .pipe(minilog.backends.console.formatNpm)
+    .pipe(minilog.backends.console)
+  ;
 
-//
-// Build statuses
-//
-statuses(app.routes, bundle);
+  http.createServer(app).listen(process.env.PORT || process.argv[2] || 8080, function (err) {
+    if (err) return callback(err);
 
-//
-// Exports
-//
+    const addr = server.address();
+
+    log.info('browserify-cdn is online');
+    log.info('http://' + addr.address + ':' + addr.port);
+
+    callback(null, server);
+  });
+}
+
+exports.start = start;
 exports.app = app;
 exports.bundler = bundler;
-exports.defaults = defaults;
+exports.config = config;
+
