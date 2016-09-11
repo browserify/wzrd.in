@@ -11,7 +11,7 @@ const Bundler = require('./lib/bundler');
 
 const requestLogger = require('./middlewares/request-logger');
 
-const config = require('./defaults'),
+const config = require('./config'),
 
 const app = express();
 
@@ -20,7 +20,7 @@ const bundler = new Bundler(config);
 const routes = require('./routes');
 app.routes = routes(new express.Router(), bundler);
 
-app.use(require('cors')());
+app.use(require('cors')(config.cors));
 app.use(require('compression')());
 app.use(require('./middlewares/request-logger')());
 app.use(app.routes);
@@ -36,7 +36,7 @@ function start(callback) {
     .pipe(minilog.backends.console)
   ;
 
-  http.createServer(app).listen(process.env.PORT || process.argv[2] || 8080, function (err) {
+  http.createServer(app).listen(config.port, function (err) {
     if (err) return callback(err);
 
     const addr = server.address();
