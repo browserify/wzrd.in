@@ -41,7 +41,7 @@ tap.test('bundler.init', (t) => {
 });
 
 tap.test('bundler._getAlias', (t) => {
-  const checkSpy = sinon.stub(bundler._caches.aliases, 'check', function() {
+  const checkStub = sinon.stub(bundler._caches.aliases, 'check', function() {
     return Promise.resolve('1.2.3');
   });
 
@@ -54,10 +54,10 @@ tap.test('bundler._getAlias', (t) => {
     }).catch((err) => {
       t.fail(err, '_getAlias should have succeeded');
     }).then((version) => {
-      t.ok(checkSpy.calledOnce, 'alias check was called once');
+      t.ok(checkStub.calledOnce, 'alias check was called once');
       t.equal(version, '1.2.3', 'version should be 1.2.3');
     }).then(() => {
-      checkSpy.reset();
+      checkStub.reset();
       t.end();
     });
   });
@@ -68,7 +68,7 @@ tap.test('bundler._getAlias', (t) => {
     }).catch((err) => {
       t.fail(err, '_getAlias should have succeeded');
     }).then((version) => {
-      t.notOk(checkSpy.called, 'alias check should not have been called');
+      t.notOk(checkStub.called, 'alias check should not have been called');
 
       t.equal(version, bundler._builder.versions.node, 'core module should have builder node version');
 
@@ -77,6 +77,83 @@ tap.test('bundler._getAlias', (t) => {
   });
 
   t.tearDown(() => {
-    checkSpy.restore();
+    checkStub.restore();
+  });
+});
+
+tap.test('bundler._getBundle', (t) => {
+  const checkStub = sinon.stub(bundler._caches.bundles, 'check', function() {
+    return Promise.resolve({ pkg: {}, bundle: '(function(){})()' });
+  });
+
+  bundler._getBundle({
+    module_name: 'concat-stream',
+    module_version: '1.2.3'
+  }).catch((err) => {
+    t.fail(err, '_getBundle should have succeeded');
+  }).then((bundle) => {
+    t.ok(bundle, 'gave us a bundle');
+    bundle = bundle || {};
+    t.same(bundle.pkg, {}, 'bundle looks like it came from our cache stub');
+    t.equal(bundle.bundle, '(function(){})()', 'bundle definitely came from our cache stub');
+
+    checkStub.restore();
+
+    t.end();
+  });
+});
+
+tap.test('bundler._recordBuildStatus', (t) => {
+  t.plan(2);
+
+  const putStub = sinon.stub(bundler._caches.statuses, 'put', function() {
+    return Promise.resolve();
+  });
+
+  const testInput = {
+    module_name: 'concat-stream',
+    module_version: '1.2.3'
+  };
+
+  const testBuild = {
+    debug: {
+      module_name: 'concat-stream',
+      module_version: '1.2.3'
+    }
+  };
+
+  t.test('on pass', (t) => {
+    bundler._recordBuildStatus(testInput, Promise.resolve(testBuild)).then(() => {
+      t.ok(putStub.calledOnce, 'put stub was called once');
+
+      t.same(putStub.lastCall.args[0], testInput, 'put stub was called with input as key');
+      t.same(putStub.lastCall.args[1], { ok: true }, 'put stub was called with passing build state');
+
+      putStub.reset();
+
+      t.end();
+    });
+  });
+
+  t.test('on fail', (t) => {
+    const buildError = new Error('failed build lol');
+    buildError.metadata = 'some metadata';
+
+    bundler._recordBuildStatus(testInput, Promise.reject(buildError)).then(() => {
+      t.ok(putStub.calledOnce, 'put stub was called once');
+      t.same(putStub.lastCall.args[0], testInput, 'put stub was called with input as key');
+      t.same(putStub.lastCall.args[1], {
+        ok: false,
+        error: {
+          message: buildError.message,
+          stack: buildError.stack,
+          metadata: buildError.metadata
+        }
+      }, 'put stub was called with failing build state');
+
+      putStub.restore();
+
+      t.end();
+    });
   });
 });
