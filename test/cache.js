@@ -197,16 +197,28 @@ tap.test('Cache', (t) => {
   });
 });
 
-// TODO: Make this use cache methods!!
 tap.test('cull decorator', (t) => {
-  const mockStream = new EventEmitter();
+  // TODO: Test for multiple dist-tags
 
-  mockSubDb.createKeyStream = sinon.stub().returns(mockStream);
-  mockSubDb.del = sinon.stub();
+  const stubKeyStream = new EventEmitter();
+  mockSubDb.createKeyStream = sinon.stub().returns(stubKeyStream);
 
-  const culledCache = cacheLib.cull({
-    db: mockSubDb
-  });
+  t.throws(() => {
+    cacheLib.cull({ db: mockSubDb });
+  }, 'fails to decorate without right name');
+
+  const stubCacheDel = sinon.stub();
+
+  let culledCache;
+  t.doesNotThrow(() => {
+    culledCache = cacheLib.cull({
+      name: 'aliases',
+      db: mockSubDb,
+      _del: stubCacheDel
+    });
+  }, 'decorates successfully');
+
+  const createKeyStreamSpy = sinon.spy(culledCache, 'createKeyStream');
 
   t.ok(culledCache._pubStream, 'has a _pubStream');
   t.ok(culledCache._cullHandler, 'has a _cullHandler');
@@ -216,22 +228,37 @@ tap.test('cull decorator', (t) => {
 
   t.doesNotThrow(() => {
     oldPubStream.destroy();
-  }, 'publish stream is destroyable');
+  }, 'publish stream is destroyable (good riddance!)');
 
   culledCache._cullHandler({
-    id: 'concat-stream',
     doc: {
+      name: 'concat-stream',
       'dist-tags': {
         latest: '1.2.3'
       }
     }
   });
 
-  mockStream.emit('data', 'concat-stream@1.2.x');
+  t.ok(createKeyStreamSpy.calledOnce, 'createKeyStream called once');
+  t.ok(createKeyStreamSpy.calledWith('concat-stream'), 'createKeyStream called with module name');
 
-  t.ok(mockSubDb.del.calledOnce, 'db del was called once');
+  stubKeyStream.emit('data', 'concat-stream@1.2.x');
 
-  mockSubDb.del = sinon.stub().yields(null);
+  t.ok(stubCacheDel.calledOnce, 'cache del was called once');
+  t.ok(stubCacheDel.calledWith('concat-stream@1.2.x'), 'cache del was called with `concat-stream@1.2.x`');
+
+  stubCacheDel.reset();
+
+  stubKeyStream.emit('data', 'concat-stream@1.1.x');
+
+  t.notOk(stubCacheDel.called, 'cache del was not called');
+
+  stubCacheDel.reset();
+
+  stubKeyStream.emit('data', 'concat-stream@latest');
+
+  t.ok(stubCacheDel.calledOnce, 'cache del was called once for dist-tag');
+  t.ok(stubCacheDel.calledWith('concat-stream@latest'), 'cache del was called with `concat-stream@latest`');
 
   t.end();
 });
