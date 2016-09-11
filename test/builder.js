@@ -8,6 +8,13 @@ const Builder = require('../builder');
 const SECONDS = 1000;
 const MINUTES = 60 * SECONDS;
 
+const INIT_TIMEOUT= 5 * MINUTES;
+const BUILD_TIMEOUT = 2 * MINUTES;
+const DEFAULT_TIMEOUT = 5 * SECONDS;
+
+tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + DEFAULT_TIMEOUT);
+tap.plan(3);
+
 let builder;
 tap.test('Builder constructor', (t) => {
   t.doesNotThrow(() => {
@@ -17,7 +24,7 @@ tap.test('Builder constructor', (t) => {
 });
 
 tap.test('builder.init', (t) => {
-  t.setTimeout(5 * MINUTES);
+  t.setTimeout(INIT_TIMEOUT);
 
   builder.init().then((result) => {
     t.end();
@@ -28,7 +35,7 @@ tap.test('builder.init', (t) => {
 });
 
 tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
-  t.setTimeout(2 * MINUTES);
+  t.setTimeout(BUILD_TIMEOUT);
 
   builder.build({
     module_name: 'concat-stream',
