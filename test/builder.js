@@ -12,6 +12,8 @@ const INIT_TIMEOUT= 5 * MINUTES;
 const BUILD_TIMEOUT = 2 * MINUTES;
 const DEFAULT_TIMEOUT = 5 * SECONDS;
 
+const NODE_VERSION = 'v4';
+
 tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + DEFAULT_TIMEOUT);
 tap.plan(3);
 
@@ -65,8 +67,7 @@ tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
     t.ok(debug.versions, 'versions block is defined');
     const versions = debug.versions || {};
 
-    const expectedNodeVersion = process.version.split('.').shift();
-    t.match(versions.node, new RegExp(`^${expectedNodeVersion}`), `node is ${expectedNodeVersion}`);
+    t.match(versions.node, new RegExp(`^${NODE_VERSION}`), `node is ${NODE_VERSION}`);
 
     t.type(versions.npm, 'string', 'npm sure has a version alright');
 
