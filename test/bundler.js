@@ -6,11 +6,14 @@ const tap = require('tap');
 
 const Bundler = require('../lib/bundler');
 
+const fakeBuild = {};
+
 const fakeBuilder = {
   init: sinon.stub().returns(Promise.resolve('butts')),
   versions: {
     node: '4.5.0'
-  }
+  },
+  build: sinon.stub().returns(Promise.resolve(fakeBuild))
 };
 
 let bundler;
@@ -156,4 +159,29 @@ tap.test('bundler._recordBuildStatus', (t) => {
       t.end();
     });
   });
+});
+
+tap.test('bundler._build', (t) => {
+  const recordStub = sinon.stub(bundler, '_recordBuildStatus', function() {
+    return Promise.resolve();
+  });
+
+  const input = {
+    module_name: 'concat-stream',
+    module_version: '1.2.3'
+  };
+
+  bundler._build(input)
+    .catch((err) => {
+      t.fail(err, '_build should have succeeded');
+    }).then((build) => {
+      t.equal(build, fakeBuild, 'should have returned a build');
+      t.ok(fakeBuilder.build.calledOnce, 'buildStub was called once');
+      t.ok(fakeBuilder.build.calledWith(input), '_builder.build was called with input');
+    }).then(() => {
+      fakeBuilder.build.reset();
+      recordStub.restore();
+      t.end();
+    })
+  ;
 });
