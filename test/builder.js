@@ -1,6 +1,7 @@
 'use strict';
 
 const semver = require('semver');
+const sinon = require('sinon');
 const tap = require('tap');
 
 const Builder = require('../builder');
@@ -14,10 +15,11 @@ const DEFAULT_TIMEOUT = 5 * SECONDS;
 
 const NODE_VERSION = 'v4';
 
-tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + DEFAULT_TIMEOUT);
-tap.plan(3);
+tap.plan(4);
+tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + 2 * DEFAULT_TIMEOUT);
 
 let builder;
+
 tap.test('Builder constructor', (t) => {
   t.setTimeout(DEFAULT_TIMEOUT);
 
@@ -100,6 +102,40 @@ tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
     
   }).catch((err) => {
     t.fail(err);
+    t.end();
+  });
+});
+
+tap.test('two builds at the same time', (t) => {
+  const fakeInput = {
+    node_module: 'concat-stream',
+    node_version: '1.2.3'
+  };
+  const fakeBuild = {};
+
+  const buildStub = sinon.stub(builder, '_build', function() {
+    return Promise.resolve(fakeBuild);
+  });
+
+  const hashStub = sinon.stub(Builder, '_hash', function() {
+    return 'hash_browns';
+  });
+
+  Promise.all([
+    builder.build(fakeInput),
+    builder.build(fakeInput)
+  ]).then((builds) => {
+    t.equal(builds[0], fakeBuild, 'first build is our expected build');
+    t.equal(builds[1], fakeBuild, 'second build is our expected build');
+
+    t.ok(buildStub.calledOnce, 'builder._build was called once');
+    t.ok(buildStub.calledWith(fakeInput), 'builder._build was called with expected input');
+
+    t.ok(hashStub.calledTwice, 'Builder._hash was called twice');
+    t.notOk(builder._inProgress['hash_browns'], 'in-progress build was cleaned up');
+
+    buildStub.restore();
+    hashStub.restore();
     t.end();
   });
 });
