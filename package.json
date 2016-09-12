@@ -38,10 +38,6 @@
     "waitress": "~0.1.5",
     "xtend": "4.0.1"
   },
-  "bundledDependencies": [
-    "temp",
-    "scopedfs"
-  ],
   "scripts": {
     "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap --timeout $(node -pe '3* 60 * 1000 + 10 * 000') ./test/*.js",
     "start": "node ./bin/wzrd.in",
