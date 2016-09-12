@@ -8,14 +8,14 @@ const singularHandler = require('./handlers/singular');
 const multiHandlers = require('./handlers/multiple');
 
 module.exports = function (app, bundler, config) {
-  app.get('/bundle/:module', singularHandler(bundler));
-  app.purge('/bundle/:module', singularHandler(bundler, { purge: true }));
-  app.get('/debug-bundle/:module', singularHandler(bundler, { debug: true }));
-  app.purge('/debug-bundle/:module', singularHandler(bundler, { debug: true, purge: true }));
-  app.get('/standalone/:module', singularHandler(bundler, { standalone: true }));
-  app.purge('/standalone/:module', singularHandler(bundler, { standalone: true, purge: true }));
-  app.get('/debug-standalone/:module', singularHandler(bundler, { standalone: true, debug: true }));
-  app.purge('/debug-standalone/:module', singularHandler(bundler, { standalone: true, debug: true, purge: true }));
+  app.get('/bundle/:slug', singularHandler(bundler));
+  app.purge('/bundle/:slug', singularHandler(bundler, { purge: true }));
+  app.get('/debug-bundle/:slug', singularHandler(bundler, { debug: true }));
+  app.purge('/debug-bundle/:slug', singularHandler(bundler, { debug: true, purge: true }));
+  app.get('/standalone/:slug', singularHandler(bundler, { standalone: true }));
+  app.purge('/standalone/:slug', singularHandler(bundler, { standalone: true, purge: true }));
+  app.get('/debug-standalone/:slug', singularHandler(bundler, { standalone: true, debug: true }));
+  app.purge('/debug-standalone/:slug', singularHandler(bundler, { standalone: true, debug: true, purge: true }));
 
   app.post('/multi', bodyParser.json(), multiHandlers.create(bundler));
   app.get('/multi/:bundle', multiHandlers.get(bundler));

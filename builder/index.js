@@ -9,15 +9,7 @@ const joi = require('joi');
 const Promise = require('bluebird');
 const waitress = require('waitress');
 
-const schema = {
-  module_scope: joi.string().optional(),
-  module_name: joi.string().required(),
-  module_version: joi.string().required(),
-  module_subfile: joi.string().optional(),
-  standalone: joi.boolean().default(false),
-  debug: joi.boolean().default(false),
-  full_paths: joi.boolean().default(false)
-};
+const validate = require('../lib/validate');
 
 class Builder {
 
@@ -35,14 +27,6 @@ class Builder {
     const err = new Error(message);
     Object.assign(err, results);
     return err;
-  }
-
-  static _validate(input) {
-    const validated = joi.validate(input, schema, { stripUnknown: true });
-    if (validated.error) {
-      throw validated.error;
-    }
-    return validated.value;
   }
 
   static _exec(cmd, argv, opts) {
@@ -165,7 +149,7 @@ class Builder {
 
   _build(options) {
     return Promise.try(() => {
-      options = this.constructor._validate(options);
+      options = validate.validateInput(options);
 
       const p = this.constructor._exec(
         'docker',
@@ -202,5 +186,4 @@ class Builder {
   }
 }
 
-Builder.schema = schema;
 module.exports = Builder;

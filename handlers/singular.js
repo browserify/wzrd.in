@@ -7,20 +7,20 @@ module.exports = function createSingularHandler(bundler, options) {
   options = options || {};
 
   return function singularHandler(req, res) {
+    const serve = serveBundle(res);
+    const fail = fiveHundred(res);
+    const ack = acknowledgePurge(res);
+
     let input;
     try {
       input = parse(req.params.slug, options);
     }
     catch (err) {
-      return handleError(err);
+      return fail(err);
     }
 
-    const serve = serveBundle(res);
-    const fail = fiveHundred(res);
-    const ack = acknowledgePurge(res);
-
     // TODO: Separate handler
-    if (routeOpts.purge) {
+    if (options.purge) {
       return bundler.purge(o).then(ack, fail);
     }
 
