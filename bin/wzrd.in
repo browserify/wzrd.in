@@ -2,7 +2,26 @@
 
 'use strict';
 
+const minimist = require('minimist');
+
 const wzrdin = require('../');
 
-wzrdin.start();
+const argv = minimist(process.argv.slice(2));
+
+if (argv._[0] === 'initialize') {
+  wzrdin.bundler.init().then((output) => {
+    console.log(output);
+    process.exit(0);
+  }).catch((err) => {
+    console.error(err.stack);
+    Object.keys(err).forEach((k) => {
+      console.log(`* ${k}: %j`, err[k]);
+    });
+
+    process.exit(1);
+  });
+}
+else {
+  wzrdin.start();
+}
 
