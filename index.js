@@ -19,7 +19,7 @@ const app = express();
 
 const bundler = new Bundler(config);
 
-app.routes = new express.Router(), bundler, config;
+app.routes = new express.Router();
 routes(app.routes, bundler, config);
 
 app.use(require('cors')(config.cors));
