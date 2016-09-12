@@ -40,18 +40,16 @@ function start(callback) {
     .pipe(minilog.backends.console)
   ;
 
-  bundler.init().then(() => {
-    const server = http.createServer(app).listen(_.get(config, 'server.port'), function (err) {
-      if (err) return callback(err);
+  const server = http.createServer(app).listen(_.get(config, 'server.port'), function (err) {
+    if (err) return callback(err);
 
-      const addr = server.address();
+    const addr = server.address();
 
-      log.info('browserify-cdn is online');
-      log.info('http://' + addr.address + ':' + addr.port);
+    log.info('browserify-cdn is online');
+    log.info('http://' + addr.address + ':' + addr.port);
 
-      callback(null, server);
-    });
-  }).done();
+    callback(null, server);
+  });
 }
 
 exports.start = start;

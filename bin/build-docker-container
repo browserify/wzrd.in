@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const Builder = require('../builder');
+const config = require('../config');
+
+const builder = new Builder(config.builder);
+
+builder.init().then((output) => {
+  console.log(output);
+  process.exit(0);
+}).catch((err) => {
+  console.error(err.stack);
+  Object.keys(err).forEach((k) => {
+    console.log(`* ${k}: %j`, err[k]);
+  });
+
+  process.exit(1);
+});
