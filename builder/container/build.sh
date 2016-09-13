@@ -15,8 +15,8 @@ function info() {
   echo 'info: ' ${@} > ${LOG_FILE}
 }
 
-source $NVM_BIN &> $LOG_FILE
-nvm use 4 &> $LOG_FILE
+source $NVM_BIN > $LOG_FILE 2>&1
+nvm use 4 > $LOG_FILE 2>&1
 
 # Things I expect to be passed to me
 module_scope=$(echo $INPUT | jq -r '.module_scope')
@@ -76,7 +76,7 @@ function die() {
   local logs=$(cat $LOG_FILE)
 
   if [ -e ./build/node_modules/${module_path}/package.json ]; then
-    local pkg=$(cat ./build/node_modules/${module_path}/package.json) &> /dev/null
+    local pkg=$(cat ./build/node_modules/${module_path}/package.json) > /dev/null 2>&1
   else
     local pkg="{}"
   fi
@@ -161,7 +161,7 @@ function adjust_package_json() {
 
       fs.writeFileSync("./package/package.json", JSON.stringify(pkg, null, 2));
     }
-  ' &>> $LOG_FILE
+  ' >> $LOG_FILE 2>&1
 }
 
 function move_to_node_modules() {
@@ -177,7 +177,7 @@ function move_to_node_modules() {
 
 function npm_install() {
   cd ./node_modules/${module_path}
-    npm install --production --registry ${REGISTRY_URL} &>> $LOG_FILE
+    npm install --production --registry ${REGISTRY_URL} >> $LOG_FILE 2>&1
   cd ../..
 }
 
