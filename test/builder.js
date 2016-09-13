@@ -9,14 +9,14 @@ const Builder = require('../builder');
 const SECONDS = 1000;
 const MINUTES = 60 * SECONDS;
 
-const INIT_TIMEOUT= 2 * MINUTES;
+const BOOTSTRAP_TIMEOUT= 2 * MINUTES;
 const BUILD_TIMEOUT = 1 * MINUTES;
 const DEFAULT_TIMEOUT = 5 * SECONDS;
 
 const NODE_VERSION = /^4/;
 
-tap.plan(4);
-tap.setTimeout(INIT_TIMEOUT + BUILD_TIMEOUT + 2 * DEFAULT_TIMEOUT);
+tap.plan(5);
+tap.setTimeout(BOOTSTRAP_TIMEOUT + BUILD_TIMEOUT + 3 * DEFAULT_TIMEOUT);
 
 let builder;
 
@@ -29,11 +29,19 @@ tap.test('Builder constructor', (t) => {
   t.end();
 });
 
-tap.test('builder.init', (t) => {
-  t.setTimeout(INIT_TIMEOUT);
+tap.test('builder.bootstrap', (t) => {
+  t.setTimeout(BOOTSTRAP_TIMEOUT);
 
+  builder.bootstrap().then((result) => {
+    t.pass('successfully bootstrapped');
+  }).catch((err) => {
+    t.fail(err, 'did not successfully bootstrap');
+  }).then(() => t.end());
+});
+
+tap.test('builder.init', (t) => {
   builder.init().then((result) => {
-    t.pass('successfully initted');
+    t.pass('successfully initialized');
     t.ok(builder.versions, 'builder has versions');
     const versions = builder.versions || {};
     t.ok(versions.node, 'builder has a node version');

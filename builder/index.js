@@ -107,7 +107,7 @@ class Builder {
     });
   }
 
-  init() {
+  bootstrap() {
     return this.constructor._exec(
       'docker',
       [ 'build', '.', '-t', this.DOCKER_TAG ],
@@ -122,12 +122,14 @@ class Builder {
         );
       }
 
-      const stdout = results.stdout;
+      return results.stdout;
+    });
+  }
 
-      return this._getVersions().then((versions) => {
-        this.versions = versions;
-        return stdout;
-      });
+  init() {
+    return this._getVersions().then((versions) => {
+      this.versions = versions;
+      return null;
     });
   }
 

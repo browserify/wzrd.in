@@ -9,6 +9,7 @@ NVM_BIN=$HOME/nvm/nvm.sh
 
 LOG_FILE=$HOME/log.log
 BROWSERIFY_FILE=$HOME/build/bundle.js
+RUN_ROOT=$(pwd)
 
 function info() {
   echo 'info: ' ${@} > ${LOG_FILE}
@@ -22,6 +23,7 @@ module_scope=$(echo $INPUT | jq -r '.module_scope')
 if [ $module_scope == 'null' ]; then
   module_scope=''
 fi
+
 module_name=$(echo $INPUT | jq -r '.module_name')
 module_version=$(echo $INPUT | jq -r '.module_version')
 module_subfile=$(echo $INPUT | jq -r '.module_subfile')
@@ -55,7 +57,7 @@ if [ $module_subfile ]; then
 fi
 
 is_in_core='false'
-if [ $(echo $CORE_MODULES | grep "$module_name") ]; then
+if [ "$(echo "$CORE_MODULES" | grep "$module_path")" ]; then
   is_in_core='true'
 fi
 
@@ -66,11 +68,18 @@ touch ${LOG_FILE}
 touch ${BROWSERIFY_FILE}
 
 function die() {
+  cd ${RUN_ROOT}
+
   local error_code=$1
 
   local bundle=$(cat $BROWSERIFY_FILE)
   local logs=$(cat $LOG_FILE)
-  local pkg=$(cat ./build/node_modules/${module_path}/package.json) &> /dev/null
+
+  if [ -e ./build/node_modules/${module_path}/package.json ]; then
+    local pkg=$(cat ./build/node_modules/${module_path}/package.json) &> /dev/null
+  else
+    local pkg="{}"
+  fi
 
   if [ ! "${pkg}" ]; then
     pkg="{}"
@@ -156,7 +165,13 @@ function adjust_package_json() {
 }
 
 function move_to_node_modules() {
-  mkdir ./node_modules
+
+  if [ $module_scope ]; then
+    mkdir -p ./node_modules/${module_scope}
+  else
+    mkdir -p ./node_modules
+  fi
+
   mv ./package ./node_modules/${module_path}
 }
 
