@@ -156,7 +156,7 @@ class Builder {
       const p = this.constructor._exec(
         'docker',
         // TODO: Sane setting for --name ?
-        [ 'run', '-i', '--rm', this.DOCKER_TAG ]
+        [ 'run', '-i', '--rm', this.DOCKER_TAG, 'bash', './build.sh' ]
       );
 
       p.stdin.end(JSON.stringify(options));
@@ -179,6 +179,13 @@ class Builder {
       if (stderr) {
         throw this.constructor._execError(
           'Unexpected stderr from builder',
+          results
+        );
+      }
+
+      if (output.code !== 0) {
+        throw this.constructor._execError(
+          'Unexpected exit code from builder',
           results
         );
       }

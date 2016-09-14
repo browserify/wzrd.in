@@ -19,7 +19,7 @@ COPY build.sh ./
 RUN chmod 555 build.sh
 COPY versions.sh ./
 RUN chmod 555 versions.sh
+COPY explode.sh ./
+RUN chmod 555 explode.sh
 USER anon
-
-CMD ["bash", "build.sh"]
 
