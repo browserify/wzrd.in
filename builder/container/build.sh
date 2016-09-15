@@ -7,41 +7,57 @@ CORE_MODULES="assert buffer child_process cluster console constants crypto dgram
 REGISTRY_URL='http://registry.npmjs.org'
 NVM_BIN=$HOME/nvm/nvm.sh
 
-LOG_FILE=$HOME/log.log
-BROWSERIFY_FILE=$HOME/build/bundle.js
 RUN_ROOT=$(pwd)
+LOG_FILE=${RUN_ROOT}/log.log
+BROWSERIFY_FILE=${RUN_ROOT}/build/bundle.js
 
 function info() {
-  echo 'info: ' ${@} > ${LOG_FILE}
+  echo 'info: ' ${@} >> ${LOG_FILE}
 }
 
-source $NVM_BIN > $LOG_FILE 2>&1
-nvm use 4 > $LOG_FILE 2>&1
+source $NVM_BIN >> $LOG_FILE 2>&1
+nvm use 4 >> $LOG_FILE 2>&1
+
+info "Extracting variables from payload..."
 
 # Things I expect to be passed to me
 module_scope=$(echo $INPUT | jq -r '.module_scope')
 if [ $module_scope == 'null' ]; then
   module_scope=''
+  info "  - module_scope: (no scope)"
+else
+  info "  - module_scope: ${module_scope}"
 fi
 
 module_name=$(echo $INPUT | jq -r '.module_name')
+info "  - module_name: ${module_name}"
+
 module_version=$(echo $INPUT | jq -r '.module_version')
+info "  - module_version: ${module_version}"
+
 module_subfile=$(echo $INPUT | jq -r '.module_subfile')
 if [ $module_subfile == 'null' ]; then
   module_subfile=''
 fi
+info "  - module_subfile: ${module_subfile}"
+
 standalone=$(echo $INPUT | jq -r '.standalone')
 if [ $standalone == 'null' ]; then
   standalone='false'
 fi
+info "  - standalone: ${standalone}"
+
 debug=$(echo $INPUT | jq -r '.debug')
 if [ $debug == 'null' ]; then
   debug='false'
 fi
+info "  - debug: ${debug}"
+
 full_paths=$(echo $INPUT | jq -r '.full_paths')
 if [ $full_paths == 'null' ]; then
   full_paths='false'
 fi
+info "  - full_paths: ${full_paths}"
 
 # Things I can derive
 module_path=${module_scope}
@@ -50,17 +66,23 @@ if [ $module_path ]; then
 else
   module_path=${module_name}
 fi
+info "  - module_path: ${module_path}"
 
 require_path=${module_path}
 if [ $module_subfile ]; then
   require_path=${module_path}/${module_subfile}
 fi
+info "  - require_path: ${require_path}"
 
 is_in_core='false'
 if [ "$(echo "$CORE_MODULES" | grep "$module_path")" ]; then
+  info "Module is in core..."
   is_in_core='true'
+else
+  info "Module is NOT in core..."
 fi
 
+info "Initializing build directory..."
 rm -rf ./build
 mkdir ./build
 
@@ -71,6 +93,8 @@ function die() {
   cd ${RUN_ROOT}
 
   local error_code=$1
+
+  info "Exiting with code ${error_code}"'!'
 
   local bundle=$(cat $BROWSERIFY_FILE)
   local logs=$(cat $LOG_FILE)
@@ -91,6 +115,9 @@ function die() {
       --arg module_name "${module_name}" \
       --arg module_version "${module_version}" \
       --arg module_subfile "${module_subfile}" \
+      --arg module_path "${module_path}" \
+      --arg require_path "${require_path}" \
+      --arg is_in_core "${is_in_core}" \
       --argjson standalone "${standalone}" \
       --argjson debug "${debug}" \
       --argjson full_paths "${full_paths}" \
@@ -100,6 +127,9 @@ function die() {
         "module_name": $module_name,
         "module_version": $module_version,
         "module_subfile": $module_subfile,
+        "module_path": $module_path,
+        "require_path": $require_path,
+        "is_in_core": $is_in_core,
         "standalone": $standalone,
         "debug": $debug,
         "full_paths": $full_paths,
@@ -134,13 +164,16 @@ function die_if_error() {
 
 
 function download() {
-  curl -s "${REGISTRY_URL}/${module_path}/-/${module_name}-${module_version}.tgz" 2>> ${LOG_FILE}
+  local url="${REGISTRY_URL}/${module_path}/-/${module_name}-${module_version}.tgz"
+  info "Downloading tarball from ${url}..."
+  curl -s --verbose "${url}" 2>> ${LOG_FILE}
 }
 
 function adjust_package_json() {
   # Add README to package.json.
   # Could also remove package.scripts but with docker I don't think that's
   # needed.
+  info "Analyzing package..."
   node -e '
     '"'"'use strict'"'"';
 
@@ -149,14 +182,17 @@ function adjust_package_json() {
 
     const glob = require("glob");
 
+    console.log("  - Attempting to read ./package/package.json...");
     const pkg = JSON.parse(fs.readFileSync("./package/package.json"));
 
+    console.log("  - Searching for README...");
     let files = glob.sync("README?(.*)", { cwd: "package/", nocase: true, mark: true });
 
     files = files.filter((f) => !f.match(/\/$/));
 
     if (files.length) {
-
+      console.log("  - Found README!");
+      console.log("  - Reticulating splines...");
       pkg.readme = fs.readFileSync(path.join("package/", files[0]), "utf8");
 
       fs.writeFileSync("./package/package.json", JSON.stringify(pkg, null, 2));
@@ -165,25 +201,34 @@ function adjust_package_json() {
 }
 
 function move_to_node_modules() {
-
   if [ $module_scope ]; then
-    mkdir -p ./node_modules/${module_scope}
+    local basedir="./node_modules/${module_scope}"
   else
-    mkdir -p ./node_modules
+    local basedir="./node_modules"
   fi
 
-  mv ./package ./node_modules/${module_path}
+  info "Creating directory ${basedir}..."
+  mkdir -p "${basedir}"
+
+  local dest="./node_modules/${module_path}"
+
+  info "Moving ./package to ${dest}..."
+  mv ./package ${dest}
 }
 
 function npm_install() {
-  cd ./node_modules/${module_path}
-    npm install --production --registry ${REGISTRY_URL} >> $LOG_FILE 2>&1
+  local install_path="./node_modules/${module_path}"
+  info "Installing npm dependencies at ${install_path}..."
+  cd "${install_path}"
+    npm install --production --registry ${REGISTRY_URL} >> ${LOG_FILE} 2>&1
   cd ../..
 }
 
 function resolve_standalone_file() {
   if [[ ${standalone} == "true" ]]; then
-    standalone_file=$(node -pe "require.resolve('$module_path');")
+    info "Attempting to resolve ${require_path}..."
+    standalone_file=$(node -pe "require.resolve('${require_path}');") 2>> ${LOG_FILE}
+    info "  - Resolved to: ${standalone_file}"
   fi
 }
 
@@ -208,6 +253,8 @@ function run_browserify() {
   if [ ${standalone} == 'false' ]  || [ $is_in_core == 'true' ]; then
     browserify_argv=( "${browserify_argv[@]}" "-r" ${require_path} )
   fi
+
+  info "Running browserify with arguments: ${browserify_argv[@]}..."
 
   browserify ${browserify_argv[@]} 2>>${LOG_FILE} | uglifyjs - 2>>${LOG_FILE} 1>${BROWSERIFY_FILE}
 }

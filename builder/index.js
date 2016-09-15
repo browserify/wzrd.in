@@ -168,6 +168,7 @@ class Builder {
 
       try {
         output = JSON.parse(results.stdout);
+        
       }
       catch (parseError) {
         throw this.constructor._execError(
@@ -179,14 +180,16 @@ class Builder {
       if (stderr) {
         throw this.constructor._execError(
           'Unexpected stderr from builder',
-          results
+          results,
+          output
         );
       }
 
       if (output.code !== 0) {
         throw this.constructor._execError(
           'Unexpected exit code from builder',
-          results
+          results,
+          output
         );
       }
 
