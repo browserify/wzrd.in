@@ -1,79 +1,59 @@
-var path = require('path');
+'use strict';
 
-var tap = require('tap'),
-    supertest = require('supertest'),
-    rimraf = require('rimraf');
+const http = require('http');
+const path = require('path');
+    
+const inject = require('shot').inject;
+const rimraf = require('rimraf');
+const tap = require('tap');
 
-var cdn = require('../').app;
+const wzrdin = require('../../');
+
+function looksLegit(res, t) {
+  t.equal(res.statusCode, 200, 'status code is 200');
+  t.equal(res.headers['Content-Type'], 'text/javascript', 'content-type says javascript');
+  t.match(res.payload, /^javascript(/, 'body looks like a bundle');
+}
+
+tap.test('setup', (t) => {
+  wzrdin.bundler.init().then(() => t.end(), (err) => { t.fail(err); t.end(); });
+});
 
 tap.test('singular bundles build the first time', function (t) {
-  supertest(cdn)
-    .get('/standalone/concat-stream@latest')
-//    .expect('Content-Type', 'text/javascript')
-    .expect(200)
-    .end(function (err, res) {
-      t.error(err, 'requesting /standalone/concat-stream@latest doesn\'t explode');
-      t.end();
-    })
-  ;
+  inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }, (res) => {
+    looksLegit(res, t);
+    t.end();
+  });
 });
 
 tap.test('singular bundles are cached the second time', function (t) {
-  supertest(cdn)
-    .get('/standalone/concat-stream@latest')
-//    .expect('Content-Type', 'text/javascript')
-    .expect(200)
-    .end(function (err, res) {
-      t.error(err, 'requesting /standalone/concat-stream@latest doesn\'t explode');
-      t.end();
-    })
-  ;
+  inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }, (res) => {
+    looksLegit(res, t);
+    t.end();
+  });
 });
 
 tap.test('singular scoped bundles build the first time', function (t) {
-  supertest(cdn)
-    .get('/standalone/@tatumcreative%2Fcolor@latest')
-//    .expect('Content-Type', 'text/javascript')
-    .expect(200)
-    .end(function (err, res) {
-      process.stdout.write(require('util').inspect(res) + '\n');
-      t.error(err, 'requesting /standalone/@tatumcreative%2Fcolor@latest doesn\'t explode');
-      t.end();
-    })
-  ;
+  inject(wzrdin.app, { url: '/standalone/@tatumcreative%2Fcolor@latest' }, (res) => {
+    looksLegit(res, t);
+    t.end();
+  });
 });
 
 tap.test('singular bundles with subfiles build the first time', function (t) {
-  supertest(cdn)
-    .get('/standalone/jsonml-stringify%2Fdom@latest')
-//    .expect('Content-Type', 'text/javascript')
-    .expect(200)
-    .end(function (err, res) {
-      t.error(err, 'requesting /standalone/jsonml-stringify%2Fdom@latest doesn\'t explode');
-      t.end();
-    })
-  ;
+  inject(wzrdin.app, { url: '/standalone/jsonml-stringify%2Fdom@latest' }, (res) => {
+    looksLegit(res, t);
+    t.end();
+  });
 });
 
 tap.test('singular bundles of standalone core modules build the first time', function (t) {
-  supertest(cdn)
-    .get('/standalone/events')
-//    .expect('Content-Type', 'text/javascript')
-    .expect(200)
-    .end(function (err, res) {
-      t.error(err, 'requesting /standalone/events doesn\'t explode');
-      t.end();
-    })
-  ;
+  inject(wzrdin.app, { url: '/standalone/events' }, (res) => {
+    looksLegit(res, t);
+    t.end();
+  });
 });
 
-tap.test('teardown', function (t) {
-  rimraf('./cdn.db', function (err) {
-    t.error(err, 'removed the database');
-    t.end();
-    setTimeout(function () {
-      process.stderr.write('# killing this because supertest is hanging\n');
-      process.exit(0);
-    }, 2000);
-  });
+tap.tearDown(function () {
+  rimraf('./cdn.db', (err) => { if (err) throw err; });
 });
