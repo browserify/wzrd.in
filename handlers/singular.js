@@ -2,6 +2,7 @@
 
 const parse = require('../lib/parse');
 const stringifyError = require('../stringify-error');
+const Promise = require('bluebird');
 
 module.exports = function createSingularHandler(bundler, options) {
   options = options || {};
@@ -24,7 +25,7 @@ module.exports = function createSingularHandler(bundler, options) {
       return bundler.purge(o).done(ack, fail);
     }
 
-    bundler.bundle(input).done(serve, fail);
+    Promise.resolve({ bundle: '' }).done(serve, fail);
   };
 };
 
