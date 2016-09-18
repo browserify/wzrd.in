@@ -49,6 +49,7 @@
     "jsontool": "~7.0.1",
     "marked": "~0.3.0",
     "replacer": "0.0.1",
+    "shot": "3.3.2",
     "supertest": "~0.9.0",
     "tap": "~0.4.8"
   }
