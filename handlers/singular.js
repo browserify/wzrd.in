@@ -25,7 +25,8 @@ module.exports = function createSingularHandler(bundler, options) {
       return bundler.purge(o).done(ack, fail);
     }
 
-    Promise.resolve({ bundle: '' }).done(serve, fail);
+//    Promise.resolve({ bundle: '' }).done(serve, fail);
+    serve({ bundle: '' });
   };
 };
 
