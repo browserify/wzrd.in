@@ -244,7 +244,7 @@ function run_browserify() {
   fi
 
   if [ ${standalone} == 'true' ]; then
-    browserify_argv=( "${browserify_argv[@]}" "--standalone" ${require_path})
+    browserify_argv=( "${browserify_argv[@]}" "--standalone" $(basename "${require_path}"))
     if [ ${standalone_file} ]; then
       browserify_argv=( "${browserify_argv[@]}" ${standalone_file} )
     fi
