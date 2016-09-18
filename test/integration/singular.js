@@ -11,9 +11,11 @@ const wzrdin = require('../../');
 
 function looksLegit(res, t) {
   t.equal(res.statusCode, 200, 'status code is 200');
-  t.equal(res.headers['Content-Type'], 'text/javascript', 'content-type says javascript');
-  t.match(res.payload, /^javascript(/, 'body looks like a bundle');
+  t.equal(res.headers['content-type'], 'text/javascript', 'content-type says javascript');
+  t.type(res.payload, 'string', 'body looks like a bundle');
 }
+
+tap.plan(6);
 
 tap.test('setup', (t) => {
   wzrdin.bundler.init().then(() => t.end(), (err) => { t.fail(err); t.end(); });
@@ -55,5 +57,6 @@ tap.test('singular bundles of standalone core modules build the first time', fun
 });
 
 tap.tearDown(function () {
+  wzrdin.bundler._caches._destroy();
   rimraf('./cdn.db', (err) => { if (err) throw err; });
 });
