@@ -40,7 +40,7 @@ function start(callback) {
     .pipe(minilog.backends.console)
   ;
 
-  bundler.init().then(() => {
+  bundler.init().done(() => {
 
     const server = http.createServer(app).listen(_.get(config, 'server.port'), function (err) {
       if (err) return callback(err);
@@ -52,9 +52,9 @@ function start(callback) {
 
       callback(null, server);
     });
-  }).catch((err) => {
-    minilog.error(err);
-  }).done();
+  }, (err) => {
+    callback(err);
+  });
 }
 
 exports.start = start;

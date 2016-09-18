@@ -17,14 +17,14 @@ switch (argv._[0]) {
     builder.bootstrap().then((output) => {
       console.log(output);
       process.exit(0);
-    }).catch((err) => {
+    }).done(null, (err) => {
       console.error(err.stack);
       Object.keys(err).forEach((k) => {
         console.log(`* ${k}: %j`, err[k]);
       });
 
       process.exit(1);
-    }).done();
+    });
 
   break;
   case 'start':

@@ -21,10 +21,10 @@ module.exports = function createSingularHandler(bundler, options) {
 
     // TODO: Separate handler
     if (options.purge) {
-      return bundler.purge(o).then(ack, fail).done();
+      return bundler.purge(o).done(ack, fail);
     }
 
-    bundler.bundle(input).then(serve, fail).done();
+    bundler.bundle(input).done(serve, fail);
   };
 };
 
