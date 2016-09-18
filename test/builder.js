@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const semver = require('semver');
 const sinon = require('sinon');
 const tap = require('tap');
@@ -15,8 +16,8 @@ const DEFAULT_TIMEOUT = 5 * SECONDS;
 
 const NODE_VERSION = /^4/;
 
-tap.plan(5);
-tap.setTimeout(BOOTSTRAP_TIMEOUT + BUILD_TIMEOUT + 3 * DEFAULT_TIMEOUT);
+tap.plan(7);
+tap.setTimeout(BOOTSTRAP_TIMEOUT + 3 * BUILD_TIMEOUT + 3 * DEFAULT_TIMEOUT);
 
 let builder;
 
@@ -53,6 +54,76 @@ tap.test('builder.init', (t) => {
   });
 });
 
+function assertStatusCode(results, t) {
+  t.equal(_.get(results, 'code'), 0, 'exit code is 0');
+}
+
+const expectedPackageVersions = require('../builder/container/package.json').dependencies;
+
+function assertVersions(results, t) {
+  t.ok(_.get(results, 'debug.versions'), 'version block is defined');
+  t.match(_.get(results, 'debug.versions.node'), NODE_VERSION, 'node sure looks like a version');
+  t.type(_.get(results, 'debug.versions.npm'), 'string', 'npm sure has a version alright');
+
+  [ 'browserify', 'uglify-js' ].forEach((pkg) => {
+    const range = expectedPackageVersions[pkg];
+    // TODO: Extra?
+    t.ok(semver.satisfies(_.get(results, `debug.versions.${pkg}`), range), `${pkg} is ${range} (actual: ${_.get(results, 'debug.versions.' + pkg)})`);
+  });
+}
+
+function assertLogs(results, t) {
+  t.comment(results.logs);
+  t.ok(results.logs, 'logs are a string alright', { diagnostic: true });
+}
+
+function assertBundle(results, t, options) {
+  const isStandalone = _.get(options, 'standalone');
+  const isCore = _.get(options, 'core');
+
+  t.ok(_.get(results, 'pkg'), 'pkg block is defined');
+  if (!isCore) {
+    t.type(_.get(results, 'pkg.readme'), 'string', 'readme is a string');
+    t.ok(_.get(results, 'pkg.readme.length'), 'readme has content');
+  }
+  if (isStandalone) {
+    t.match(_.get(results, 'bundle'), /^\(function\(f\){/, 'looks like a bundle alright');
+  }
+  else {
+    t.match(_.get(results, 'bundle'), /^require=function e\(t,n,r\)/, 'looks like a bundle alright');
+  }
+}
+
+function assertModuleScope(results, t, scope) {
+  scope = scope || '';
+  t.equal(_.get(results, 'debug.module_scope'), scope, `module_scope is \`${scope}\``);
+}
+
+function assertModuleName(results, t, name) {
+  t.equal(_.get(results, 'debug.module_name'), name, `module_name is \`${name}\``);
+}
+
+function assertModuleVersion(results, t, version) {
+  t.equal(_.get(results, 'debug.module_version'), version, `module_version is \`${version}\``);
+}
+
+function assertModuleSubfile(results, t, subfile) {
+  subfile = subfile || '';
+  t.equal(_.get(results, 'debug.module_subfile'), subfile, `module_subfile is \`${subfile}\``);
+}
+
+function assertStandalone(results, t, isStandalone) {
+  t.equal(_.get(results, 'debug.standalone'), isStandalone, `standalone is \`${isStandalone}\``);
+}
+
+function assertDebug(results, t, isDebug) {
+  t.equal(_.get(results, 'debug.debug'), isDebug, `debug is \`${isDebug}\``);
+}
+
+function assertFullPaths(results, t, isFullPaths) {
+  t.equal(_.get(results, 'debug.full_paths'), isFullPaths, `full_paths is \`${isFullPaths}\``);
+}
+
 tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
   t.setTimeout(BUILD_TIMEOUT);
 
@@ -62,57 +133,85 @@ tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
     standalone: true
   }).then((results) => {
     t.ok(results);
-    results = results || {};
+    assertStatusCode(results, t);
 
-    t.equal(results.code, 0, 'exit code is 0');
+    assertModuleScope(results, t);
+    assertModuleName(results, t, 'concat-stream');
+    assertModuleVersion(results, t, '1.5.2');
+    assertModuleSubfile(results, t);
+    assertStandalone(results, t, true);
+    assertDebug(results, t, false);
+    assertFullPaths(results, t, false);
 
-    t.ok(results.debug, 'debug block is defined');
-    const debug = results.debug || {};
-
-    t.equal(debug.module_scope, '', 'module_scope is blank');
-    t.equal(debug.module_name, 'concat-stream', 'module_name is concat-stream');
-    t.equal(debug.module_version, '1.5.2', 'module_version is 1.5.2');
-    t.equal(debug.module_subfile, '', 'module_subfile is blank');
-    t.equal(debug.standalone, true, 'standalone is true');
-    t.equal(debug.debug, false, 'debug is false');
-    t.equal(debug.full_paths, false, 'full_paths is false');
-
-    t.ok(debug.versions, 'versions block is defined');
-    const versions = debug.versions || {};
-
-    t.match(versions.node, NODE_VERSION, 'node sure looks like a version');
-
-    t.type(versions.npm, 'string', 'npm sure has a version alright');
-
-    const expectedPackageVersions = require('../builder/container/package.json').dependencies;
-    [ 'browserify', 'uglify-js' ].forEach((pkg) => {
-      const range = expectedPackageVersions[pkg];
-      try {
-        t.ok(semver.satisfies(versions[pkg], range), `${pkg} is ${range} (actual: ${versions[pkg]})`);
-      } catch (err) {
-        throw new Error('pkg' + versions[pkg]);
-      }
-    });
-
-    t.type(results.logs, 'string', 'logs are a string');
-
-    t.ok(results.pkg, 'pkg block is defined');
-    const pkg = results.pkg || {};
-
-    t.type(pkg.readme, 'string', 'readme is a string');
-    t.ok(pkg.readme.length, 'readme has length');
-
-    t.ok(results.bundle, 'bundle is defined');
-    const bundle = results.bundle || '';
-    t.ok(results.bundle.length, 'bundle has length');
+    assertVersions(results, t);
+    assertLogs(results, t);
+    assertBundle(results, t, { standalone: true });
 
     t.end();
-    
   }).catch((err) => {
     t.fail(err);
     t.end();
   });
 });
+
+tap.test('builder._build creates a bundle -- standalone jsonml-stringify - subfile stringify', (t) => {
+  t.setTimeout(BUILD_TIMEOUT);
+
+  builder.build({
+    module_name: 'jsonml-stringify',
+    module_subfile: 'stringify',
+    module_version: '1.0.1',
+    standalone: true
+  }).then((results) => {
+    t.ok(results);
+    assertStatusCode(results, t);
+
+    assertModuleScope(results, t);
+    assertModuleName(results, t, 'jsonml-stringify');
+    assertModuleVersion(results, t, '1.0.1');
+    assertModuleSubfile(results, t, 'stringify');
+    assertStandalone(results, t, true);
+    assertDebug(results, t, false);
+    assertFullPaths(results, t, false);
+
+    assertVersions(results, t);
+    assertLogs(results, t);
+    assertBundle(results, t, { standalone: true });
+
+    t.end();
+  }).catch((err) => {
+    t.fail(err);
+    t.end();
+  });
+});
+
+tap.test('builder._build creates a bundle -- core module events', (t) => {
+  t.setTimeout(BUILD_TIMEOUT);
+
+  builder.build({
+    module_name: 'events'
+  }).then((results) => {
+    t.ok(results);
+    assertStatusCode(results, t);
+
+    assertModuleScope(results, t);
+    assertModuleName(results, t, 'events');
+    assertStandalone(results, t, false);
+    assertDebug(results, t, false);
+    assertFullPaths(results, t, false);
+
+    assertVersions(results, t);
+    assertLogs(results, t);
+    assertBundle(results, t, { core: true });
+
+    t.end();
+  }).catch((err) => {
+    t.fail(err);
+    t.end();
+  });
+});
+
+
 
 tap.test('two builds at the same time', (t) => {
   const fakeInput = {
