@@ -41,7 +41,7 @@ tap.test('singular scoped bundles build the first time', function (t) {
 });
 
 tap.test('singular bundles with subfiles build the first time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/jsonml-stringify%2Fdom@latest' }, (res) => {
+  inject(wzrdin.app, { url: '/standalone/lodash%2Frange@latest' }, (res) => {
     looksLegit(res, t);
     t.end();
   });

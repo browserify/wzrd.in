@@ -154,22 +154,22 @@ tap.test('builder._build creates a bundle -- standalone concat-stream', (t) => {
   });
 });
 
-tap.test('builder._build creates a bundle -- standalone jsonml-stringify - subfile stringify', (t) => {
+tap.test('builder._build creates a bundle -- standalone lodash - subfile range', (t) => {
   t.setTimeout(BUILD_TIMEOUT);
 
   builder.build({
-    module_name: 'jsonml-stringify',
-    module_subfile: 'stringify',
-    module_version: '1.0.1',
+    module_name: 'lodash',
+    module_subfile: 'range',
+    module_version: '4.15.0',
     standalone: true
   }).then((results) => {
     t.ok(results);
     assertStatusCode(results, t);
 
     assertModuleScope(results, t);
-    assertModuleName(results, t, 'jsonml-stringify');
-    assertModuleVersion(results, t, '1.0.1');
-    assertModuleSubfile(results, t, 'stringify');
+    assertModuleName(results, t, 'lodash');
+    assertModuleVersion(results, t, '4.15.0');
+    assertModuleSubfile(results, t, 'range');
     assertStandalone(results, t, true);
     assertDebug(results, t, false);
     assertFullPaths(results, t, false);
