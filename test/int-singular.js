@@ -15,11 +15,11 @@ function looksLegit(res, t) {
   t.type(res.payload, 'string', 'body looks like a bundle');
 }
 
-tap.plan(6);
+tap.plan(5);
 
-tap.test('setup', (t) => {
-  wzrdin.bundler.init().then(() => t.end(), (err) => { t.fail(err); t.end(); });
-});
+//tap.test('setup', (t) => {
+//  wzrdin.bundler.init().then(() => t.end(), (err) => { t.fail(err); t.end(); });
+//});
 
 tap.test('singular bundles build the first time', function (t) {
   inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }, (res) => {
