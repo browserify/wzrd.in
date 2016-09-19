@@ -14,7 +14,7 @@ module.exports = function requestLogger(req, res, next) {
   const end = res.end;
   res.end = function (chunk, encoding) {
     res.end = end;
-    res.end(chunk, encoding);
+    const out = res.end(chunk, encoding);
 
     const remoteAddr = (function () {
           if (req.ip) return req.ip;
@@ -41,6 +41,8 @@ module.exports = function requestLogger(req, res, next) {
       httpVersion,
       status
     ));
+
+    return out;
   };
 
   next();
