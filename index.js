@@ -5,12 +5,8 @@ const http = require('http');
 const _ = require('lodash');
 const express = require('express');
 const minilog = require('minilog');
-const cors = require('cors');
-const compression = require('compression');
 
 const Bundler = require('./lib/bundler');
-
-const requestLogger = require('./middlewares/request-logger');
 
 const config = require('./config');
 const routes = require('./routes');
@@ -19,16 +15,14 @@ const app = express();
 
 const bundler = new Bundler(config);
 
-app.routes = new express.Router();
-routes(app.routes, bundler, config);
+const router = new express.Router();
+routes(router, bundler, config);
 
 app.use(require('cors')(config.cors));
 app.use(require('compression')());
 app.use(require('./middlewares/request-logger'));
-app.use(app.routes);
+app.use(router);
 app.use(express.static(__dirname + '/public'));
-
-require('./routes')(app.routes, bundler, config);
 
 function start(callback) {
   callback = callback || ((err) => { if (err) { throw err; } });
