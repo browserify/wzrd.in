@@ -5,13 +5,10 @@ const http = require('http');
 const express = require('express');
 const shot = require('shot');
 
-const requestLogger = require('./middlewares/request-logger');
-
 const app = express();
 
-app.use(require('./middlewares/request-logger'));
-
 app.get('/foo', function(req, res, next) {
+  console.log('foo');
   res.end('foo');
 });
 
