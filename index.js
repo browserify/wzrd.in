@@ -24,7 +24,7 @@ routes(app.routes, bundler, config);
 
 app.use(require('cors')(config.cors));
 app.use(require('compression')());
-app.use(require('./middlewares/request-logger'));
+//app.use(require('./middlewares/request-logger'));
 app.use(app.routes);
 app.use(express.static(__dirname + '/public'));
 
