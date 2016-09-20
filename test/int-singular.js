@@ -3,7 +3,7 @@
 const http = require('http');
 const path = require('path');
     
-const inject = require('shot').inject;
+const inject = require('pickleback').inject;
 const rimraf = require('rimraf');
 const tap = require('tap');
 

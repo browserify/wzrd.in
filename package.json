@@ -28,9 +28,6 @@
     "uuid": "2.0.2",
     "waitress": "~0.1.5"
   },
-  "bundledDependencies": [
-    "shot"
-  ],
   "scripts": {
     "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap --timeout $(node -pe '3* 60 * 1000 + 3 * 5 * 000') ./test/*.js",
     "start": "node ./bin/wzrd.in start",
@@ -40,9 +37,9 @@
     "exercise-bike": "0.0.1",
     "jsontool": "~7.0.1",
     "marked": "~0.3.0",
+    "pickleback": "3.3.2",
     "replacer": "0.0.1",
     "rimraf": "2.5.4",
-    "shot": "3.3.2",
     "sinon": "1.17.5",
     "supertest": "2.0.0",
     "tap": "7.1.2"
