@@ -36,10 +36,7 @@ exports.create = function create(bundler) {
       return Promise.all(keys.map((k) => {
         const input = Object.assign(parse(k), options, { module_semver: deps[k] });
 
-        process.stderr.write('input: ' + JSON.stringify(input) + '\n');
-
         return bundler.bundle(input).then((b) => {
-          process.stderr.write('adding ' + k + ' to modules\n');
           modules[k] = b;
         }, (err) => {
           errors.push(err);
@@ -60,7 +57,6 @@ exports.create = function create(bundler) {
           throw err;
         }
 
-        process.stderr.write('module keys:' + JSON.stringify(Object.keys(modules)) + '\n');
         return JSON.stringify(modules, null, 2); 
       });
     }).then((b) => {

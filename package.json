@@ -29,7 +29,7 @@
     "waitress": "~0.1.5"
   },
   "scripts": {
-    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap --timeout $(node -pe '3* 60 * 1000 + 3 * 5 * 000') ./test/*.js",
+    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap --timeout $(node -pe '3* 60 * 1000 + 3 * 5 * 000') ./test/*.js ./test/integration/*.js",
     "start": "node ./bin/wzrd.in start",
     "index-page": "marked README.md | node -e \"var Replacer = require('replacer'); process.stdin.pipe(new Replacer('https://wzrd.in/standalone/concat-stream@latest', '/standalone/concat-stream@latest')).pipe(new Replacer('<p>Also, <a href=\\\"https://wzrd.in\\\">wzrd.in</a> has a nice url generating form.</p>', '<form method=\\\"get\\\" id=\\\"url-generator\\\"><h3>Or choose a module here:</h3><label>Module:<input type=\\\"text\\\" name=\\\"module\\\" value=\\\"concat-stream\\\" required /></label><label>Version:<input type=\\\"text\\\" name=\\\"ver\\\" value=\\\"latest\\\" required /></label><input type=\\\"submit\\\" value=\\\"Go!\\\" /></form>')).pipe(process.stdout)\" | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },

@@ -6,7 +6,7 @@ const inject = require('pickleback').inject;
 const rimraf = require('rimraf');
 const tap = require('tap');
 
-const wzrdin = require('../');
+const wzrdin = require('../../');
 
 const requestBody = JSON.stringify({
   dependencies: {
