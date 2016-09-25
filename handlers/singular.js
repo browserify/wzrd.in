@@ -19,12 +19,16 @@ module.exports = function createSingularHandler(bundler, options) {
       return fail(err);
     }
 
-    // TODO: Separate handler
-    if (options.purge) {
-      return bundler.purge(o).done(ack, fail);
+    function done(p) {
+      return p.catch((err) => setImmediate(() => { throw err; }));
     }
 
-    bundler.bundle(input).done(serve, fail);
+    // TODO: Separate handler
+    if (options.purge) {
+      return done(bundler.purge(o).then(ack, fail));
+    }
+
+    done(bundler.bundle(input).then(serve, fail));
   };
 };
 

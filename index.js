@@ -34,7 +34,7 @@ function start(callback) {
     .pipe(minilog.backends.console)
   ;
 
-  bundler.init().done(() => {
+  bundler.init().then(() => {
 
     const server = http.createServer(app).listen(_.get(config, 'server.port'), function (err) {
       if (err) return callback(err);
@@ -48,7 +48,7 @@ function start(callback) {
     });
   }, (err) => {
     callback(err);
-  });
+  }, (err) => setImmediate(() => { throw err; }));
 }
 
 exports.start = start;

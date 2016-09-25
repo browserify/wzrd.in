@@ -17,7 +17,7 @@ switch (argv._[0]) {
     builder.bootstrap().then((output) => {
       console.log(output);
       process.exit(0);
-    }).done(null, (err) => {
+    }).catch((err) => {
       console.error(err.stack);
       Object.keys(err).forEach((k) => {
         console.log(`* ${k}: %j`, err[k]);
