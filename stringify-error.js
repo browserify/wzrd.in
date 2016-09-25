@@ -2,7 +2,7 @@
 
 const util = require('util');
 
-const log = require('minilog')('browserify-cdn');
+const log = require('minilog')('wzrd.in');
 const uuid = require('uuid').v1;
 
 const stringify = module.exports = function stringifyError(err) {
@@ -70,10 +70,10 @@ stringify.hello = '---FLAGRANT SYSTEM ERROR---\n'
 
 stringify.goodbye = [
   '',
-  'This is probably an issue with the package, and not browserify-cdn itself.',
+  'This is probably an issue with the package, and not wzrd.in itself.',
   'If you feel differently, feel free to file a bug report at:',
   '',
-  '    https://github.com/jfhbrook/browserify-cdn/issues',
+  '    https://github.com/jfhbrook/wzrd.in/issues',
   '',
   'Include the ENTIRETY of the contents of this message, and the maintainer(s)',
   'can try to help you out.',
