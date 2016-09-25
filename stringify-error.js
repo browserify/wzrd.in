@@ -1,12 +1,14 @@
-var util = require('util');
+'use strict';
 
-var log = require('minilog')('browserify-cdn');
-var uuid = require('uuid').v1;
+const util = require('util');
 
-var stringify = module.exports = function stringifyError(err) {
-  var id = uuid(),
-      internal = [],
-      external = [ util.format('\n(logs uuid: %s )\n', id) ]
+const log = require('minilog')('browserify-cdn');
+const uuid = require('uuid').v1;
+
+const stringify = module.exports = function stringifyError(err) {
+  const id = uuid();
+  const internal = [];
+  const external = [ util.format('\n(logs uuid: %s )\n', id) ];
 
   if (err.stack) {
     err.stack.split('\n').forEach(function (l) {
@@ -29,13 +31,34 @@ var stringify = module.exports = function stringifyError(err) {
   external.push('');
 
   Object.keys(err).forEach(function (k) {
-    var s = k + ': ' + util.format(err[k]);
-    internal.push(s);
-    external.push(s);
+    const v = err[k];
+
+    if (typeof v === 'string') {
+      if (v) {
+        push(`---${k}---\n${indent(v)}\n`);
+      }
+      else {
+        push(`---${k}---\n    (blank string)\n`);
+      }
+    }
+    else {
+      push(`---${k}---\n${indent(util.format(v))}\n`);
+    }
+
+    function indent(txt) {
+      return txt.split('\n').map((l) => { return '    ' + l; }).join('\n');
+    }
+
+    function push(s) {
+      internal.push(s);
+      external.push(s);
+    }
   });
 
-  internal.forEach(function (l) {
-    log.error(id + ' : ' + l);
+  internal.forEach(function(txt) {
+    txt.split('\n').forEach((l) => {
+      log.error(id + ' : ' + l);
+    });
   });
 
   external.push('');

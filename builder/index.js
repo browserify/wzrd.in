@@ -42,14 +42,7 @@ class Builder {
         if (err) {
           return reject(err);
         }
-        if (code) {
-          err = this._execError(
-            cmd + ' exited with code ' + code,
-            { code: code, stdout: stdout, stderr: stderr }
-          );
-          return reject(err);
-        }
-        return resolve({ stdout: stdout, stderr: stderr });
+        return resolve({ code: code, stdout: stdout, stderr: stderr });
       });
 
       child.stdout.pipe(concat((_out) => {
@@ -180,16 +173,14 @@ class Builder {
       if (stderr) {
         throw this.constructor._execError(
           'Unexpected stderr from builder',
-          results,
-          output
+          Object.assign({}, results, output)
         );
       }
 
       if (output.code !== 0) {
         throw this.constructor._execError(
           'Unexpected exit code from builder',
-          results,
-          output
+          Object.assign({}, results, output)
         );
       }
 
