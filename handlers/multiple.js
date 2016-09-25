@@ -1,16 +1,20 @@
 'use strict';
 
+const Promise = require('bluebird');
+const parse = require('../lib/parse');
+
+const cache = require('../lib/cache');
 const stringifyError = require('../stringify-error');
 
-exports.create = function create(bundle) {
+exports.create = function create(bundler) {
 
-  const cache = bundle.cache;
+  const caches = bundler._caches;
 
   return function (req, res) {
-    var opts = req.body;
+    const opts = req.body;
 
-    var deps = opts.dependencies,
-        options = opts.options || {};
+    const deps = opts.dependencies;
+    const options = opts.options || {};
 
     if (typeof deps === 'undefined' || deps === null) {
       res.statusCode = 500;
@@ -23,68 +27,43 @@ exports.create = function create(bundle) {
       return res.end(stringifyError.goodbye);
     }
 
-    cache.multibundles.check(cache.defaultHashFxn(opts), function multibundle(cb) {
-      var keys = Object.keys(deps),
-          count = keys.length,
-          modules = {},
-          errors = [];
+    caches.multibundles.check(opts, () => {
+      const keys = Object.keys(deps);
+      const count = keys.length;
+      const modules = {};
+      const errors = [];
 
-      keys.forEach(function (k) {
-        var o = JSON.parse(JSON.stringify(options)),
-            subfile;
+      return Promise.all(keys.map((k) => {
+        const input = Object.assign(parse(k), options, { module_semver: deps[k] });
 
-        o.module = k;
-        o.version = deps[k];
+        process.stderr.write('input: ' + JSON.stringify(input) + '\n');
 
-        subfile = k.split('/');
-        if (subfile.length > 1) {
-          o.module = subfile.shift();
-          o.subfile = subfile.join('/');
-        }
-
-        bundle(o, function (err, b) {
-          if (err) {
-            errors.push(err);
-          }
-          else {
-            modules[k] = b;
-          }
-
-          count--;
-
-          if (!count) {
-            handleBundle();
-          }
+        return bundler.bundle(input).then((b) => {
+          process.stderr.write('adding ' + k + ' to modules\n');
+          modules[k] = b;
+        }, (err) => {
+          errors.push(err);
         });
-      });
-
-      function handleBundle() {
+      })).then(() => {
         if (errors.length) {
-          //
-          // End the request. Don't try caching.
-          //
-          res.statusCode = 500;
-          res.setHeader('content-type', 'text/plain');
-          res.write(stringifyError.hello);
-          errors.forEach(function (e, i) {
-            res.write('\n--- error #' + i + ': ---\n\n');
-            res.write(stringifyError(e));
-            res.write('\n');
-          });
-          res.write('\n------\n');
-          return res.end(stringifyError.goodbye);
-        }
-        return cb(null, JSON.stringify(modules, true, 2));
-      }
-    }, function (err, _b) {
-      if (err) {
-        res.statusCode = 500;
-        res.setHeader('content-type', 'text/plain');
-        res.write(stringifyError.hello);
-        res.write(stringifyError(err));
-        return res.end(stringifyError.goodbye);
-      }
+          let msg = 'Errors while generating multibundle:\n';
 
+          errors.forEach((err, i) => {
+            msg += '--- error #' + i + ': ---\n\n';
+            msg += stringifyError(err) + '\n';
+          });
+
+          msg += '\n------\n';
+
+          const err = new Error(msg);
+
+          throw err;
+        }
+
+        process.stderr.write('module keys:' + JSON.stringify(Object.keys(modules)) + '\n');
+        return JSON.stringify(modules, null, 2); 
+      });
+    }).then((b) => {
       //
       // It seems 302s cause problems with certain use cases.
       // I still include the Location header here though, so that one may
@@ -93,62 +72,66 @@ exports.create = function create(bundle) {
       // res.statusCode = 302;
       res.setHeader('Location', '/multi/' + encodeURIComponent(cache.defaultHashFxn(opts)));
       res.setHeader('content-type', 'application/json');
-      res.end(_b);
+      res.end(b);
+    }, (err) => {
+      res.statusCode = 500;
+      res.setHeader('content-type', 'text/plain');
+      res.write(stringifyError.hello);
+      res.write(stringifyError(err));
+      return res.end(stringifyError.goodbye);
     });
   };
 };
 
-exports.purge = function purge (bundle) {
-  var cache = bundle.cache;
+exports.purge = function purge (bundler) {
+  const caches = bundler._caches;
 
   return function (req, res) {
-    var hash = req.params.bundle;
+    const hash = req.params.bundle;
 
-    cache.multibundles.del(decodeURIComponent(hash), function(err) {
-      if (err) {
-        res.statusCode = 500;
-        res.setHeader('content-type', 'text/plain');
-        res.write(stringifyError.hello);
-        res.write(stringifyError(err));
-        return res.end(stringifyError.goodbye);
-      }
-      res.setHeader('content-type', 'text/plain');
+    caches.multibundles.del(decodeURIComponent(hash)).then(() => {
       res.end('PURGE IS PURGED\n');
+    }, (err) => {
+      res.statusCode = 500;
+      res.setHeader('content-type', 'text/plain');
+      res.write(stringifyError.hello);
+      res.write(stringifyError(err));
+      res.end(stringifyError.goodbye);
     });
   };
 }
 
-exports.get = function get(bundle) {
+exports.get = function get(bundler) {
 
-  var cache = bundle.cache;
+  const caches = bundler._caches;
 
   return function (req, res) {
 
-    var hash = req.params.bundle;
+    const hash = req.params.bundle;
 
-    cache.multibundles.get(decodeURIComponent(hash), function nope(cb) {
-      res.statusCode = 404;
-      res.setHeader('content-type', 'text/plain');
-      res.write(stringifyError.hello);
-      res.write(stringifyError(new Error(
-        'The requested bundle does not exist.\n' +
-        'Have you tried POSTING to `/multi`?'
-      )));
-      return res.end(stringifyError.goodbye);
-
-    }, function yup(err, b) {
-      if (err) {
-        //
-        // This should not happen.
-        //
-        res.statusCode = 500;
+    caches.multibundles._get(decodeURIComponent(hash)).then((bundle) => {
+      res.setHeader('content-type', 'application/json');
+      res.end(bundle);
+    }, (err) => {
+      if (err.name === 'NotFoundError') {
+        res.statusCode = 404;
         res.setHeader('content-type', 'text/plain');
         res.write(stringifyError.hello);
-        res.write(stringifyError(err));
+        res.write(stringifyError(new Error(
+          'The requested bundle does not exist.\n' +
+          'Have you tried POSTING to `/multi`?'
+        )));
         return res.end(stringifyError.goodbye);
       }
-      res.setHeader('content-type', 'application/json');
-      return res.end(b);
+
+      //
+      // This should not happen.
+      //
+      res.statusCode = 500;
+      res.setHeader('content-type', 'text/plain');
+      res.write(stringifyError.hello);
+      res.write(stringifyError(err));
+      return res.end(stringifyError.goodbye);
     });
   };
 };

@@ -1,6 +1,5 @@
 'use strict';
 
-const http = require('http');
 const path = require('path');
     
 const inject = require('pickleback').inject;
@@ -56,7 +55,7 @@ tap.test('singular bundles of standalone core modules build the first time', fun
   });
 });
 
-tap.tearDown(function () {
+tap.tearDown(() => {
   wzrdin.bundler._caches._destroy();
   rimraf('./cdn.db', (err) => { if (err) throw err; });
 });
