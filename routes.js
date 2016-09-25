@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cullHandler = require('./handlers/cull');
 const singularHandler = require('./handlers/singular');
 const multiHandlers = require('./handlers/multiple');
+const statusesHandler = require('./handlers/statuses');
 
 module.exports = function (app, bundler, config) {
   app.get('/bundle/:slug', singularHandler(bundler));
@@ -19,7 +20,9 @@ module.exports = function (app, bundler, config) {
 
   app.post('/multi', bodyParser.json(), multiHandlers.create(bundler));
   app.get('/multi/:bundle', multiHandlers.get(bundler));
-  app.purge('/multi:bundle', multiHandlers.purge(bundler));
+  app.purge('/multi/:bundle', multiHandlers.purge(bundler));
+
+  app.get('/status/:bundle', statusesHandler(bundler));
 
   app.get('/admin/cull/:module', auth(config), cullHandler(bundler, config));
 }
