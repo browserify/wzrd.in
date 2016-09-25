@@ -18,22 +18,22 @@ const config = module.exports = {
   cors: {
     origin: process.env.WZRDIN_CORS_ORIGIN || '*',
     // This one's locked down a little
-    methods: process.env.WZRDIN_CORS_METHODS || [ 'GET,POST' ],
+    methods: process.env.WZRDIN_CORS_METHODS || 'GET,POST',
     preflightContinue: false,
     optionsSuccessStatus: 204
   },
   level: {
-    db: './cdn.db'
+    db: process.env.WZRDIN_LEVEL_DB || './cdn.db'
   },
   npm: {
-    registry: process.env.WZRDIN_NPM_REGISTRY || 'http://registry.npmjs.org',
+    registry: process.env.WZRDIN_NPM_REGISTRY || 'https://registry.npmjs.com',
     skimdb: process.env.WZRDIN_NPM_SKIMDB || 'https://skimdb.npmjs.com:443',
     follower: {
       refreshRate: parseInt(process.env.WZRDIN_NPM_FOLLOWER_REFRESHRATE) || 2 * MINUTES
     }
   },
   server: {
-    port: parseInt(process.env.PORT || process.argv[2]) || 8080
+    port: parseInt(process.env.PORT) || 8080
   }
 };
 
