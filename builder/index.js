@@ -137,6 +137,9 @@ class Builder {
 
     this._inProgress[key].then((result) => {
       this._inProgress[key] = undefined;
+    }, (err) => {
+      // This error should get handled elsewhere, we just need to clean up our memoization
+      this._inProgress[key] = undefined;
     });
 
     return this._inProgress[key];
