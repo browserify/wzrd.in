@@ -147,7 +147,7 @@ function die() {
       "code": $error_code,
       "debug": $debug,
       "logs": $logs,
-      "pkg": $pkg,
+      "package": $pkg,
       "bundle": $bundle
     }'
 

@@ -81,10 +81,10 @@ function assertBundle(results, t, options) {
   const isStandalone = _.get(options, 'standalone');
   const isCore = _.get(options, 'core');
 
-  t.ok(_.get(results, 'pkg'), 'pkg block is defined');
+  t.ok(_.get(results, 'package'), 'pkg block is defined');
   if (!isCore) {
-    t.type(_.get(results, 'pkg.readme'), 'string', 'readme is a string');
-    t.ok(_.get(results, 'pkg.readme.length'), 'readme has content');
+    t.type(_.get(results, 'package.readme'), 'string', 'readme is a string');
+    t.ok(_.get(results, 'package.readme.length'), 'readme has content');
   }
   if (isStandalone) {
     t.match(_.get(results, 'bundle'), /^\(function\(f\){/, 'looks like a bundle alright');
