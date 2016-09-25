@@ -1,5 +1,3 @@
-# Adopted largely from https://github.com/brigand/docker-js-eval
-
 FROM ubuntu
 MAINTAINER josh.holbrook@gmail.com
 

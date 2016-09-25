@@ -1,5 +1,0 @@
-https://github.com/thestinger/playpen
-
-[13:17] <@nathan7> mhm
-[13:18] <@nathan7> that's what playpen does too
-[13:18] <@nathan7> you just docker export foo | tar x -C sandbox
