@@ -135,20 +135,37 @@ versions. Properties:</p>
 false), this property will contain information about the error</li>
 </ul>
 <p>Versions which have not been built will not be keyed onto &quot;builds&quot;.</p>
-<h2 id="heroku-installation">Heroku Installation</h2>
-<p>browserify-cdn is ready to run on Heroku:</p>
-<pre><code class="lang-sh">heroku create my-browserify-cdn
-git push heroku master
-heroku ps:scale web=1
-</code></pre>
-<h2 id="docker-installation">Docker Installation</h2>
-<p>You can build and run an image doing the following:</p>
-<pre><code class="lang-sh">docker build -t &quot;wzrd.in&quot; /path/to/wzrd.in
-docker run -p 8080:8080 wzrd.in
-</code></pre>
-<p>Keep in mind that a new deploy will wipe the cache.</p>
+<h2 id="installation-operation">Installation/Operation</h2>
+<p>wzrd.in requires <a href="https://www.docker.com/">docker</a> to run, which it uses to
+create build environments.</p>
+<p>Once docker is installed, do the typical steps:</p>
+<pre><code>git clone git@github.com:jfhbrook/wzrd.in.git
+cd wzrd.in
+npm install
+</code></pre><p>App configuration is handled via environment variables:</p>
+<ul>
+<li><code>WZRDIN_ADMIN_USER</code>: The wzrd.in admin username, used for basic auth against
+administrative routes (defaults to null, rejecting all admin routes)</li>
+<li><code>WZRDIN_ADMIN_PASS</code>: The wzrd.in admin password, used for basic auth against
+administrative routes (defaults to null, rejecting all admin routes)</li>
+<li><code>WZRDIN_DOCKER_TAG</code>: The docker tag used for the wzrd.in builder image (defaults to <code>browserify-builder</code>)</li>
+<li><code>WZRDIN_CORS_ORIGIN</code>: Specifies the origin(s) allowed by cors (defaults to <code>*</code>)</li>
+<li><code>WZRDIN_CORS_METHODS</code>: A comma-separated list of methods allowed by cors (defaults to <code>GET,POST</code>)</li>
+<li><code>WZRDIN_LEVEL_DB</code>: The folder location of the cache&#39;s leveldb store (defaults to <code>./cdn.db</code>)</li>
+<li><code>WZRDIN_NPM_REGISTRY</code>: The connection string for the npm registry (defaults to <code>https://registry.npmjs.com</code>)</li>
+<li><code>WZRDIN_NPM_SKIMDB</code>: The connection for the npm skimdb, used for purging the cache on public package updates (defaults to <code>https://skimdb.npmjs.com:443</code>)</li>
+<li><code>WZRDIN_NPM_FOLLOWER_REFRESHRATE</code>: The refresh rate, in milliseconds, for the skimdb follower (defaults to 2 minutes)</li>
+<li><code>PORT</code>: The port listened to by wzrd.in (defaults to 8080)</li>
+</ul>
+<p>Before starting wzrd.in, you have to build the docker image used by the
+builder. This can be done by properly configuring your environment (ie, setting
+<code>WZRDIN_DOCKER_TAG</code> as appropriate) and running:</p>
+<pre><code>npm run bootstrap
+</code></pre><p>Once that&#39;s done, you should be off to the races:</p>
+<pre><code>npm start
+</code></pre><p>Note that running wzrd.in in docker itself is currently unsupported.</p>
 <h2 id="license">License</h2>
-<p>MIT</p>
+<p>MIT/X11, see LICENSE file.</p>
 
 
     </div>
