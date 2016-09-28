@@ -20,7 +20,8 @@ module.exports = function createSingularHandler(bundler, options) {
     }
 
     function done(p) {
-      return p.catch((err) => setImmediate(() => { throw err; }));
+      p.catch((err) => setImmediate(() => { throw err; }));
+      return p;
     }
 
     // TODO: Separate handler
