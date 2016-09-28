@@ -53,7 +53,7 @@ class Builder {
       }));
       child.stderr.pipe(concat((_err) => {
         if (_err) {
-          stderr = _err.toString();
+          stderr = String(_err);
         }
         finish();
       }));
