@@ -46,7 +46,7 @@ const stringify = module.exports = function stringifyError(err) {
     }
 
     function indent(txt) {
-      return txt.split('\n').map((l) => { return '    ' + l; }).join('\n');
+      return txt.split('\n').map((l) => '    ' + l).join('\n');
     }
 
     function push(s) {
