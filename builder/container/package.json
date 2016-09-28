@@ -1,5 +1,6 @@
 {
   "name": "browserify-builder",
+  "private": true,
   "version": "1.0.0",
   "description": "Build system for wzrd.in",
   "repository": {
