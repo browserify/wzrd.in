@@ -5,11 +5,11 @@ INPUT="$(cat -)"
 # some constants
 CORE_MODULES="assert buffer child_process cluster console constants crypto dgram dns domain events freelist fs http https module net os path punycode querystring readline repl smalloc stream string_decoder sys timers tls tty url util vm zlib"
 REGISTRY_URL='http://registry.npmjs.org'
-NVM_BIN=$HOME/nvm/nvm.sh
+NVM_BIN="$HOME/nvm/nvm.sh"
 
 RUN_ROOT=$(pwd)
-LOG_FILE=${RUN_ROOT}/log.log
-BROWSERIFY_FILE=${RUN_ROOT}/build/bundle.js
+LOG_FILE="${RUN_ROOT}/log.log"
+BROWSERIFY_FILE="${RUN_ROOT}/build/bundle.js"
 
 function info() {
   echo 'info: ' ${@} >> ${LOG_FILE}
