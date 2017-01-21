@@ -5,7 +5,7 @@ INPUT="$(cat -)"
 # some constants
 CORE_MODULES="assert buffer child_process cluster console constants crypto dgram dns domain events freelist fs http https module net os path punycode querystring readline repl smalloc stream string_decoder sys timers tls tty url util vm zlib"
 REGISTRY_URL='http://registry.npmjs.org'
-NVM_BIN="$HOME/nvm/nvm.sh"
+NVM_DIR="$HOME/nvm"
 
 RUN_ROOT=$(pwd)
 LOG_FILE="${RUN_ROOT}/log.log"
@@ -15,7 +15,7 @@ function info() {
   echo 'info: ' ${@} >> ${LOG_FILE}
 }
 
-source $NVM_BIN >> $LOG_FILE 2>&1
+source $NVM_DIR/nvm.sh >> $LOG_FILE 2>&1
 nvm use 4 >> $LOG_FILE 2>&1
 
 info "Extracting variables from payload..."
