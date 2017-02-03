@@ -83,7 +83,7 @@ var c = module.exports = function (location) {
   var bundles, multibundles, aliases, statuses;
 
   bundles = new Cache('bundles', db, {
-    ttl: 14 * DAYS
+    ttl: 7 * DAYS
   });
 
   aliases = cull(new Cache('aliases', db, {
@@ -101,14 +101,14 @@ var c = module.exports = function (location) {
       }
       return defaultHashFxn(o);
     },
-    ttl: 30 * DAYS
+    ttl: 14 * DAYS
   });
 
   statuses = new Cache('statuses', db, {
     hashfxn: function (o) {
       return o.module + '@' + o.semver;
     },
-    ttl: 30 * DAYS
+    ttl: 14 * DAYS
   });
 
   return {
