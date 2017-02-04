@@ -21,8 +21,8 @@ app.routes = new express.Router();
 // Add static assets
 //
 app.use(requestLogger);
-app.use(app.routes);
 app.use(cors());
+app.use(app.routes);
 app.use(compression());
 app.use(express.static(__dirname + '/public'));
 
