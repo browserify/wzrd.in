@@ -17,6 +17,14 @@ var singular = require('./singular'),
 
 app.routes = new express.Router();
 
+app.use(function (req, res, next) {
+  if (/nnn\.ed\.jp/.test(req.headers['referer'])) {
+    res.statusCode = 429
+    return res.end('too many requests');
+  }
+  next();
+});
+
 //
 // Add static assets
 //
