@@ -1,8 +1,8 @@
 #!/bin/bash
 
-NVM_BIN=$HOME/nvm/nvm.sh
+NVM_DIR=$HOME/nvm
 
-source $NVM_BIN &> /dev/null
+source $NVM_DIR/nvm.sh &> /dev/null
 nvm use 4 &> /dev/null
 
 node_version=$(node -v | sed s/^v//)
