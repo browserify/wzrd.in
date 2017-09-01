@@ -10,7 +10,7 @@ COPY package.json ./
 RUN bash -c '\
   git clone https://github.com/creationix/nvm.git nvm; \
   . ./nvm/nvm.sh; \
-  nvm install 4;\
+  nvm install 6;\
   npm install;'
 ENV PATH /var/ws/node_modules/.bin:${PATH}
 COPY build.sh ./
