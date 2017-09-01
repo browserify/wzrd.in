@@ -1,23 +1,24 @@
-var express = require('express'),
-    log = require('minilog')('browserify-cdn'),
-    cors = require('cors'),
-    compression = require('compression');
+'use strict';
 
-var bundler = require('./bundler'),
-    defaults = require('./defaults'),
-    admin = require('./admin'),
-    requestLogger = require('./request-logger');
+const http = require('http');
 
-var app = express(),
-    bundle = bundler(defaults());
+const _ = require('lodash');
+const express = require('express');
+const minilog = require('minilog');
 
-var singular = require('./singular'),
-    multiple = require('./multiple'),
-    statuses = require('./statuses');
+const Bundler = require('./lib/bundler');
 
-app.routes = new express.Router();
+const config = require('./config');
+const routes = require('./routes');
 
-app.use(function (req, res, next) {
+const app = express();
+
+const bundler = new Bundler(config);
+
+const router = new express.Router();
+routes(router, bundler, config);
+
+app.use(function(req, res, next) {
   if (/nnn\.ed\.jp/.test(req.headers['referer'])) {
     res.statusCode = 429
     return res.end('too many requests');
@@ -25,38 +26,41 @@ app.use(function (req, res, next) {
   next();
 });
 
-//
-// Add static assets
-//
-app.use(requestLogger);
-app.use(cors());
-app.use(app.routes);
-app.use(compression());
+app.use(require('cors')(config.cors));
+app.use(require('compression')());
+app.use(require('./middlewares/request-logger'));
+app.use(router);
 app.use(express.static(__dirname + '/public'));
 
-//
-// Admin REST API
-//
-admin(app.routes, bundle);
+function start(callback) {
+  callback = callback || ((err) => { if (err) { throw err; } });
 
-//
-// Single-module bundles
-//
-singular(app.routes, bundle);
+  const log = minilog('browserify-cdn');
 
-//
-// Multiple-module bundles
-//
-multiple(app.routes, bundle);
+  minilog
+    .pipe(minilog.backends.console.formatNpm)
+    .pipe(minilog.backends.console)
+  ;
 
-//
-// Build statuses
-//
-statuses(app.routes, bundle);
+  bundler.init().then(() => {
 
-//
-// Exports
-//
+    const server = http.createServer(app).listen(_.get(config, 'server.port'), function (err) {
+      if (err) return callback(err);
+
+      const addr = server.address();
+
+      log.info('browserify-cdn is online');
+      log.info('http://' + addr.address + ':' + addr.port);
+
+      callback(null, server);
+    });
+  }, (err) => {
+    callback(err);
+  }, (err) => setImmediate(() => { throw err; }));
+}
+
+exports.start = start;
 exports.app = app;
 exports.bundler = bundler;
-exports.defaults = defaults;
+exports.config = config;
+

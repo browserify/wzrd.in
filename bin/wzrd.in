@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const minimist = require('minimist');
+const Builder = require('../builder');
+const config = require('../config');
+
+const argv = minimist(process.argv.slice(2));
+
+switch (argv._[0]) {
+  case 'init':
+  case 'initialize':
+  case 'bootstrap':
+    const builder = new Builder(config);
+
+    builder.bootstrap().then((output) => {
+      console.log(output);
+      process.exit(0);
+    }).catch((err) => {
+      console.error(err.stack);
+      Object.keys(err).forEach((k) => {
+        console.log(`* ${k}: %j`, err[k]);
+      });
+
+      process.exit(1);
+    });
+
+  break;
+  case 'start':
+    // Has to happen here because requiring wzrdin connects to the db (oops)
+    const wzrdin = require('../');
+
+    wzrdin.start();
+  break;
+}
+

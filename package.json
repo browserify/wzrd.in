@@ -1,51 +1,49 @@
 {
   "name": "browserify-cdn",
   "version": "0.4.0",
-  "repository": "https://github.com/jfhbrook/browserify-cdn.git",
+  "private": true,
+  "repository": "https://github.com/jfhbrook/wzrd.in.git",
   "bin": {
-    "browserify-cdn": "./bin/browserify-cdn"
+    "browserify-cdn": "./bin/browserify-cdn",
+    "wzrd.in": "./bin/wzrd.in"
   },
   "dependencies": {
     "basic": "2.0.0",
-    "browserify": "13.1.0",
+    "bluebird": "3.4.6",
+    "body-parser": "1.15.2",
     "compression": "1.6.2",
     "concat-stream": "1.5.2",
     "cors": "2.1.1",
     "express": "4.14.0",
-    "glob": "7.0.6",
+    "joi": "9.0.4",
     "level": "1.4.0",
     "level-sublevel": "6.5.4",
     "level-ttl": "3.1.1",
-    "marked": "0.3.6",
+    "lodash": "4.15.0",
     "minilog": "~2.0.0",
-    "mkdirp": "0.5.1",
-    "npm": "2.15.11",
+    "minimist": "1.2.0",
     "npm-publish-stream": "1.0.2",
+    "object-hash": "1.1.4",
     "request": "2.74.0",
-    "rimraf": "2.5.4",
     "semver": "5.3.0",
-    "supertest": "2.0.0",
-    "tap": "7.1.1",
-    "uglify-js": "2.7.3",
     "uuid": "2.0.2",
-    "waitress": "~0.1.5",
-    "xtend": "4.0.1"
+    "waitress": "~0.1.5"
   },
-  "bundledDependencies": [
-    "temp",
-    "scopedfs"
-  ],
   "scripts": {
-    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js",
-    "start": "node ./bin/browserify-cdn",
+    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap --timeout $(node -pe '3* 60 * 1000 + 3 * 5 * 000') ./test/*.js ./test/integration/*.js",
+    "start": "node ./bin/wzrd.in start",
+    "bootstrap": "node ./bin/wzrd.in init",
     "index-page": "marked README.md | node -e \"var Replacer = require('replacer'); process.stdin.pipe(new Replacer('https://wzrd.in/standalone/concat-stream@latest', '/standalone/concat-stream@latest')).pipe(new Replacer('<p>Also, <a href=\\\"https://wzrd.in\\\">wzrd.in</a> has a nice url generating form.</p>', '<form method=\\\"get\\\" id=\\\"url-generator\\\"><h3>Or choose a module here:</h3><label>Module:<input type=\\\"text\\\" name=\\\"module\\\" value=\\\"concat-stream\\\" required /></label><label>Version:<input type=\\\"text\\\" name=\\\"ver\\\" value=\\\"latest\\\" required /></label><input type=\\\"submit\\\" value=\\\"Go!\\\" /></form>')).pipe(process.stdout)\" | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
   },
   "devDependencies": {
     "exercise-bike": "0.0.1",
     "jsontool": "~7.0.1",
     "marked": "~0.3.0",
+    "pickleback": "3.3.2",
     "replacer": "0.0.1",
-    "supertest": "~0.9.0",
-    "tap": "~0.4.8"
+    "rimraf": "2.5.4",
+    "sinon": "1.17.5",
+    "supertest": "2.0.0",
+    "tap": "7.1.2"
   }
 }

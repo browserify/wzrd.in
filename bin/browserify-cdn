@@ -1,23 +1,3 @@
-#!/usr/bin/env node
+#!/bin/bash
 
-var http = require('http');
-
-var minilog = require('minilog'),
-    log = minilog('browserify-cdn');
-
-minilog
-  .pipe(minilog.backends.console.formatNpm)
-  .pipe(minilog.backends.console)
-;
-
-var cdn = require('../'),
-    app = cdn.app;
-
-var server = http.createServer(app).listen(process.env.PORT || process.argv[2] || 8080, function (err) {
-  if (err) throw err;
-
-  var addr = server.address();
-
-  log.info('browserify-cdn is online');
-  log.info('http://' + addr.address + ':' + addr.port);
-});
+exec wzrd.in start
