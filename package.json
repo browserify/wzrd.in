@@ -31,10 +31,6 @@
     "waitress": "~0.1.5",
     "xtend": "4.0.1"
   },
-  "bundledDependencies": [
-    "temp",
-    "scopedfs"
-  ],
   "scripts": {
     "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js",
     "start": "node ./bin/browserify-cdn",

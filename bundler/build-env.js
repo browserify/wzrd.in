@@ -2,8 +2,8 @@ var path = require('path'),
     spawn = require('child_process').spawn,
     exec = require('child_process').exec;
 
-var sfs = require('scopedfs'),
-    temp = require('temp'),
+var sfs = require('../private_modules/scopedfs'),
+    temp = require('../private_modules/temp'),
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
     glob = require('glob'),
