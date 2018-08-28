@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/browserify/wzrd.in.png?branch=master)](https://travis-ci.org/browserify/wzrd.in)
 
+# Notice
+
+jfhbrook doesn't maintain this anymore. If you have machine problems, try to contact goto-bus-stop, who has ssh keys.
+
 #### Places
 
 * [fork me on github](https://github.com/jfhbrook/browserify-cdn)
