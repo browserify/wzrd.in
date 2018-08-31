@@ -4,7 +4,7 @@
 
 # Notice
 
-jfhbrook doesn't maintain this anymore. If you have machine problems, try to contact goto-bus-stop, who has ssh keys.
+jfhbrook doesn't maintain this anymore. If you have machine problems, try to contact [goto-bus-stop](https://twitter.com/goto_bus_stop), who has ssh keys, or visit the #browserify channel on freenode.
 
 #### Places
 
