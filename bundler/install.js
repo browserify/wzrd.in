@@ -9,7 +9,7 @@ module.exports = function install(env, module, cb) {
 
   env.log.info('install: installing `' + module + '`...');
 
-  npm = env.spawn('npm', [ 'install', '--production', '--registry', registryURL ], {
+  npm = env.spawn('npm', [ 'install', '--ignore-scripts', '--production', '--registry', registryURL ], {
     cwd: 'node_modules/' + module
   });
 
