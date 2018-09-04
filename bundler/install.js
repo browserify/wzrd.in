@@ -1,3 +1,4 @@
+var path = require('path');
 var gatherOutputs = require('./gather-outputs');
 var registryURL = require('./registry').registryURL;
 
@@ -9,7 +10,14 @@ module.exports = function install(env, module, cb) {
 
   env.log.info('install: installing `' + module + '`...');
 
-  npm = env.spawn('npm', [ 'install', '--ignore-scripts', '--production', '--registry', registryURL ], {
+  var cache = path.join(env.dirPath, 'cache');
+
+  npm = env.spawn('npm', [ 'install',
+    '--ignore-scripts',
+    '--production',
+    '--registry', registryURL,
+    '--cache', cache
+  ], {
     cwd: 'node_modules/' + module
   });
 
