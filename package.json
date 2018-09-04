@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "basic": "2.0.0",
-    "browserify": "13.1.0",
+    "browserify": "16.2.2",
     "compression": "1.6.2",
     "concat-stream": "1.5.2",
     "cors": "2.1.1",
