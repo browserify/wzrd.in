@@ -24,14 +24,14 @@
     </div>
     <div id="content">
       <h1 id="browserify-as-a-service">browserify-as-a-service</h1>
-<p><a href="https://travis-ci.org/jfhbrook/wzrd.in"><img src="https://travis-ci.org/jfhbrook/wzrd.in.png?branch=master" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/browserify/wzrd.in"><img src="https://travis-ci.org/browserify/wzrd.in.png?branch=production" alt="Build Status"></a></p>
 <h4 id="places">Places</h4>
 <ul>
-<li><a href="https://github.com/jfhbrook/browserify-cdn">fork me on github</a></li>
+<li><a href="https://github.com/browserify/wzrd.in">fork me on github</a></li>
 <li><a href="http://browserify.org">browserify on the web</a></li>
 <li><a href="https://github.com/maxogden/browser-module-sandbox">browser-module-sandbox</a> - helpful for using multi-bundles</li>
-<li><a href="http://requirebin.com">requirebin.com</a> - powered by browserify-cdn</li>
-<li><a href="http://esnextb.in">esnextb.in</a> - also powered by browserify-cdn</li>
+<li><a href="http://requirebin.com">requirebin.com</a> - powered by wzrd.in</li>
+<li><a href="http://esnextb.in">esnextb.in</a> - also powered by wzrd.in</li>
 </ul>
 <h1 id="quick-start">Quick Start</h1>
 <p>Try visiting this link:</p>
@@ -66,7 +66,7 @@ But if you were to try and grab a bundle that
 <p>Both <code>--debug</code> and <code>--standalone</code> are passed to browserify!</p>
 <h2 id="post-multi">POST /multi</h2>
 <p>POST a body that looks something like this:</p>
-<pre><code class="lang-json">{
+<pre><code class="language-json">{
   &quot;options&quot;: {
     &quot;debug&quot;: true
   },
@@ -74,8 +74,7 @@ But if you were to try and grab a bundle that
     &quot;concat-stream&quot;: &quot;0.1.x&quot;,
     &quot;hyperstream&quot;: &quot;0.2.x&quot;
   }
-}
-</code></pre>
+}</code></pre>
 <p>&quot;options&quot; is where you get to set &quot;debug&quot;, &quot;standalone&quot;, and &quot;fullPaths&quot;.
 Usually, in this case, you&#39;ll probably only really care about debug. If you
 don&#39;t define &quot;options&quot;, it will default to
@@ -98,8 +97,7 @@ Transfer-Encoding: chunked
     &quot;package&quot;: /* the hyperstream package.json */,
     &quot;bundle&quot;: /* the hyperstream bundle */
   }
-}
-</code></pre><p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
+}</code></pre><p>The bundle gets permanently cached at <code>/multi/48GOmL0XvnRZn32bkpz75A==</code> for
 future GETs.</p>
 <h2 id="get-multi-existing-bundle">GET /multi/:existing-bundle</h2>
 <p>If you saved the Location url from the POST earlier, you can just GET it
@@ -126,8 +124,7 @@ Connection: keep-alive
       &quot;ok&quot;: true
     }
   }
-}
-</code></pre><p>The &quot;module&quot; and &quot;builds&quot; fields should both exist. Keys for &quot;builds&quot; are the
+}</code></pre><p>The &quot;module&quot; and &quot;builds&quot; fields should both exist. Keys for &quot;builds&quot; are the
 versions. Properties:</p>
 <ul>
 <li>&quot;ok&quot;: Whether the package has last built or not</li>
@@ -137,19 +134,16 @@ false), this property will contain information about the error</li>
 <p>Versions which have not been built will not be keyed onto &quot;builds&quot;.</p>
 <h2 id="heroku-installation">Heroku Installation</h2>
 <p>browserify-cdn is ready to run on Heroku:</p>
-<pre><code class="lang-sh">heroku create my-browserify-cdn
+<pre><code class="language-sh">heroku create my-browserify-cdn
 git push heroku master
-heroku ps:scale web=1
-</code></pre>
+heroku ps:scale web=1</code></pre>
 <h2 id="docker-installation">Docker Installation</h2>
 <p>You can build and run an image doing the following:</p>
-<pre><code class="lang-sh">docker build -t &quot;wzrd.in&quot; /path/to/wzrd.in
-docker run -p 8080:8080 wzrd.in
-</code></pre>
+<pre><code class="language-sh">docker build -t &quot;wzrd.in&quot; /path/to/wzrd.in
+docker run -p 8080:8080 wzrd.in</code></pre>
 <p>Keep in mind that a new deploy will wipe the cache.</p>
 <h2 id="license">License</h2>
 <p>MIT</p>
-
 
     </div>
     <div id="harry-potter">
