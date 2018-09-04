@@ -1,7 +1,6 @@
 {
   "name": "browserify-cdn",
   "version": "0.4.0",
-  "repository": "https://github.com/jfhbrook/browserify-cdn.git",
   "bin": {
     "browserify-cdn": "./bin/browserify-cdn"
   },
@@ -30,11 +29,6 @@
     "waitress": "~0.1.5",
     "xtend": "4.0.1"
   },
-  "scripts": {
-    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js",
-    "start": "node ./bin/browserify-cdn",
-    "index-page": "marked README.md | node -e \"var Replacer = require('replacer'); process.stdin.pipe(new Replacer('https://wzrd.in/standalone/concat-stream@latest', '/standalone/concat-stream@latest')).pipe(new Replacer('<p>Also, <a href=\\\"https://wzrd.in\\\">wzrd.in</a> has a nice url generating form.</p>', '<form method=\\\"get\\\" id=\\\"url-generator\\\"><h3>Or choose a module here:</h3><label>Module:<input type=\\\"text\\\" name=\\\"module\\\" value=\\\"concat-stream\\\" required /></label><label>Version:<input type=\\\"text\\\" name=\\\"ver\\\" value=\\\"latest\\\" required /></label><input type=\\\"submit\\\" value=\\\"Go!\\\" /></form>')).pipe(process.stdout)\" | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html"
-  },
   "devDependencies": {
     "exercise-bike": "0.0.1",
     "jsontool": "~7.0.1",
@@ -42,5 +36,12 @@
     "replacer": "0.0.1",
     "supertest": "~2.0.0",
     "tap": "~7.1.1"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/browserify/wzrd.in.git",
+  "scripts": {
+    "index-page": "marked README.md | node -e \"var Replacer = require('replacer'); process.stdin.pipe(new Replacer('https://wzrd.in/standalone/concat-stream@latest', '/standalone/concat-stream@latest')).pipe(new Replacer('<p>Also, <a href=\\\"https://wzrd.in\\\">wzrd.in</a> has a nice url generating form.</p>', '<form method=\\\"get\\\" id=\\\"url-generator\\\"><h3>Or choose a module here:</h3><label>Module:<input type=\\\"text\\\" name=\\\"module\\\" value=\\\"concat-stream\\\" required /></label><label>Version:<input type=\\\"text\\\" name=\\\"ver\\\" value=\\\"latest\\\" required /></label><input type=\\\"submit\\\" value=\\\"Go!\\\" /></form>')).pipe(process.stdout)\" | exercise-bike --readme :stdin: ./templates/index.handlebars ./public/index.html",
+    "start": "node ./bin/browserify-cdn",
+    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js"
   }
 }

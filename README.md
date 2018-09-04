@@ -1,14 +1,14 @@
 # browserify-as-a-service
 
-[![Build Status](https://travis-ci.org/jfhbrook/wzrd.in.png?branch=master)](https://travis-ci.org/jfhbrook/wzrd.in)
+[![Build Status](https://travis-ci.org/browserify/wzrd.in.png?branch=master)](https://travis-ci.org/browserify/wzrd.in)
 
 #### Places
 
-* [fork me on github](https://github.com/jfhbrook/browserify-cdn)
+* [fork me on github](https://github.com/browserify/wzrd.in)
 * [browserify on the web](http://browserify.org)
 * [browser-module-sandbox](https://github.com/maxogden/browser-module-sandbox) - helpful for using multi-bundles
-* [requirebin.com](http://requirebin.com) - powered by browserify-cdn
-* [esnextb.in](http://esnextb.in) - also powered by browserify-cdn
+* [requirebin.com](http://requirebin.com) - powered by wzrd.in
+* [esnextb.in](http://esnextb.in) - also powered by wzrd.in
 
 # Quick Start
 

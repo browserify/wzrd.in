@@ -50,7 +50,7 @@ stringify.goodbye = [
   'This is probably an issue with the package, and not browserify-cdn itself.',
   'If you feel differently, feel free to file a bug report at:',
   '',
-  '    https://github.com/jfhbrook/browserify-cdn/issues',
+  '    https://github.com/browserify/wzrd.in/issues',
   '',
   'Include the ENTIRETY of the contents of this message, and the maintainer(s)',
   'can try to help you out.',
