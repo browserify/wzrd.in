@@ -20,7 +20,7 @@
     "npm": "6.4.1",
     "npm-publish-stream": "1.0.2",
     "readable-stream": "2.3.6",
-    "request": "2.74.0",
+    "request": "2.88.0",
     "resolve": "1.8.1",
     "rimraf": "2.6.2",
     "semver": "5.5.1",
