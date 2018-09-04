@@ -11,19 +11,18 @@ var bundler = require('./bundler'),
 var app = express(),
     bundle = bundler(defaults());
 
-var singular = require('./singular'),
+var denylist = require('./denylist'),
+    singular = require('./singular'),
     multiple = require('./multiple'),
     statuses = require('./statuses');
 
 app.routes = new express.Router();
 
-app.use(function (req, res, next) {
-  if (/nnn\.ed\.jp/.test(req.headers['referer'])) {
-    res.statusCode = 429
-    return res.end('too many requests');
-  }
-  next();
-});
+//
+// Block some cases that should just use their own CDN early
+// so we don't run at 100% CPU and RAM all the frickin time
+//
+app.use(denylist);
 
 //
 // Add static assets

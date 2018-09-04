@@ -3,10 +3,10 @@ var path = require('path'),
 
 var log = require('minilog')('bundler'),
     xtend = require('xtend'),
-    waitress = require('waitress');
+    waitress = require('waitress'),
+    resolve = require('resolve');
 
 var cache = require('./cache'),
-    core = require('./node-core'),
     buildEnv = require('./build-env'),
     registry = require('./registry'),
     unpack = require('./unpack'),
@@ -35,7 +35,7 @@ module.exports = function bundler(opts) {
         semver = pkg.version;
 
 
-    if (core.test(module)) {
+    if (resolve.isCore(module)) {
       return checkBundles(null, process.version);
     }
 
@@ -103,7 +103,7 @@ module.exports = function bundler(opts) {
       }, function (err, env) {
         if (err) return cb(withPath(err));
 
-        if (core.test(module)) {
+        if (resolve.isCore(module)) {
           pkg.__core__ = true;
           return browserify(env, pkg, function (err, bundle) {
             return finish(err, bundle, { core: true, version: pkg.version });
@@ -177,7 +177,7 @@ module.exports = function bundler(opts) {
     var module = pkg.module,
         semver = pkg.version;
 
-    if (core.test(module)) {
+    if (resolve.isCore(module)) {
       return purgeBundles(null, process.version);
     }
 

@@ -22,6 +22,7 @@
     "npm-publish-stream": "1.0.2",
     "readable-stream": "2.3.6",
     "request": "2.74.0",
+    "resolve": "1.8.1",
     "rimraf": "2.5.4",
     "semver": "5.3.0",
     "terser": "3.8.2",
