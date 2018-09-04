@@ -1,13 +1,13 @@
-var minify = require('uglify-js').minify;
+var minify = require('terser').minify;
 
 //
 // Run uglify-js
 //
 module.exports = function (env, bundle) {
-  env.log.info('minify: running through uglify-js.');
+  env.log.info('minify: running through terser.');
 
   try {
-    var result = minify(bundle, { fromString: true });
+    var result = minify(bundle);
     env.log.info('minify: minification complete.');
     return result.code;
   }
