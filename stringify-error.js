@@ -1,7 +1,7 @@
 var util = require('util');
 
 var log = require('minilog')('browserify-cdn');
-var uuid = require('uuid').v1;
+var uuid = require('uuid/v1');
 
 var stringify = module.exports = function stringifyError(err) {
   var id = uuid(),
