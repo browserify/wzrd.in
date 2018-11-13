@@ -41,7 +41,6 @@
     "marked": "0.5.1",
     "replacer": "0.0.1",
     "rimraf": "2.6.2",
-    "shot": "4.0.7",
     "sinon": "7.1.1",
     "supertest": "3.3.0",
     "tap": "12.1.0"

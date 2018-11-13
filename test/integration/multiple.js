@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const inject = require('shot').inject;
+const supertest = require('supertest');
 const rimraf = require('rimraf');
 const tap = require('tap');
 
@@ -18,83 +18,80 @@ const requestBody = JSON.stringify({
 tap.plan(3);
 
 tap.test('setup', (t) => {
-  wzrdin.bundler.init().then(() => t.end(), (err) => { t.fail(err); t.end(); });
+  return wzrdin.bundler.init();
 });
 
 tap.test('multi-bundles build the first time', function (t) {
-  return inject(wzrdin.app, {
-    url: '/multi',
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json'
-    },
-    payload: requestBody
-  }).then((res) => {
-    t.equal(res.statusCode, 200, 'status code is 200');
-    t.equal(res.headers['content-type'], 'application/json', 'content-type says json');
+  return supertest(wzrdin.app)
+    .post('/multi')
+    .set('content-type', 'application/json')
+    .set('accept', 'application/json')
+    .send(requestBody)
+    .expect(200)
+    .expect('content-type', 'application/json')
+    .then((res) => {
+      let body = {};
 
-    let body = {};
+      t.doesNotThrow(function () {
+        body = JSON.parse(res.text);
+      }, 'body is valid JSON');
 
-    t.doesNotThrow(function () {
-      body = JSON.parse(res.payload);
-    }, 'body is valid JSON');
+      [
+        'concat-stream',
+        'mux'
+      ].forEach(function (module) {
+        t.type(body[module], 'object', module + ' is included');
 
-    [
-      'concat-stream',
-      'mux'
-    ].forEach(function (module) {
-      t.type(body[module], 'object', module + ' is included');
+        t.comment(Object.keys(body[module]));
 
-      t.comment(Object.keys(body[module]));
+        body[module] = body[module] || {};
+        t.type(body[module].package, 'object', module + ' has package');
 
-      body[module] = body[module] || {};
-      t.type(body[module].package, 'object', module + ' has package');
+        body[module].package = body[module].package || {};
+        t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
 
-      body[module].package = body[module].package || {};
-      t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
+        t.ok(body[module].package.readme, module + ' package has a readme');
 
-      t.ok(body[module].package.readme, module + ' package has a readme');
-
-      t.type(body[module].bundle, 'string', module + ' includes bundle');
+        t.type(body[module].bundle, 'string', module + ' includes bundle');
+      });
+      t.end();
     });
-    t.end();
-  });
 });
 
 tap.test('multi-bundles are cached the second time', function (t) {
-  return inject(wzrdin.app, {
-    url: '/multi',
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json'
-    },
-    payload: requestBody
-  }).then((res) => {
-    let body = {};
+  return supertest(wzrdin.app)
+    .post('/multi')
+    .set('content-type', 'application/json')
+    .set('accept', 'application/json')
+    .send(requestBody)
+    .expect(200)
+    .expect('content-type', 'application/json')
+    .then((res) => {
+      let body = {};
 
-    t.doesNotThrow(function () {
-      body = JSON.parse(res.payload);
-    }, 'body is valid JSON');
+      t.doesNotThrow(function () {
+        body = JSON.parse(res.text);
+      }, 'body is valid JSON');
 
-    [
-      'concat-stream',
-      'mux'
-    ].forEach(function (module) {
-      t.type(body[module], 'object', module + ' is included');
+      [
+        'concat-stream',
+        'mux'
+      ].forEach(function (module) {
+        t.type(body[module], 'object', module + ' is included');
 
-      body[module] = body[module] || {};
-      t.type(body[module].package, 'object', module + ' has package');
+        body[module] = body[module] || {};
+        t.type(body[module].package, 'object', module + ' has package');
 
-      body[module].package = body[module].package || {};
-      t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
+        body[module].package = body[module].package || {};
+        t.equal(body[module].package.name, module.split('/').shift(), module + ' package has expected name');
 
-      t.type(body[module].bundle, 'string', module + ' includes bundle');
+        t.type(body[module].bundle, 'string', module + ' includes bundle');
+      });
+      t.end();
     });
-    t.end();
-  });
 });
 
 tap.teardown(() => {
   wzrdin.bundler._caches._destroy();
-  rimraf('./cdn.db', (err) => { if (err) throw err; });
+  rimraf.sync('./cdn.db');
 });
