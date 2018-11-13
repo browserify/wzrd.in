@@ -11,5 +11,7 @@ addons:
         packages:
           - g++-4.8
 node_js:
-  - 4
+  - stable
+  - 10
+  - 8
   - 6
