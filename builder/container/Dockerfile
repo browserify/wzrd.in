@@ -1,17 +1,13 @@
-FROM ubuntu
+FROM mhart/alpine-node:10
 MAINTAINER josh.holbrook@gmail.com
 
-RUN apt-get update && apt-get install -y curl jq git
+RUN apk add curl jq git bash
 
-RUN adduser --disabled-password --shell /bin/bash --home /var/ws anon
+RUN adduser -D -s /bin/bash -h /var/ws anon
 RUN chown -R anon:anon /var/ws
 WORKDIR /var/ws
 COPY package.json ./
-RUN bash -c '\
-  git clone https://github.com/creationix/nvm.git nvm; \
-  . ./nvm/nvm.sh; \
-  nvm install 6;\
-  npm install;'
+RUN npm install
 ENV PATH /var/ws/node_modules/.bin:${PATH}
 COPY build.sh ./
 RUN chmod 555 build.sh
