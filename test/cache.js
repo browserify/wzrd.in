@@ -84,7 +84,6 @@ tap.test('Cache', (t) => {
           mockHashFxn.reset();
           t.end();
         });
-      ;
     });
 
     t.test('cache._put', (t) => {

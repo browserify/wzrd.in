@@ -47,7 +47,7 @@ tap.test('bundler.init', (t) => {
 });
 
 tap.test('bundler._getAlias', (t) => {
-  const checkStub = sinon.stub(bundler._caches.aliases, 'check', function() {
+  const checkStub = sinon.stub(bundler._caches.aliases, 'check').callsFake(function() {
     return Promise.resolve('1.2.3');
   });
 
@@ -88,7 +88,7 @@ tap.test('bundler._getAlias', (t) => {
 });
 
 tap.test('bundler._getBundle', (t) => {
-  const checkStub = sinon.stub(bundler._caches.bundles, 'check', function() {
+  const checkStub = sinon.stub(bundler._caches.bundles, 'check').callsFake(function() {
     return Promise.resolve({ pkg: {}, bundle: '(function(){})()' });
   });
 
@@ -112,7 +112,7 @@ tap.test('bundler._getBundle', (t) => {
 tap.test('bundler._recordBuildStatus', (t) => {
   t.plan(2);
 
-  const putStub = sinon.stub(bundler._caches.statuses, 'put', function() {
+  const putStub = sinon.stub(bundler._caches.statuses, 'put').callsFake(function() {
     return Promise.resolve();
   });
 
@@ -165,7 +165,7 @@ tap.test('bundler._recordBuildStatus', (t) => {
 });
 
 tap.test('bundler._build', (t) => {
-  const recordStub = sinon.stub(bundler, '_recordBuildStatus', function() {
+  const recordStub = sinon.stub(bundler, '_recordBuildStatus').callsFake(function() {
     return Promise.resolve();
   });
 

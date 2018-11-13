@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const inject = require('pickleback').inject;
+const inject = require('shot').inject;
 const rimraf = require('rimraf');
 const tap = require('tap');
 
@@ -22,14 +22,14 @@ tap.test('setup', (t) => {
 });
 
 tap.test('multi-bundles build the first time', function (t) {
-  inject(wzrdin.app, {
+  return inject(wzrdin.app, {
     url: '/multi',
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
     payload: requestBody
-  }, (res) => {
+  }).then((res) => {
     t.equal(res.statusCode, 200, 'status code is 200');
     t.equal(res.headers['content-type'], 'application/json', 'content-type says json');
 
@@ -62,14 +62,14 @@ tap.test('multi-bundles build the first time', function (t) {
 });
 
 tap.test('multi-bundles are cached the second time', function (t) {
-  inject(wzrdin.app, {
+  return inject(wzrdin.app, {
     url: '/multi',
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
     payload: requestBody
-  }, (res) => {
+  }).then((res) => {
     let body = {};
 
     t.doesNotThrow(function () {

@@ -90,7 +90,7 @@ function assertBundle(results, t, options) {
     t.match(_.get(results, 'bundle'), /^\(function\(f\){/, 'looks like a bundle alright');
   }
   else {
-    t.match(_.get(results, 'bundle'), /^require=function e\(t,n,r\)/, 'looks like a bundle alright');
+    t.match(_.get(results, 'bundle'), /^require=function\(\)/, 'looks like a bundle alright');
   }
 }
 
@@ -220,11 +220,11 @@ tap.test('two builds at the same time', (t) => {
   };
   const fakeBuild = {};
 
-  const buildStub = sinon.stub(builder, '_build', function() {
+  const buildStub = sinon.stub(builder, '_build').callsFake(function() {
     return Promise.resolve(fakeBuild);
   });
 
-  const hashStub = sinon.stub(Builder, '_hash', function() {
+  const hashStub = sinon.stub(Builder, '_hash').callsFake(function() {
     return 'hash_browns';
   });
 

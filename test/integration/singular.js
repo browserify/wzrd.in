@@ -1,8 +1,8 @@
 'use strict';
 
 const path = require('path');
-    
-const inject = require('pickleback').inject;
+
+const inject = require('shot').inject;
 const rimraf = require('rimraf');
 const tap = require('tap');
 
@@ -21,35 +21,35 @@ tap.test('setup', (t) => {
 });
 
 tap.test('singular bundles build the first time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }, (res) => {
+  return inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }).then((res) => {
     looksLegit(res, t);
     t.end();
   });
 });
 
 tap.test('singular bundles are cached the second time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }, (res) => {
+  return inject(wzrdin.app, { url: '/standalone/concat-stream@latest' }).then((res) => {
     looksLegit(res, t);
     t.end();
   });
 });
 
 tap.test('singular scoped bundles build the first time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/@tatumcreative%2Fcolor@latest' }, (res) => {
+  return inject(wzrdin.app, { url: '/standalone/@tatumcreative%2Fcolor@latest' }).then((res) => {
     looksLegit(res, t);
     t.end();
   });
 });
 
 tap.test('singular bundles with subfiles build the first time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/lodash%2Frange@latest' }, (res) => {
+  return inject(wzrdin.app, { url: '/standalone/lodash%2Frange@latest' }).then((res) => {
     looksLegit(res, t);
     t.end();
   });
 });
 
 tap.test('singular bundles of standalone core modules build the first time', function (t) {
-  inject(wzrdin.app, { url: '/standalone/events' }, (res) => {
+  return inject(wzrdin.app, { url: '/standalone/events' }).then((res) => {
     looksLegit(res, t);
     t.end();
   });
