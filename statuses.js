@@ -28,7 +28,7 @@ function status(bundle) {
     }
     
     if (scope) {
-      module = scope + '%2F' + module;
+      module = scope + '/' + module;
     }
     else {
       module = module;

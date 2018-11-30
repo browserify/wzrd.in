@@ -39,7 +39,7 @@ function singular(bundle, opts) {
     }
 
     if (scope) {
-      o.module = scope + '%2F' + module;
+      o.module = scope + '/' + module;
     }
     else {
       o.module = module;

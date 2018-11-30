@@ -68,7 +68,7 @@ tap.test('latest scoped has not been built', function (t) {
       var builds = JSON.parse(res.text);
 
       t.doesNotThrow(function () {
-        t.equal(builds.module, '@tatumcreative%2Fcolor', 'module is @tatumcreative%2Fcolor');
+        t.equal(builds.module, '@tatumcreative/color', 'module is @tatumcreative/color');
         t.equal(Object.keys(builds.builds).length, 0, 'no builds for semver range');
       }, 'returns an object');
       t.end();
@@ -99,7 +99,7 @@ tap.test('latest scoped has been built', function (t) {
       var builds = JSON.parse(res.text);
 
       t.doesNotThrow(function () {
-        t.equal(builds.module, '@tatumcreative%2Fcolor', 'module is @tatumcreative%2Fcolor');
+        t.equal(builds.module, '@tatumcreative/color', 'module is @tatumcreative/color');
         t.equal(Object.keys(builds.builds).length, 1, 'there is only 1 `latest`');
         t.equal(builds.builds[Object.keys(builds.builds)].ok, true, 'worked correctly');
       }, 'returns an object');

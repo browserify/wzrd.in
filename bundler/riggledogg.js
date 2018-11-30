@@ -85,7 +85,12 @@ module.exports = function riggledogg(env, module, cb) {
   function moveFolder() {
     env.log.info('riggledogg: making node_modules folder...');
 
-    env.mkdirp('node_modules', function (err) {
+    var basedir = 'node_modules';
+    if (module[0] === '@') {
+      basedir = path.join(basedir, module.split('/')[0]);
+    }
+
+    env.mkdirp(basedir, function (err) {
       if (err) {
         return cb(err);
       }
