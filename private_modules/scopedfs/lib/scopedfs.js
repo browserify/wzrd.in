@@ -3,7 +3,7 @@
   var Path, ScopedFS, fs, mkdirp, rimraf, temp,
     __hasProp = {}.hasOwnProperty;
 
-  temp = require('temp');
+  temp = require('../../temp');
 
   fs = require('fs');
 
