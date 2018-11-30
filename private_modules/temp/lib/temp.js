@@ -137,7 +137,7 @@ var createWriteStream = function(affixes) {
 }
 
 /* EXPORTS */
-exports.dir               = os.tmpDir();
+exports.dir               = os.tmpdir();
 exports.mkdir             = mkdir;
 exports.mkdirSync         = mkdirSync;
 exports.open              = open;
