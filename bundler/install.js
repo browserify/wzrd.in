@@ -16,6 +16,7 @@ module.exports = function install(env, module, cb) {
     '--ignore-scripts',
     '--production',
     '--no-package-lock',
+    '--no-audit',
     '--registry', registryURL,
     '--cache', cache
   ], {
