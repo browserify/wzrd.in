@@ -7,6 +7,7 @@
   "dependencies": {
     "basic": "2.0.3",
     "browserify": "^16.2.3",
+    "changes-stream": "^2.2.0",
     "compression": "1.7.3",
     "concat-stream": "1.6.2",
     "cors": "^2.8.5",
@@ -17,8 +18,8 @@
     "level-ttl": "3.1.1",
     "minilog": "^3.1.0",
     "mkdirp": "0.5.1",
+    "normalize-registry-metadata": "^1.1.2",
     "npm": "^6.4.1",
-    "npm-publish-stream": "1.0.2",
     "pacote": "^9.2.3",
     "resolve": "^1.8.1",
     "rimraf": "2.6.2",
