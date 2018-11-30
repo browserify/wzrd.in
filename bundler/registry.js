@@ -1,4 +1,5 @@
 var request = require('request'),
+    pacote = require('pacote'),
     semver = require('semver');
 
 //
@@ -22,25 +23,18 @@ if (registryURL.substr(-1) !== '/') {
 registry.registryURL = registryURL;
 
 registry.metadata = function metadata(module, cb) {
-  request({
-    uri: registryURL + module,
-    json: true
-  }, function (err, res, body) {
-    if (res.statusCode !== 200) {
-      if (body.error === 'not_found') {
-        err = new Error('module `' + module + '` is not on npm.');
+  return pacote.packument(module)
+    .catch(function (err) {
+      var newErr = new Error('npm registry returned: ' + err.message);
+      if (err.statusCode === 404) {
+        err.notFound = true;
       }
-      else {
-        err = new Error('npm registry returned status code ' + res.statusCode);
-      }
-    }
-
-    if (err) {
-      err.body = body;
-    }
-
-    cb(err, body);
-  });
+      throw err;
+    })
+    .then(
+      function (body) { cb(null, body); },
+      function (err) { cb(err); }
+    );
 };
 
 registry.resolve = function resolve(module, version, cb) {

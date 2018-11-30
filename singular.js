@@ -63,6 +63,13 @@ function singular(bundle, opts) {
   };
 }
 
+function fourOhFour(res, err) {
+  res.setHeader('content-type', 'text/plain');
+  res.statusCode = 404;
+  res.write('That package does not exist. Please check that its name is spelled correctly!\n\n');
+  return res.end(err.message);
+}
+
 function fiveHundred(res, err) {
   res.setHeader('content-type', 'text/plain');
   res.statusCode = 500;
@@ -74,6 +81,9 @@ function fiveHundred(res, err) {
 function serveBundle(res) {
   return function (err, bundle) {
     if (err) {
+      if (err.notFound) {
+        return fourOhFour(res, err);
+      }
       return fiveHundred(res, err);
     }
     res.setHeader('content-type', 'text/javascript');
