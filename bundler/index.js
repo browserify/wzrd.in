@@ -161,6 +161,8 @@ module.exports = function bundler(opts) {
             )
           });
 
+          env.teardown();
+
           return cb(err);
         }
 
