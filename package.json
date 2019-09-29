@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "basic": "2.0.3",
+    "browser-resolve": "^1.11.3",
     "browserify": "^16.5.0",
     "changes-stream": "^2.2.0",
     "compression": "1.7.4",

@@ -1,4 +1,5 @@
 var gatherOutputs = require('./gather-outputs');
+var resolve = require('browser-resolve');
 var path = require('path');
 
 //
@@ -19,16 +20,14 @@ module.exports = function (env, options, cb) {
 
     env.log.info('browserify: resolving path to standalone module `' + module + '`...');
 
-    env.exec('node -pe "require.resolve(\'' + module + '\')"', function (err, stdout, stderr) {
+    resolve(module, { basedir: env.dirPath }, function (err, path) {
       if (err) {
-        err.stdout = stdout;
-        err.stderr = stderr;
         return cb(err);
       }
 
       env.log.info('browserify: successfully resolved path to standalone module `' + module + '`.');
 
-      file = stdout.replace(/\n$/, '');
+      file = path;
       run();
     });
   }
