@@ -32,13 +32,13 @@
   "devDependencies": {
     "marked": "^0.5.2",
     "supertest": "^3.4.2",
-    "tap": "^12.7.0"
+    "tap": "^14.6.5"
   },
   "license": "MIT",
   "repository": "https://github.com/browserify/wzrd.in.git",
   "scripts": {
     "index-page": "node ./tools/make-index.js",
     "start": "node ./bin/browserify-cdn",
-    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap ./test/*.js"
+    "test": "rm -rf ./cdn.db && rm -rf ./test/cdn.db && tap -j1 ./test/*.js"
   }
 }
