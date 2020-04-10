@@ -42,7 +42,9 @@ module.exports = function (env, options, cb) {
     if (options.fullPaths) {
       argv.push('--full-paths');
     }
-
+    if (options.ignoreMissing) {
+      argv.push('--ignore-missing');
+    }
     if (options.standalone) {
       argv.push('--standalone');
       argv.push(module);
