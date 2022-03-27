@@ -16,7 +16,7 @@ var registry = module.exports = function get(module, version, cb) {
 // Define the registry that will be used for installing npm packages
 //
 var registryURL = process.env.REGISTRY || 'http://registry.npmjs.org/';
-if (registryURL.substr(-1) !== '/') {
+if (registryURL.slice(-1) !== '/') {
   registryURL += '/';
 }
 registry.registryURL = registryURL;
